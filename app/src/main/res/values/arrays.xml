@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="xposedscope">
+        <item>com.picovr.systemext</item>
+        <item>android</item>
+        <item>system</item>
+    </string-array>
+    <string-array name="preset_w">
+        <item>1280</item>
+        <item>1600</item>
+        <item>1920</item>
+        <item>2560</item>
+        <item>3840</item>
+    </string-array>
+    <string-array name="preset_h">
+        <item>720</item>
+        <item>900</item>
+        <item>1080</item>
+        <item>1440</item>
+        <item>2160</item>
+    </string-array>
+</resources>

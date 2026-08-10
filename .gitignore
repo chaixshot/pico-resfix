@@ -1,0 +1,13 @@
+# Gradle
+.gradle/
+build/
+local.properties
+*.apk
+
+# Android build artifacts
+app/libs/xposed-api.jar
+app/libs/stubclasses/
+app/libs/stub_sources.txt
+
+# screenshots
+*.png
