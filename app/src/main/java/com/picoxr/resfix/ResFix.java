@@ -15,16 +15,20 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 /**
  * ResFix hook — per-app virtual-display resolution override for PICO 4.
  *
- * Config: /data/local/tmp/resfix.cfg (JSON, written by the ResFix GUI app)
- *   {
- *     "default": { "w":2560, "h":1440, "density":200, "applyThird":true, "applySystem":false },
- *     "apps":    { "<pkg>": { "w":1920, "h":1080, "density":240 } }
- *   }
+ * We hook AppContainer.createVirtualDisplay(String,int,int,int,int) in
+ * com.picovr.systemext, invoked by AppRecord as createVirtualDisplay("NS_APP[<pkg>]",
+ * this.mWidth, this.mHeight, this.mDensity, flags).
  *
- * Hooks AppContainer.createVirtualDisplay(String,int,int,int,int) in com.picovr.systemext.
- * name is "NS_APP[<pkg>]". For each flat 2D app we apply the per-app override if present,
- * else the default (only if the scope flag matches: non-system needs applyThird, system
- * needs applySystem OR a per-app entry). Density is overridden only when specified.
+ * To avoid the "right-side clipping" caused by overriding only the w/h ARGS (which leaves
+ * AppRecord.mScale/mWidth/mHeight inconsistent), we override BOTH:
+ *   - the call ARGS (w,h,density)  -> virtual display buffer is created at the target res
+ *   - the this-object FIELDS (mWidth,mHeight,mDensity) -> SystemExt's own calculateScale(900/h)
+ *     and later resizeSurface() stay consistent, so the on-screen window keeps ~1600x900
+ *     physical size while rendering the higher-res buffer (supersample, no clipping).
+ *
+ * Config: /data/local/tmp/resfix.cfg (JSON)
+ *   { "default": { "w":1920,"h":1080,"density":200,"applyThird":true,"applySystem":false },
+ *     "apps":    { "<pkg>": { "w":2560,"h":1440,"density":240 } } }
  */
 public class ResFix implements IXposedHookLoadPackage {
 
@@ -32,8 +36,8 @@ public class ResFix implements IXposedHookLoadPackage {
     static final String CONFIG = "/data/local/tmp/resfix.cfg";
 
     static final class Cfg {
-        int w = 2560, h = 1440, density = -1;   // density -1 = keep original
-        boolean applyThird = true, applySystem = false, hasPerApp = false;
+        int w, h, density = -1;
+        boolean applyThird = true, applySystem = false;
     }
 
     private static String readConfigText() {
@@ -45,12 +49,9 @@ public class ResFix implements IXposedHookLoadPackage {
             int n = in.read(data);
             in.close();
             return new String(data, 0, n, StandardCharsets.UTF_8);
-        } catch (Throwable t) {
-            return null;
-        }
+        } catch (Throwable t) { return null; }
     }
 
-    /** Global default config (fallback). Never null. */
     static Cfg defaultConfig() {
         Cfg c = new Cfg();
         try {
@@ -59,8 +60,8 @@ public class ResFix implements IXposedHookLoadPackage {
             JSONObject root = new JSONObject(s);
             if (root.has("default")) {
                 JSONObject d = root.getJSONObject("default");
-                c.w = d.optInt("w", c.w);
-                c.h = d.optInt("h", c.h);
+                c.w = d.optInt("w", 0);
+                c.h = d.optInt("h", 0);
                 c.density = d.has("density") ? d.getInt("density") : -1;
                 c.applyThird = d.optBoolean("applyThird", true);
                 c.applySystem = d.optBoolean("applySystem", false);
@@ -69,7 +70,6 @@ public class ResFix implements IXposedHookLoadPackage {
         return c;
     }
 
-    /** Per-app override for <pkg>, or null if none/disabled. */
     static Cfg appConfig(String pkg) {
         try {
             String s = readConfigText();
@@ -81,14 +81,12 @@ public class ResFix implements IXposedHookLoadPackage {
             JSONObject a = apps.getJSONObject(pkg);
             if (a.optBoolean("disabled", false)) return null;
             Cfg c = new Cfg();
-            c.hasPerApp = true;
             c.w = a.optInt("w", 0);
             c.h = a.optInt("h", 0);
             c.density = a.has("density") ? a.getInt("density") : -1;
+            if (c.w <= 0 || c.h <= 0) return null;
             return c;
-        } catch (Throwable ignored) {
-            return null;
-        }
+        } catch (Throwable ignored) { return null; }
     }
 
     static boolean isNonSystemApp(Object container) {
@@ -97,9 +95,7 @@ public class ResFix implements IXposedHookLoadPackage {
             java.lang.reflect.Method m = container.getClass().getMethod("isSystemApp");
             m.setAccessible(true);
             return !((Boolean) m.invoke(container));
-        } catch (Throwable t) {
-            return true;
-        }
+        } catch (Throwable t) { return true; }
     }
 
     static String pkgFromName(String name) {
@@ -108,6 +104,37 @@ public class ResFix implements IXposedHookLoadPackage {
         if (end < 0) return null;
         String inner = name.substring("NS_APP[".length(), end);
         return inner.isEmpty() ? null : inner;
+    }
+
+    static String fieldString(Object o, String f) {
+        try { return (String) XposedHelpers.getObjectField(o, f); }
+        catch (Throwable t) { return null; }
+    }
+
+    /** Fallback pkg from this-object component name. */
+    static String pkgFromThis(Object o) {
+        try {
+            Object cn = XposedHelpers.getObjectField(o, "mComponentName");
+            if (cn != null) {
+                String p = (String) cn.getClass().getMethod("getPackageName").invoke(cn);
+                if (p != null) return p;
+            }
+        } catch (Throwable ignored) {}
+        return null;
+    }
+
+    /**
+     * Decide target config. Returns null when this AppRecord should NOT be resized.
+     */
+    static Cfg decide(String pkg, Object appRecord) {
+        boolean sys = !isNonSystemApp(appRecord);
+        Cfg app = (pkg != null) ? appConfig(pkg) : null;
+        if (app != null) return app;
+        Cfg glob = defaultConfig();
+        if (sys && !glob.applySystem) return null;
+        if (!sys && !glob.applyThird) return null;
+        if (glob.w <= 0 || glob.h <= 0) return null;
+        return glob;
     }
 
     @Override
@@ -123,41 +150,37 @@ public class ResFix implements IXposedHookLoadPackage {
                         protected void beforeHookedMethod(MethodHookParam param) {
                             String name = (String) param.args[0];
                             String pkg = pkgFromName(name);
-                            if (pkg == null) return;   // not a flat 2D app
+                            if (pkg == null) return;   // not a flat 2D app (e.g. NS_WINDOW_/caption)
 
-                            boolean sys = !isNonSystemApp(param.thisObject);
-
-                            // decide config
-                            Cfg app = appConfig(pkg);
-                            Cfg use;
-
-                            if (app != null) {
-                                // explicit per-app config always applies (unless disabled already filtered)
-                                use = app;
-                            } else {
-                                Cfg g = defaultConfig();
-                                // no per-app entry: apply default only if scope matches
-                                if (sys && !g.applySystem) return;
-                                if (!sys && !g.applyThird) return;
-                                use = g;
-                            }
-                            if (use.w <= 0 || use.h <= 0) return;
+                            Cfg cfg = decide(pkg, param.thisObject);
+                            if (cfg == null || cfg.w <= 0 || cfg.h <= 0) return;
 
                             int ow = (Integer) param.args[1];
                             int oh = (Integer) param.args[2];
                             int od = (Integer) param.args[3];
 
-                            param.args[1] = use.w;
-                            param.args[2] = use.h;
-                            if (use.density > 0) param.args[3] = use.density;
+                            // override call args (virtual display buffer)
+                            param.args[1] = cfg.w;
+                            param.args[2] = cfg.h;
+                            if (cfg.density > 0) param.args[3] = cfg.density;
+
+                            // override this-object fields so mScale + later resizeSurface stay consistent
+                            try {
+                                XposedHelpers.setIntField(param.thisObject, "mWidth", cfg.w);
+                                XposedHelpers.setIntField(param.thisObject, "mHeight", cfg.h);
+                                if (cfg.density > 0) {
+                                    XposedHelpers.setIntField(param.thisObject, "mDensity", cfg.density);
+                                }
+                            } catch (Throwable ignored) {}
 
                             int nd = (Integer) param.args[3];
-                            String sc = sys ? "[sys] " : "[3rd] ";
-                            XposedBridge.log(TAG + ": " + name + " " + sc
-                                    + ow + "x" + oh + "@" + od + " -> " + use.w + "x" + use.h + "@" + nd);
+                            boolean sys = !isNonSystemApp(param.thisObject);
+                            XposedBridge.log(TAG + ": " + name + " " + (sys ? "[sys]" : "[3rd]")
+                                    + " " + ow + "x" + oh + "@" + od + " -> " + cfg.w + "x" + cfg.h + "@" + nd
+                                    + " (mScale-consistent)");
                         }
                     });
-            XposedBridge.log(TAG + ": installed (per-app resolution override)");
+            XposedBridge.log(TAG + ": installed (per-app, mScale-consistent)");
         } catch (Throwable t) {
             XposedBridge.log(TAG + ": hook failed");
             XposedBridge.log(t);

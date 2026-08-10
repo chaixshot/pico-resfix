@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
@@ -35,7 +36,7 @@ public final class Config {
     }
 
     public static class GlobalCfg {
-        public int w = 2560, h = 1440, density = 200;
+        public int w = 1602, h = 902, density = 200;   // stock 1602x902 (matches physical window, no clipping)
         public boolean applyThird = true, applySystem = false;
     }
 
@@ -84,24 +85,30 @@ public final class Config {
         return g;
     }
 
-    /** List installed launcher apps (2D apps). filterSystem=true hides system apps. */
+    /** List installed apps (any with a launchable activity). filterSystem hides system apps.
+     *  PICO does not expose most 2D apps via the standard MAIN/LAUNCHER intent, so we list ALL
+     *  installed apps that have at least one activity (covers the full third-party set). */
     public static List<AppEntry> listApps(Context ctx, boolean filterSystem, GlobalCfg glob) {
         List<AppEntry> out = new ArrayList<>();
         try {
             PackageManager pm = ctx.getPackageManager();
-            List<ApplicationInfo> apps = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+            List<ApplicationInfo> all = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+            List<ApplicationInfo> sorted = new java.util.ArrayList<>(all);
+            java.util.Collections.sort(sorted,
+                    (a, b) -> String.valueOf(a.loadLabel(pm)).compareToIgnoreCase(String.valueOf(b.loadLabel(pm))));
             JSONObject appsJ = appsObj(readRoot());
-            for (ApplicationInfo ai : apps) {
-                // only apps that can be launched -> treat any with launcher intent
-                if (ctx.getPackageManager().getLaunchIntentForPackage(ai.packageName) == null) continue;
+            for (ApplicationInfo ai : sorted) {
+                String pkg = ai.packageName;
+                if (pkg == null || pkg.equals(ctx.getPackageName())) continue; // hide ourselves
                 boolean sys = (ai.flags & (ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0;
                 if (sys && filterSystem) continue;
                 AppEntry e = new AppEntry();
-                e.pkg = ai.packageName;
-                e.label = ai.loadLabel(pm);
+                e.pkg = pkg;
+                CharSequence lb = ai.loadLabel(pm);
+                e.label = (lb != null) ? lb : pkg;
                 e.isSystem = sys;
-                if (appsJ.has(ai.packageName)) {
-                    JSONObject a = appsJ.optJSONObject(ai.packageName);
+                if (appsJ.has(pkg)) {
+                    JSONObject a = appsJ.optJSONObject(pkg);
                     if (a != null && !a.optBoolean("disabled", false)) {
                         e.hasOverride = true;
                         e.w = a.optInt("w", 0);

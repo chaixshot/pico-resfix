@@ -90,12 +90,12 @@ public class AppDetailActivity extends Activity {
         } catch (Throwable ignored) {}
         if (target != null) {
             try {
-                etW.setText(String.valueOf(target.optInt("w", 2560)));
-                etH.setText(String.valueOf(target.optInt("h", 1440)));
+                etW.setText(String.valueOf(target.optInt("w", 1602)));
+                etH.setText(String.valueOf(target.optInt("h", 902)));
                 if (target.has("density")) etDensity.setText(String.valueOf(target.getInt("density")));
             } catch (Throwable ignored) {}
         } else {
-            etW.setText("2560"); etH.setText("1440");
+            etW.setText("1602"); etH.setText("902");
         }
         swEnable.setChecked(enabled);
         boolean en = enabled || TextUtils.isEmpty(pkg); // default always editable
@@ -104,7 +104,7 @@ public class AppDetailActivity extends Activity {
     }
 
     void save() {
-        int w = parseInt(etW, 2560), h = parseInt(etH, 1440);
+        int w = parseInt(etW, 1602), h = parseInt(etH, 902);
         if (w < 320 || h < 240) { Toast.makeText(this,"无效分辨率",Toast.LENGTH_SHORT).show(); return; }
         try {
             JSONObject root = Config.readRoot();

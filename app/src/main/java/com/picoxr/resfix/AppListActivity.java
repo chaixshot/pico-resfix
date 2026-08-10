@@ -58,6 +58,11 @@ public class AppListActivity extends Activity {
         glob = Config.getGlobal();
         boolean showSys = swSystem.isChecked();
         List<Config.AppEntry> apps = Config.listApps(this, !showSys, glob);
+        android.util.Log.i("ResFixGUI", "listApps returned " + apps.size()
+                + " apps (showSystem=" + swSystem.isChecked() + ")");
+        for (Config.AppEntry e : apps) {
+            android.util.Log.i("ResFixGUI", "  " + (e.isSystem?"[sys]":"[3rd]") + " " + e.pkg);
+        }
         adapter.setApps(apps);
         status.setVisibility(apps.isEmpty() ? View.VISIBLE : View.GONE);
     }
