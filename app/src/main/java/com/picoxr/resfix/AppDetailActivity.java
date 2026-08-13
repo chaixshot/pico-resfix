@@ -4,10 +4,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +24,7 @@ public class AppDetailActivity extends Activity {
     String pkg;
     TextView tvTitle, tvPkg;
     Switch swEnable;
-    RadioGroup rgPreset;
+    Spinner spPreset, spPresetSwap;
     EditText etW, etH, etDensity;
     Button btnSave, btnRemove;
 
@@ -39,7 +40,8 @@ public class AppDetailActivity extends Activity {
         tvTitle = findViewById(R.id.tv_title);
         tvPkg = findViewById(R.id.tv_pkg);
         swEnable = findViewById(R.id.sw_enable);
-        rgPreset = findViewById(R.id.rg_preset);
+        spPreset = findViewById(R.id.sp_preset);
+        spPresetSwap = findViewById(R.id.sp_preset_swap);
         etW = findViewById(R.id.et_w);
         etH = findViewById(R.id.et_h);
         etDensity = findViewById(R.id.et_density);
@@ -55,17 +57,49 @@ public class AppDetailActivity extends Activity {
         }
 
         // presets
+        String[] items = new String[nArr.length + 1];
+        items[0] = getString(R.string.select_preset);
+        System.arraycopy(nArr, 0, items, 1, nArr.length);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spPreset.setAdapter(adapter);
+        spPreset.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position > 0) {
+                    etW.setText(wArr[position - 1]);
+                    etH.setText(hArr[position - 1]);
+                    spPresetSwap.setSelection(0);
+                }
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        // presets swap
+        String[] itemsSwap = new String[nArr.length + 1];
+        itemsSwap[0] = getString(R.string.select_preset);
         for (int i = 0; i < nArr.length; i++) {
-            RadioButton rb = new RadioButton(this);
-            rb.setText(nArr[i]);
-            rb.setId(-1 - i);
-            rb.setOnClickListener(v -> { etW.setText(wArr[-rb.getId()-1]); etH.setText(hArr[-rb.getId()-1]); });
-            rgPreset.addView(rb);
+            itemsSwap[i + 1] = hArr[i] + " × " + wArr[i];
         }
+        ArrayAdapter<String> adapterSwap = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemsSwap);
+        adapterSwap.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spPresetSwap.setAdapter(adapterSwap);
+        spPresetSwap.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position > 0) {
+                    etW.setText(hArr[position - 1]);
+                    etH.setText(wArr[position - 1]);
+                    spPreset.setSelection(0);
+                }
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         loadCurrent();
         swEnable.setOnCheckedChangeListener((x, checked) -> {
-            for (int i = 0; i < rgPreset.getChildCount(); i++) rgPreset.getChildAt(i).setEnabled(checked);
+            spPreset.setEnabled(checked);
+            spPresetSwap.setEnabled(checked);
             etW.setEnabled(checked); etH.setEnabled(checked); etDensity.setEnabled(checked);
         });
 
@@ -99,7 +133,8 @@ public class AppDetailActivity extends Activity {
         }
         swEnable.setChecked(enabled);
         boolean en = enabled || TextUtils.isEmpty(pkg); // default always editable
-        for (int i = 0; i < rgPreset.getChildCount(); i++) rgPreset.getChildAt(i).setEnabled(en);
+        spPreset.setEnabled(en);
+        spPresetSwap.setEnabled(en);
         etW.setEnabled(en); etH.setEnabled(en); etDensity.setEnabled(en);
     }
 

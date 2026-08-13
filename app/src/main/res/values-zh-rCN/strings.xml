@@ -19,6 +19,9 @@
     <string name="remove_btn">移除设置（恢复默认）</string>
     <string name="saved_toast">已保存</string>
     <string name="remove_toast">已移除该应用设置</string>
+    <string name="select_preset">选择预设…</string>
+    <string name="landscape">横屏</string>
+    <string name="portrait">竖屏</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">默认设置（未单独配置的非系统应用）</string>
