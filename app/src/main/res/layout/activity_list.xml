@@ -1,53 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@drawable/bg_main"
+    android:clipToOutline="true">
 
-    <!-- Top bar: title + system toggle -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="12dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="visible">
 
-        <TextView
-            android:layout_width="0dp"
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/app_name"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:background="@android:color/transparent"
+            android:paddingHorizontal="30dp"
+            app:elevation="0dp">
 
-        <Switch
-            android:id="@+id/sw_system"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/show_system" />
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_marginStart="20dp"
+                android:background="@android:color/transparent"
+                app:title="@string/app_name"
+                app:titleTextAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardBackgroundColor="@color/content_bg"
+            app:cardElevation="0dp"
+            app:contentPaddingBottom="0dp"
+            app:contentPaddingTop="0dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingHorizontal="70dp"
+                android:paddingVertical="10dp"
+                android:paddingBottom="50dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
-
-    <!-- Default config entry -->
-    <Button
-        android:id="@+id/btn_default"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="12dp"
-        android:text="@string/default_title" />
 
     <TextView
         android:id="@+id/status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:visibility="gone"
-        android:text="@string/status_none" />
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/status_none"
+        android:visibility="gone" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingBottom="12dp" />
-</LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_default"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/default_title"
+        app:srcCompat="@drawable/ic_settings" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

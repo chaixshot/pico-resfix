@@ -1,17 +1,23 @@
 package com.picoxr.resfix;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONObject;
 
@@ -19,14 +25,14 @@ import org.json.JSONObject;
  * Per-app (or default) resolution editor. If pkg == "" it edits the global default
  * for non-system apps (stored under "default"), otherwise under "apps[<pkg>]".
  */
-public class AppDetailActivity extends Activity {
+public class AppDetailActivity extends AppCompatActivity {
 
     String pkg;
     TextView tvTitle, tvPkg;
-    Switch swEnable;
+    MaterialSwitch swEnable;
     Spinner spPreset, spPresetSwap;
-    EditText etW, etH, etDensity;
-    Button btnSave, btnRemove;
+    TextInputEditText etW, etH, etDensity;
+    MaterialButton btnSave, btnRemove;
 
     final String[] wArr = {"1280","1600","1920","2560","3840"};
     final String[] hArr = {"720","900","1080","1440","2160"};
@@ -34,9 +40,18 @@ public class AppDetailActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle b) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         super.onCreate(b);
         setContentView(R.layout.activity_detail);
         pkg = getIntent().getStringExtra("pkg");
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("");
+        }
+
         tvTitle = findViewById(R.id.tv_title);
         tvPkg = findViewById(R.id.tv_pkg);
         swEnable = findViewById(R.id.sw_enable);
@@ -107,6 +122,15 @@ public class AppDetailActivity extends Activity {
         btnRemove.setOnClickListener(v -> removeOverride());
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     void loadCurrent() {
         JSONObject root = Config.readRoot();
         JSONObject target = null;
@@ -155,7 +179,7 @@ public class AppDetailActivity extends Activity {
                 target.put("disabled", !swEnable.isChecked());
             }
             target.put("w", w); target.put("h", h);
-            String d = etDensity.getText().toString().trim();
+            String d = etDensity.getText() != null ? etDensity.getText().toString().trim() : "";
             if (!TextUtils.isEmpty(d)) target.put("density", parseIntStr(d));
             else target.remove("density");
             boolean ok = Config.writeRoot(root);
@@ -182,7 +206,8 @@ public class AppDetailActivity extends Activity {
         } catch (Throwable t) { Toast.makeText(this, R.string.failed, Toast.LENGTH_SHORT).show(); }
     }
 
-    static int parseInt(EditText e, int def) {
+    static int parseInt(TextInputEditText e, int def) {
+        if (e.getText() == null) return def;
         try { return Integer.parseInt(e.getText().toString().trim()); } catch (Throwable t) { return def; }
     }
     static int parseIntStr(String s) {

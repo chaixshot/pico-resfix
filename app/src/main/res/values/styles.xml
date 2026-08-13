@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.ResFix" parent="Theme.Material3.DayNight">
-        <item name="android:statusBarColor">@color/primary</item>
+    <style name="Theme.ResFix" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_main</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:forceDarkAllowed">false</item>
+
+        <item name="colorPrimary">@color/button_bg</item>
+        <item name="colorOnPrimary">@color/design_default_color_background</item>
+
+        <item name="colorPrimaryContainer">@color/button_bg</item>
+        <item name="colorOnPrimaryContainer">@color/design_default_color_background</item>
     </style>
 </resources>

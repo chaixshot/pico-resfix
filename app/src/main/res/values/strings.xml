@@ -23,6 +23,7 @@
     <string name="write_failed">Write failed</string>
     <string name="save_failed">Save failed</string>
     <string name="failed">Failed</string>
+    <string name="tag_system">System</string>
     <string name="custom_prefix">Custom: </string>
     <string name="default_prefix">Default: </string>
     <string name="select_preset">Select preset…</string>

@@ -1,18 +1,23 @@
 package com.picoxr.resfix;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.List;
 
@@ -21,31 +26,44 @@ import java.util.List;
  * system apps. Tapping an app opens AppDetailActivity for its per-app resolution.
  * "默认设置" opens a simple editor for the global default (third-party apps).
  */
-public class AppListActivity extends Activity {
+public class AppListActivity extends AppCompatActivity {
 
     RecyclerView recycler;
-    Switch swSystem;
+    MaterialSwitch swSystem;
     TextView status;
-    Button btnDefault;
+    FloatingActionButton fabDefault;
     AppAdapter adapter;
     Config.GlobalCfg glob;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         recycler = findViewById(R.id.recycler);
         status = findViewById(R.id.status);
-        swSystem = findViewById(R.id.sw_system);
-        btnDefault = findViewById(R.id.btn_default);
+        fabDefault = findViewById(R.id.fab_default);
 
-        recycler.setLayoutManager(new LinearLayoutManager(this));
+        recycler.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new AppAdapter();
         recycler.setAdapter(adapter);
 
-        swSystem.setOnCheckedChangeListener((b, c) -> reload());
-        btnDefault.setOnClickListener(v -> openDefaultEditor());
+        fabDefault.setOnClickListener(v -> openDefaultEditor());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_list, menu);
+        MenuItem item = menu.findItem(R.id.menu_show_system);
+        swSystem = (MaterialSwitch) item.getActionView();
+        if (swSystem != null) {
+            swSystem.setOnCheckedChangeListener((b, c) -> reload());
+        }
+        return true;
     }
 
     @Override
@@ -56,13 +74,10 @@ public class AppListActivity extends Activity {
 
     void reload() {
         glob = Config.getGlobal();
-        boolean showSys = swSystem.isChecked();
+        boolean showSys = swSystem != null && swSystem.isChecked();
         List<Config.AppEntry> apps = Config.listApps(this, !showSys, glob);
         android.util.Log.i("ResFixGUI", "listApps returned " + apps.size()
-                + " apps (showSystem=" + swSystem.isChecked() + ")");
-        for (Config.AppEntry e : apps) {
-            android.util.Log.i("ResFixGUI", "  " + (e.isSystem?"[sys]":"[3rd]") + " " + e.pkg);
-        }
+                + " apps (showSystem=" + showSys + ")");
         adapter.setApps(apps);
         status.setVisibility(apps.isEmpty() ? View.VISIBLE : View.GONE);
     }
@@ -91,7 +106,7 @@ public class AppListActivity extends Activity {
             final Config.AppEntry e = apps.get(pos);
             h.label.setText(e.label != null ? e.label : e.pkg);
             h.pkg.setText(e.pkg);
-            h.sys.setVisibility(e.isSystem ? View.VISIBLE : View.GONE);
+            h.cardSys.setVisibility(e.isSystem ? View.VISIBLE : View.GONE);
             String prefix = e.hasOverride
                     ? h.root.getContext().getString(R.string.custom_prefix)
                     : h.root.getContext().getString(R.string.default_prefix);
@@ -108,10 +123,10 @@ public class AppListActivity extends Activity {
         public int getItemCount() { return apps == null ? 0 : apps.size(); }
 
         class VH extends RecyclerView.ViewHolder {
-            View root; TextView label, pkg, res, sys;
+            View root, cardSys; TextView label, pkg, res;
             VH(View v) { super(v); root = v; label = v.findViewById(R.id.tv_label);
                 pkg = v.findViewById(R.id.tv_pkg); res = v.findViewById(R.id.tv_res);
-                sys = v.findViewById(R.id.tv_sys); }
+                cardSys = v.findViewById(R.id.card_sys); }
         }
     }
 }

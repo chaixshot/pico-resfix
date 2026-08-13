@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary">#1565C0</color>
-    <color name="primary_dark">#0D47A1</color>
-    <color name="accent">#FFC107</color>
-    <color name="white">#FFFFFF</color>
+
+    <color name="main_bg">#1e1e1e</color>
+    <color name="content_bg">#292929</color>
+    <color name="card_bg">#323232</color>
+    <color name="button_bg">#464646</color>
 </resources>
