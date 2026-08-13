@@ -4,6 +4,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,7 +38,7 @@ public class AppDetailActivity extends AppCompatActivity {
     MaterialSwitch swEnable;
     Spinner spPreset, spPresetSwap;
     TextInputEditText etW, etH, etDensity;
-    MaterialButton btnSave, btnRemove;
+    MaterialButton btnSave, btnRemove, btnSwapVal;
 
     final String[] wArr = {"1280","1600","1920","2560","3840"};
     final String[] hArr = {"720","900","1080","1440","2160"};
@@ -67,6 +68,7 @@ public class AppDetailActivity extends AppCompatActivity {
         etDensity = findViewById(R.id.et_density);
         btnSave = findViewById(R.id.btn_save);
         btnRemove = findViewById(R.id.btn_remove);
+        btnSwapVal = findViewById(R.id.btn_swap_val);
 
         if (TextUtils.isEmpty(pkg)) {
             tvTitle.setText(R.string.default_title);
@@ -136,6 +138,16 @@ public class AppDetailActivity extends AppCompatActivity {
 
         btnSave.setOnClickListener(v -> save());
         btnRemove.setOnClickListener(v -> removeOverride());
+        btnSwapVal.setOnClickListener(v -> {
+            Editable tw = etW.getText();
+            Editable th = etH.getText();
+            String sw = tw != null ? tw.toString() : "";
+            String sh = th != null ? th.toString() : "";
+            etW.setText(sh);
+            etH.setText(sw);
+        });
+    }
+
     }
 
     @Override

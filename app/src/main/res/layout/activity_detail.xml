@@ -277,11 +277,16 @@
                                             android:inputType="number" />
                                     </com.google.android.material.textfield.TextInputLayout>
 
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:paddingHorizontal="8dp"
-                                        android:text="×" />
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/btn_swap_val"
+                                        android:layout_width="25dp"
+                                        android:layout_height="35dp"
+                                        android:layout_marginHorizontal="10dp"
+                                        app:cornerRadius="5dp"
+                                        app:icon="@android:drawable/ic_menu_close_clear_cancel"
+                                        app:iconGravity="textStart"
+                                        app:iconPadding="0dp"
+                                        app:srcCompat="@drawable/ic_settings" />
 
                                     <com.google.android.material.textfield.TextInputLayout
                                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
