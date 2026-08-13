@@ -132,7 +132,9 @@ public class AppListActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull VH h, int pos) {
             final Config.AppEntry e = apps.get(pos);
             h.label.setText(e.label != null ? e.label : e.pkg);
+            h.label.setSelected(true);
             h.pkg.setText(e.pkg);
+            h.pkg.setSelected(true);
             h.cardSys.setVisibility(e.isSystem ? View.VISIBLE : View.GONE);
             String prefix = e.hasOverride
                     ? h.root.getContext().getString(R.string.custom_prefix)

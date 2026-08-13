@@ -84,6 +84,8 @@ public class AppDetailActivity extends AppCompatActivity {
                 ivIcon.setImageResource(android.R.drawable.sym_def_app_icon);
             }
         }
+        tvTitle.setSelected(true);
+        tvPkg.setSelected(true);
 
         // presets
         String[] items = new String[nArr.length + 1];

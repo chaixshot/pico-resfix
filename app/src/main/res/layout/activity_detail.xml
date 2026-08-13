@@ -105,6 +105,12 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginRight="10dp"
+                                        android:ellipsize="marquee"
+                                        android:focusable="true"
+                                        android:focusableInTouchMode="true"
+                                        android:marqueeRepeatLimit="marquee_forever"
+                                        android:scrollHorizontally="true"
+                                        android:singleLine="true"
                                         android:text="test"
                                         android:textAppearance="?attr/textAppearanceHeadlineSmall" />
 
@@ -113,6 +119,12 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:alpha="0.7"
+                                        android:ellipsize="marquee"
+                                        android:focusable="true"
+                                        android:focusableInTouchMode="true"
+                                        android:marqueeRepeatLimit="marquee_forever"
+                                        android:scrollHorizontally="true"
+                                        android:singleLine="true"
                                         android:text="Test"
                                         android:textAppearance="?attr/textAppearanceBodyMedium" />
 
