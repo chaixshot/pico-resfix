@@ -23,21 +23,14 @@
     <string name="write_failed">쓰기 실패</string>
     <string name="save_failed">저장 실패</string>
     <string name="failed">실패</string>
+    <string name="tag_system">시스템</string>
     <string name="custom_prefix">사용자 지정: </string>
     <string name="default_prefix">기본값: </string>
     <string name="select_preset">프리셋 선택…</string>
     <string name="search_hint">앱 검색…</string>
-    <string name="landscape">가로 모드</string>
-    <string name="portrait">세로 모드</string>
+    <string name="floating">플로팅</string>
+    <string name="dock">독</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">기본 설정 (별도 설정이 없는 비시스템 앱)</string>
-
-    <string-array name="preset_names">
-        <item>1280 × 720</item>
-        <item>1600 × 900</item>
-        <item>1920 × 1080</item>
-        <item>2560 × 1440</item>
-        <item>3840 × 2160</item>
-    </string-array>
 </resources>

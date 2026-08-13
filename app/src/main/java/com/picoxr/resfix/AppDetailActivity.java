@@ -2,7 +2,6 @@ package com.picoxr.resfix;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -40,9 +39,8 @@ public class AppDetailActivity extends AppCompatActivity {
     TextInputEditText etW, etH, etDensity;
     MaterialButton btnSave, btnRemove, btnSwapVal;
 
-    final String[] wArr = {"1280","1600","1920","2560","3840"};
-    final String[] hArr = {"720","900","1080","1440","2160"};
-    final String[] nArr = {"1280 × 720","1600 × 900","1920 × 1080","2560 × 1440","3840 × 2160"};
+    final String[] resFloatArr = {"1280 × 722","1600 × 902","1920 × 1082","2560 × 1442","3840 × 2162"};
+    final String[] resDockArr = {"807 × 432","1127 × 752","1447 × 1072","1767 × 1392","2087 × 1712"};
 
     @Override
     protected void onCreate(Bundle b) {
@@ -89,40 +87,36 @@ public class AppDetailActivity extends AppCompatActivity {
         tvTitle.setSelected(true);
         tvPkg.setSelected(true);
 
-        // presets
-        String[] items = new String[nArr.length + 1];
-        items[0] = getString(R.string.select_preset);
-        System.arraycopy(nArr, 0, items, 1, nArr.length);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
+        // Floating Resolution
+        String[] itemsFloat = new String[resFloatArr.length + 1];
+        itemsFloat[0] = getString(R.string.select_preset);
+        System.arraycopy(resFloatArr, 0, itemsFloat, 1, resFloatArr.length);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemsFloat);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spPreset.setAdapter(adapter);
         spPreset.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position > 0) {
-                    etW.setText(wArr[position - 1]);
-                    etH.setText(hArr[position - 1]);
+                    applyDimensions(resFloatArr[position - 1]);
                     spPresetSwap.setSelection(0);
                 }
             }
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // presets swap
-        String[] itemsSwap = new String[nArr.length + 1];
-        itemsSwap[0] = getString(R.string.select_preset);
-        for (int i = 0; i < nArr.length; i++) {
-            itemsSwap[i + 1] = hArr[i] + " × " + wArr[i];
-        }
-        ArrayAdapter<String> adapterSwap = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemsSwap);
+        // Dock Resolution
+        String[] itemsDock = new String[resDockArr.length + 1];
+        itemsDock[0] = getString(R.string.select_preset);
+        System.arraycopy(resDockArr, 0, itemsDock, 1, resDockArr.length);
+        ArrayAdapter<String> adapterSwap = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemsDock);
         adapterSwap.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spPresetSwap.setAdapter(adapterSwap);
         spPresetSwap.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position > 0) {
-                    etW.setText(hArr[position - 1]);
-                    etH.setText(wArr[position - 1]);
+                    applyDimensions(resDockArr[position - 1]);
                     spPreset.setSelection(0);
                 }
             }
@@ -148,6 +142,13 @@ public class AppDetailActivity extends AppCompatActivity {
         });
     }
 
+    // Helper method to split the string and set text
+    private void applyDimensions(String resolution) {
+        String[] dimensions = resolution.split(" × ");
+        if (dimensions.length == 2) {
+            etW.setText(dimensions[0]);
+            etH.setText(dimensions[1]);
+        }
     }
 
     @Override

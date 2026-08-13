@@ -23,21 +23,14 @@
     <string name="write_failed">Kirjoittaminen epäonnistui</string>
     <string name="save_failed">Tallennus epäonnistui</string>
     <string name="failed">Epäonnistui</string>
+    <string name="tag_system">Järjestelmä</string>
     <string name="custom_prefix">Mukautettu: </string>
     <string name="default_prefix">Oletus: </string>
     <string name="select_preset">Valitse esiasetus…</string>
     <string name="search_hint">Hae sovelluksia…</string>
-    <string name="landscape">Vaaka</string>
-    <string name="portrait">Pysty</string>
+    <string name="floating">Kelluva</string>
+    <string name="dock">Telakka</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Oletusasetukset (ei-järjestelmäsovellukset ilman omia asetuksia)</string>
-
-    <string-array name="preset_names">
-        <item>1280 × 720</item>
-        <item>1600 × 900</item>
-        <item>1920 × 1080</item>
-        <item>2560 × 1440</item>
-        <item>3840 × 2160</item>
-    </string-array>
 </resources>
