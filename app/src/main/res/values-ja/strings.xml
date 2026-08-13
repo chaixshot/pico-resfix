@@ -26,6 +26,7 @@
     <string name="custom_prefix">カスタム: </string>
     <string name="default_prefix">デフォルト: </string>
     <string name="select_preset">プリセットを選択…</string>
+    <string name="search_hint">アプリを検索…</string>
     <string name="landscape">横向き</string>
     <string name="portrait">縦向き</string>
 

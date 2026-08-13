@@ -26,6 +26,7 @@
     <string name="custom_prefix">Özel: </string>
     <string name="default_prefix">Varsayılan: </string>
     <string name="select_preset">Önayar seçin…</string>
+    <string name="search_hint">Uygulamaları ara…</string>
     <string name="landscape">Yatay</string>
     <string name="portrait">Dikey</string>
 

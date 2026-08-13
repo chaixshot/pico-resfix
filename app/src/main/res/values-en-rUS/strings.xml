@@ -26,6 +26,7 @@
     <string name="custom_prefix">Custom: </string>
     <string name="default_prefix">Default: </string>
     <string name="select_preset">Select preset…</string>
+    <string name="search_hint">Search apps…</string>
     <string name="landscape">Landscape</string>
     <string name="portrait">Portrait</string>
 

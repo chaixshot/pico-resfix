@@ -26,6 +26,7 @@
     <string name="custom_prefix">Προσαρμοσμένο: </string>
     <string name="default_prefix">Προεπιλογή: </string>
     <string name="select_preset">Επιλογή προεπιλογής…</string>
+    <string name="search_hint">Αναζήτηση εφαρμογών…</string>
     <string name="landscape">Οριζόντιος προσανατολισμός</string>
     <string name="portrait">Κατακόρυφος προσανατολισμός</string>
 

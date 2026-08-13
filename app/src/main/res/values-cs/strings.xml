@@ -26,6 +26,7 @@
     <string name="custom_prefix">Vlastní: </string>
     <string name="default_prefix">Výchozí: </string>
     <string name="select_preset">Vybrat předvolbu…</string>
+    <string name="search_hint">Hledat aplikace…</string>
     <string name="landscape">Na šířku</string>
     <string name="portrait">Na výšku</string>
 

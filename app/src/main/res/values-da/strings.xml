@@ -26,6 +26,7 @@
     <string name="custom_prefix">Brugerdefineret: </string>
     <string name="default_prefix">Standard: </string>
     <string name="select_preset">Vælg forudindstilling…</string>
+    <string name="search_hint">Søg i apps…</string>
     <string name="landscape">Landskab</string>
     <string name="portrait">Portræt</string>
 

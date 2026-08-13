@@ -26,6 +26,7 @@
     <string name="custom_prefix">Tilpasset: </string>
     <string name="default_prefix">Standard: </string>
     <string name="select_preset">Velg forhåndsinnstilling…</string>
+    <string name="search_hint">Søk i apper…</string>
     <string name="landscape">Liggende</string>
     <string name="portrait">Stående</string>
 

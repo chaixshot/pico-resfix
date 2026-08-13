@@ -26,6 +26,7 @@
     <string name="custom_prefix">กำหนดเอง: </string>
     <string name="default_prefix">เริ่มต้น: </string>
     <string name="select_preset">เลือกค่าที่ตั้งไว้ล่วงหน้า…</string>
+    <string name="search_hint">ค้นหาแอป…</string>
     <string name="landscape">แนวนอน</string>
     <string name="portrait">แนวตั้ง</string>
 

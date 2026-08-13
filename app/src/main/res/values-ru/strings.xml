@@ -26,6 +26,7 @@
     <string name="custom_prefix">Вручную: </string>
     <string name="default_prefix">По умолчанию: </string>
     <string name="select_preset">Выберите предустановку…</string>
+    <string name="search_hint">Поиск приложений…</string>
     <string name="landscape">Альбомная</string>
     <string name="portrait">Портретная</string>
 

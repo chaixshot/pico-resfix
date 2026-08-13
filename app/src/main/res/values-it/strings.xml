@@ -26,6 +26,7 @@
     <string name="custom_prefix">Personalizzato: </string>
     <string name="default_prefix">Predefinito: </string>
     <string name="select_preset">Seleziona predefinito…</string>
+    <string name="search_hint">Cerca app…</string>
     <string name="landscape">Orizzontale</string>
     <string name="portrait">Verticale</string>
 

@@ -26,6 +26,7 @@
     <string name="custom_prefix">Personalizat: </string>
     <string name="default_prefix">Implicit: </string>
     <string name="select_preset">Selectați presetarea…</string>
+    <string name="search_hint">Căutați aplicații…</string>
     <string name="landscape">Peisaj</string>
     <string name="portrait">Portret</string>
 

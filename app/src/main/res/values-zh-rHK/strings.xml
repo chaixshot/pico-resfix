@@ -26,6 +26,7 @@
     <string name="custom_prefix">自定義: </string>
     <string name="default_prefix">預設: </string>
     <string name="select_preset">選擇預設…</string>
+    <string name="search_hint">搜尋應用程式…</string>
     <string name="landscape">橫屏</string>
     <string name="portrait">豎屏</string>
 
