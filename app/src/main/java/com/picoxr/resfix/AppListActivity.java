@@ -94,6 +94,15 @@ public class AppListActivity extends AppCompatActivity {
         glob = Config.getGlobal();
         boolean showSys = swSystem != null && swSystem.isChecked();
         List<Config.AppEntry> apps = Config.listApps(this, !showSys, glob);
+
+        // Sort: Custom first, then by label alphabet
+        apps.sort((a, b) -> {
+            if (a.hasOverride != b.hasOverride) {
+                return a.hasOverride ? -1 : 1;
+            }
+            return String.valueOf(a.label).compareToIgnoreCase(String.valueOf(b.label));
+        });
+
         android.util.Log.i("ResFixGUI", "listApps returned " + apps.size()
                 + " apps (showSystem=" + showSys + ")");
         adapter.setApps(apps);
@@ -130,6 +139,11 @@ public class AppListActivity extends AppCompatActivity {
                     : h.root.getContext().getString(R.string.default_prefix);
             String res = prefix + e.w + "x" + e.h + (e.density > 0 ? " @" + e.density : "");
             h.res.setText(res);
+            if (e.hasOverride) {
+                h.res.setTextColor(h.root.getContext().getColor(R.color.primary));
+            } else {
+                h.res.setTextColor(h.root.getContext().getColor(android.R.color.white));
+            }
             h.root.setOnClickListener(v -> {
                 Intent i = new Intent(AppListActivity.this, AppDetailActivity.class);
                 i.putExtra("pkg", e.pkg);
