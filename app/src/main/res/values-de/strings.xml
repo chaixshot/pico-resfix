@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PICO 2D Resolution</string>
+    <string name="xposed_description">PICO 4: per-app 2D virtual-display resolution override (presets + custom + density).</string>
+
+    <string name="show_system">System-Apps anzeigen</string>
+    <string name="default_cfg">Standardauflösung (Nicht-System-Apps ohne spezifische Einstellungen)</string>
+    <string name="status_none">Keine Apps installiert</string>
+
+    <string name="detail_title">App-Auflösung</string>
+    <string name="enable_override">Außerkraftsetzung aktivieren</string>
+    <string name="preset_label">Voreinstellung</string>
+    <string name="custom_label">Benutzerdefiniert (Pixel)</string>
+    <string name="width_hint">Breite</string>
+    <string name="height_hint">Höhe</string>
+    <string name="density_label">DPI (optional, leer lassen für Systemstandard)</string>
+    <string name="density_hint">z. B. 200 / 240 / 320</string>
+    <string name="save_btn">Speichern</string>
+    <string name="remove_btn">Einstellungen entfernen (Standard wiederherstellen)</string>
+    <string name="saved_toast">Gespeichert</string>
+    <string name="remove_toast">App-Einstellungen entfernt</string>
+
+    <!-- default config editor (in list header or separate) -->
+    <string name="default_title">Standardeinstellungen (Nicht-System-Apps ohne spezifische Einstellungen)</string>
+
+    <string-array name="preset_names">
+        <item>1280 × 720</item>
+        <item>1600 × 900</item>
+        <item>1920 × 1080</item>
+        <item>2560 × 1440</item>
+        <item>3840 × 2160</item>
+    </string-array>
+</resources>

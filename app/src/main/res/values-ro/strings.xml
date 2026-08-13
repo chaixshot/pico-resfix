@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PICO 2D Resolution</string>
+    <string name="xposed_description">PICO 4: per-app 2D virtual-display resolution override (presets + custom + density).</string>
+
+    <string name="show_system">Afișează aplicațiile de sistem</string>
+    <string name="default_cfg">Rezoluție implicită (aplicații non-sistem fără setări specifice)</string>
+    <string name="status_none">Nicio aplicație instalată</string>
+
+    <string name="detail_title">Rezoluția aplicației</string>
+    <string name="enable_override">Activați suprascrierea</string>
+    <string name="preset_label">Presetare</string>
+    <string name="custom_label">Personalizat (pixeli)</string>
+    <string name="width_hint">Lățime</string>
+    <string name="height_hint">Înălțime</string>
+    <string name="density_label">DPI (opțional, lăsați gol pentru sistem)</string>
+    <string name="density_hint">ex. 200 / 240 / 320</string>
+    <string name="save_btn">Salvează</string>
+    <string name="remove_btn">Elimină setările (restabilește implicit)</string>
+    <string name="saved_toast">Salvat</string>
+    <string name="remove_toast">Setările aplicației au fost eliminate</string>
+
+    <!-- default config editor (in list header or separate) -->
+    <string name="default_title">Setări implicite (aplicații non-sistem fără setări specifice)</string>
+
+    <string-array name="preset_names">
+        <item>1280 × 720</item>
+        <item>1600 × 900</item>
+        <item>1920 × 1080</item>
+        <item>2560 × 1440</item>
+        <item>3840 × 2160</item>
+    </string-array>
+</resources>

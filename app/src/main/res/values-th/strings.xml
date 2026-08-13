@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PICO 2D Resolution</string>
+    <string name="xposed_description">PICO 4: per-app 2D virtual-display resolution override (presets + custom + density).</string>
+
+    <string name="show_system">แสดงแอปของระบบ</string>
+    <string name="default_cfg">ความละเอียดเริ่มต้น (แอปที่ไม่ได้ตั้งค่าเฉพาะ)</string>
+    <string name="status_none">ไม่มีแอปที่ติดตั้งไว้</string>
+
+    <string name="detail_title">ความละเอียดของแอป</string>
+    <string name="enable_override">เปิดใช้งานการแทนที่</string>
+    <string name="preset_label">ค่าที่ตั้งไว้ล่วงหน้า</string>
+    <string name="custom_label">กำหนดเอง (พิกเซล)</string>
+    <string name="width_hint">ความกว้าง</string>
+    <string name="height_hint">ความสูง</string>
+    <string name="density_label">DPI (เลือกได้ เว้นว่างไว้เพื่อตามระบบ)</string>
+    <string name="density_hint">เช่น 200 / 240 / 320</string>
+    <string name="save_btn">บันทึก</string>
+    <string name="remove_btn">ลบการตั้งค่า (คืนค่าเริ่มต้น)</string>
+    <string name="saved_toast">บันทึกแล้ว</string>
+    <string name="remove_toast">ลบการตั้งค่าของแอปแล้ว</string>
+
+    <!-- default config editor (in list header or separate) -->
+    <string name="default_title">การตั้งค่าเริ่มต้น (แอปที่ไม่ได้ตั้งค่าเฉพาะ)</string>
+
+    <string-array name="preset_names">
+        <item>1280 × 720</item>
+        <item>1600 × 900</item>
+        <item>1920 × 1080</item>
+        <item>2560 × 1440</item>
+        <item>3840 × 2160</item>
+    </string-array>
+</resources>

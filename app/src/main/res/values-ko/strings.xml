@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PICO 2D Resolution</string>
+    <string name="xposed_description">PICO 4: per-app 2D virtual-display resolution override (presets + custom + density).</string>
+
+    <string name="show_system">시스템 앱 표시</string>
+    <string name="default_cfg">기본 해상도 (별도 설정이 없는 비시스템 앱)</string>
+    <string name="status_none">설치된 앱이 없습니다</string>
+
+    <string name="detail_title">앱 해상도</string>
+    <string name="enable_override">오버라이드 활성화</string>
+    <string name="preset_label">프리셋</string>
+    <string name="custom_label">사용자 지정 (픽셀)</string>
+    <string name="width_hint">너비</string>
+    <string name="height_hint">높이</string>
+    <string name="density_label">DPI (선택 사항, 비워두면 시스템 설정을 따름)</string>
+    <string name="density_hint">예: 200 / 240 / 320</string>
+    <string name="save_btn">저장</string>
+    <string name="remove_btn">설정 제거 (기본값으로 복원)</string>
+    <string name="saved_toast">저장됨</string>
+    <string name="remove_toast">앱 설정이 제거되었습니다</string>
+
+    <!-- default config editor (in list header or separate) -->
+    <string name="default_title">기본 설정 (별도 설정이 없는 비시스템 앱)</string>
+
+    <string-array name="preset_names">
+        <item>1280 × 720</item>
+        <item>1600 × 900</item>
+        <item>1920 × 1080</item>
+        <item>2560 × 1440</item>
+        <item>3840 × 2160</item>
+    </string-array>
+</resources>
