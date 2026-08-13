@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PICO 2D Resolution</string>
+    <string name="xposed_description">PICO 4: per-app 2D virtual-display resolution override (presets + custom + density).</string>
+
+    <string name="show_system">Näytä järjestelmäsovellukset</string>
+    <string name="default_cfg">Oletusresoluutio (ei-järjestelmäsovellukset ilman omia asetuksia)</string>
+    <string name="status_none">Ei asennettuja sovelluksia</string>
+
+    <string name="detail_title">Sovelluksen resoluutio</string>
+    <string name="enable_override">Ota ohitus käyttöön</string>
+    <string name="preset_label">Esiasetus</string>
+    <string name="custom_label">Mukautettu (pikseliä)</string>
+    <string name="width_hint">Leveys</string>
+    <string name="height_hint">Korkeus</string>
+    <string name="density_label">DPI (valinnainen, jätä tyhjäksi seurataksesi järjestelmää)</string>
+    <string name="density_hint">esim. 200 / 240 / 320</string>
+    <string name="save_btn">Tallenna</string>
+    <string name="remove_btn">Poista asetukset (palauta oletus)</string>
+    <string name="saved_toast">Tallennettu</string>
+    <string name="remove_toast">Sovelluksen asetukset poistettu</string>
+    <string name="invalid_res">Virheellinen resoluutio</string>
+    <string name="write_failed">Kirjoittaminen epäonnistui</string>
+    <string name="save_failed">Tallennus epäonnistui</string>
+    <string name="failed">Epäonnistui</string>
+    <string name="custom_prefix">Mukautettu: </string>
+    <string name="default_prefix">Oletus: </string>
+    <string name="select_preset">Valitse esiasetus…</string>
+    <string name="landscape">Vaaka</string>
+    <string name="portrait">Pysty</string>
+
+    <!-- default config editor (in list header or separate) -->
+    <string name="default_title">Oletusasetukset (ei-järjestelmäsovellukset ilman omia asetuksia)</string>
+
+    <string-array name="preset_names">
+        <item>1280 × 720</item>
+        <item>1600 × 900</item>
+        <item>1920 × 1080</item>
+        <item>2560 × 1440</item>
+        <item>3840 × 2160</item>
+    </string-array>
+</resources>

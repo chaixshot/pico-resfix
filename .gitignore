@@ -11,3 +11,4 @@ app/libs/stub_sources.txt
 
 # screenshots
 *.png
+/.idea

@@ -1,51 +1,81 @@
 package com.picoxr.resfix;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Switch;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.materialswitch.MaterialSwitch;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Main screen: lists installed 2D (launcher) apps. A "show system apps" switch filters
  * system apps. Tapping an app opens AppDetailActivity for its per-app resolution.
  * "默认设置" opens a simple editor for the global default (third-party apps).
  */
-public class AppListActivity extends Activity {
+public class AppListActivity extends AppCompatActivity {
 
     RecyclerView recycler;
-    Switch swSystem;
+    MaterialSwitch swSystem;
     TextView status;
-    Button btnDefault;
+    FloatingActionButton fabDefault;
     AppAdapter adapter;
     Config.GlobalCfg glob;
+    private final ExecutorService executor = Executors.newFixedThreadPool(4);
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Map<String, Drawable> iconCache = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         recycler = findViewById(R.id.recycler);
         status = findViewById(R.id.status);
-        swSystem = findViewById(R.id.sw_system);
-        btnDefault = findViewById(R.id.btn_default);
+        fabDefault = findViewById(R.id.fab_default);
 
-        recycler.setLayoutManager(new LinearLayoutManager(this));
+        recycler.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new AppAdapter();
         recycler.setAdapter(adapter);
 
-        swSystem.setOnCheckedChangeListener((b, c) -> reload());
-        btnDefault.setOnClickListener(v -> openDefaultEditor());
+        fabDefault.setOnClickListener(v -> openDefaultEditor());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_list, menu);
+        MenuItem item = menu.findItem(R.id.menu_show_system);
+        swSystem = (MaterialSwitch) item.getActionView();
+        if (swSystem != null) {
+            swSystem.setOnCheckedChangeListener((b, c) -> reload());
+        }
+        return true;
     }
 
     @Override
@@ -54,15 +84,27 @@ public class AppListActivity extends Activity {
         reload();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executor.shutdown();
+    }
+
     void reload() {
         glob = Config.getGlobal();
-        boolean showSys = swSystem.isChecked();
+        boolean showSys = swSystem != null && swSystem.isChecked();
         List<Config.AppEntry> apps = Config.listApps(this, !showSys, glob);
+
+        // Sort: Custom first, then by label alphabet
+        apps.sort((a, b) -> {
+            if (a.hasOverride != b.hasOverride) {
+                return a.hasOverride ? -1 : 1;
+            }
+            return String.valueOf(a.label).compareToIgnoreCase(String.valueOf(b.label));
+        });
+
         android.util.Log.i("ResFixGUI", "listApps returned " + apps.size()
-                + " apps (showSystem=" + swSystem.isChecked() + ")");
-        for (Config.AppEntry e : apps) {
-            android.util.Log.i("ResFixGUI", "  " + (e.isSystem?"[sys]":"[3rd]") + " " + e.pkg);
-        }
+                + " apps (showSystem=" + showSys + ")");
         adapter.setApps(apps);
         status.setVisibility(apps.isEmpty() ? View.VISIBLE : View.GONE);
     }
@@ -90,27 +132,60 @@ public class AppListActivity extends Activity {
         public void onBindViewHolder(@NonNull VH h, int pos) {
             final Config.AppEntry e = apps.get(pos);
             h.label.setText(e.label != null ? e.label : e.pkg);
+            h.label.setSelected(true);
             h.pkg.setText(e.pkg);
-            h.sys.setVisibility(e.isSystem ? View.VISIBLE : View.GONE);
-            String res = e.hasOverride
-                    ? ("自定义: " + e.w + "x" + e.h + (e.density > 0 ? " @" + e.density : ""))
-                    : ("默认: " + e.w + "x" + e.h + " @" + e.density);
+            h.pkg.setSelected(true);
+            h.cardSys.setVisibility(e.isSystem ? View.VISIBLE : View.GONE);
+            String prefix = e.hasOverride
+                    ? h.root.getContext().getString(R.string.custom_prefix)
+                    : h.root.getContext().getString(R.string.default_prefix);
+            String res = prefix + e.w + "x" + e.h + (e.density > 0 ? " @" + e.density : "");
             h.res.setText(res);
+            if (e.hasOverride) {
+                h.res.setTextColor(h.root.getContext().getColor(R.color.primary));
+            } else {
+                h.res.setTextColor(h.root.getContext().getColor(android.R.color.white));
+            }
             h.root.setOnClickListener(v -> {
                 Intent i = new Intent(AppListActivity.this, AppDetailActivity.class);
                 i.putExtra("pkg", e.pkg);
                 startActivity(i);
             });
+
+            // Lazy load icon
+            h.icon.setImageResource(android.R.drawable.sym_def_app_icon);
+            h.tag = e.pkg;
+            final String pkgName = e.pkg;
+            Drawable cached = iconCache.get(pkgName);
+            if (cached != null) {
+                h.icon.setImageDrawable(cached);
+            } else {
+                executor.execute(() -> {
+                    try {
+                        PackageManager pm = getPackageManager();
+                        final Drawable icon = pm.getApplicationIcon(pkgName);
+                        iconCache.put(pkgName, icon);
+                        handler.post(() -> {
+                            if (pkgName.equals(h.tag)) {
+                                h.icon.setImageDrawable(icon);
+                            }
+                        });
+                    } catch (Exception ignored) {
+                    }
+                });
+            }
         }
 
         @Override
         public int getItemCount() { return apps == null ? 0 : apps.size(); }
 
         class VH extends RecyclerView.ViewHolder {
-            View root; TextView label, pkg, res, sys;
+            View root, cardSys; TextView label, pkg, res;
+            ImageView icon; String tag;
             VH(View v) { super(v); root = v; label = v.findViewById(R.id.tv_label);
                 pkg = v.findViewById(R.id.tv_pkg); res = v.findViewById(R.id.tv_res);
-                sys = v.findViewById(R.id.tv_sys); }
+                cardSys = v.findViewById(R.id.card_sys);
+                icon = v.findViewById(R.id.iv_icon); }
         }
     }
 }

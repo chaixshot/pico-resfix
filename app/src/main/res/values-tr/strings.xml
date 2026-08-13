@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PICO 2D Resolution</string>
+    <string name="xposed_description">PICO 4: per-app 2D virtual-display resolution override (presets + custom + density).</string>
+
+    <string name="show_system">Sistem Uygulamalarını Göster</string>
+    <string name="default_cfg">Varsayılan çözünürlük (özel ayarları olmayan uygulamalar)</string>
+    <string name="status_none">Yüklü uygulama yok</string>
+
+    <string name="detail_title">Uygulama Çözünürlüğü</string>
+    <string name="enable_override">Geçersiz kılmayı etkinleştir</string>
+    <string name="preset_label">Önayar</string>
+    <string name="custom_label">Özel (piksel)</string>
+    <string name="width_hint">Genişlik</string>
+    <string name="height_hint">Yükseklik</string>
+    <string name="density_label">DPI (isteğe bağlı, sistem değerini kullanmak için boş bırakın)</string>
+    <string name="density_hint">örn. 200 / 240 / 320</string>
+    <string name="save_btn">Kaydet</string>
+    <string name="remove_btn">Ayarları Kaldır (Varsayılana Dön)</string>
+    <string name="saved_toast">Kaydedildi</string>
+    <string name="remove_toast">Uygulama ayarları kaldırıldı</string>
+    <string name="invalid_res">Geçersiz Çözünürlük</string>
+    <string name="write_failed">Yazma başarısız</string>
+    <string name="save_failed">Kaydetme başarısız</string>
+    <string name="failed">Başarısız</string>
+    <string name="custom_prefix">Özel: </string>
+    <string name="default_prefix">Varsayılan: </string>
+    <string name="select_preset">Önayar seçin…</string>
+    <string name="landscape">Yatay</string>
+    <string name="portrait">Dikey</string>
+
+    <!-- default config editor (in list header or separate) -->
+    <string name="default_title">Varsayılan Ayarlar (özel ayarları olmayan uygulamalar)</string>
+
+    <string-array name="preset_names">
+        <item>1280 × 720</item>
+        <item>1600 × 900</item>
+        <item>1920 × 1080</item>
+        <item>2560 × 1440</item>
+        <item>3840 × 2160</item>
+    </string-array>
+</resources>

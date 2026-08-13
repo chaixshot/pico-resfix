@@ -22,12 +22,37 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data
+                android:name="pvr.2dtovr.mode"
+                android:value="6" />
+            <meta-data
+                android:name="pico.vr.position"
+                android:value="near" />
         </activity>
 
         <!-- Per-app resolution editor -->
         <activity
             android:name=".AppDetailActivity"
             android:exported="false"
-            android:label="@string/detail_title" />
+            android:label="@string/detail_title">
+
+            <meta-data
+                android:name="pvr.2dtovr.mode"
+                android:value="6" />
+            <meta-data
+                android:name="pico.vr.position"
+                android:value="near" />
+        </activity>
+
+        <meta-data
+            android:name="isPUI"
+            android:value="1" />
+        <meta-data
+            android:name="pvr.vrshell.mode"
+            android:value="1" />
+        <meta-data
+            android:name="com.pvr.hmd.trackingmode"
+            android:value="3dof" />
     </application>
 </manifest>

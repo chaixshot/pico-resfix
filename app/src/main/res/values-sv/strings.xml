@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PICO 2D Resolution</string>
+    <string name="xposed_description">PICO 4: per-app 2D virtual-display resolution override (presets + custom + density).</string>
+
+    <string name="show_system">Visa systemappar</string>
+    <string name="default_cfg">Standardupplösning (icke-systemappar utan specifika inställningar)</string>
+    <string name="status_none">Inga appar installerade</string>
+
+    <string name="detail_title">App-upplösning</string>
+    <string name="enable_override">Aktivera åsidosättande</string>
+    <string name="preset_label">Förinställning</string>
+    <string name="custom_label">Anpassad (pixlar)</string>
+    <string name="width_hint">Bredd</string>
+    <string name="height_hint">Höjd</string>
+    <string name="density_label">DPI (valfritt, lämna tomt för att följa systemet)</string>
+    <string name="density_hint">t.ex. 200 / 240 / 320</string>
+    <string name="save_btn">Spara</string>
+    <string name="remove_btn">Ta bort inställningar (återställ standard)</string>
+    <string name="saved_toast">Sparad</string>
+    <string name="remove_toast">App-inställningar borttagna</string>
+    <string name="invalid_res">Ogiltig upplösning</string>
+    <string name="write_failed">Skrivning misslyckades</string>
+    <string name="save_failed">Lagring misslyckades</string>
+    <string name="failed">Misslyckades</string>
+    <string name="custom_prefix">Anpassad: </string>
+    <string name="default_prefix">Standard: </string>
+    <string name="select_preset">Välj förinställning…</string>
+    <string name="landscape">Liggande</string>
+    <string name="portrait">Stående</string>
+
+    <!-- default config editor (in list header or separate) -->
+    <string name="default_title">Standardinställningar (icke-systemappar utan specifika inställningar)</string>
+
+    <string-array name="preset_names">
+        <item>1280 × 720</item>
+        <item>1600 × 900</item>
+        <item>1920 × 1080</item>
+        <item>2560 × 1440</item>
+        <item>3840 × 2160</item>
+    </string-array>
+</resources>

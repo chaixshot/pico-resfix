@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PICO 2D Resolution</string>
+    <string name="xposed_description">PICO 4: per-app 2D virtual-display resolution override (presets + custom + density).</string>
+
+    <string name="show_system">Εμφάνιση εφαρμογών συστήματος</string>
+    <string name="default_cfg">Προεπιλεγμένη ανάλυση (εφαρμογές χωρίς ειδικές ρυθμίσεις)</string>
+    <string name="status_none">Δεν υπάρχουν εγκατεστημένες εφαρμογές</string>
+
+    <string name="detail_title">Ανάλυση εφαρμογής</string>
+    <string name="enable_override">Ενεργοποίηση παράκαμψης</string>
+    <string name="preset_label">Προεπιλογή</string>
+    <string name="custom_label">Προσαρμοσμένη (pixel)</string>
+    <string name="width_hint">Πλάτος</string>
+    <string name="height_hint">Ύψος</string>
+    <string name="density_label">DPI (προαιρετικό, αφήστε κενό για το σύστημα)</string>
+    <string name="density_hint">π.χ. 200 / 240 / 320</string>
+    <string name="save_btn">Αποθήκευση</string>
+    <string name="remove_btn">Κατάργηση ρυθμίσεων (επαναφορά προεπιλογών)</string>
+    <string name="saved_toast">Αποθηκεύτηκε</string>
+    <string name="remove_toast">Οι ρυθμίσεις της εφαρμογής καταργήθηκαν</string>
+    <string name="invalid_res">Μη έγκυρη ανάλυση</string>
+    <string name="write_failed">Η εγγραφή απέτυχε</string>
+    <string name="save_failed">Η αποθήκευση απέτυχε</string>
+    <string name="failed">Απέτυχε</string>
+    <string name="custom_prefix">Προσαρμοσμένο: </string>
+    <string name="default_prefix">Προεπιλογή: </string>
+    <string name="select_preset">Επιλογή προεπιλογής…</string>
+    <string name="landscape">Οριζόντιος προσανατολισμός</string>
+    <string name="portrait">Κατακόρυφος προσανατολισμός</string>
+
+    <!-- default config editor (in list header or separate) -->
+    <string name="default_title">Προεπιλεγμένες ρυθμίσεις (εφαρμογές χωρίς ειδικές ρυθμίσεις)</string>
+
+    <string-array name="preset_names">
+        <item>1280 × 720</item>
+        <item>1600 × 900</item>
+        <item>1920 × 1080</item>
+        <item>2560 × 1440</item>
+        <item>3840 × 2160</item>
+    </string-array>
+</resources>

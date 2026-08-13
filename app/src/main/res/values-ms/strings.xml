@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PICO 2D Resolution</string>
+    <string name="xposed_description">PICO 4: per-app 2D virtual-display resolution override (presets + custom + density).</string>
+
+    <string name="show_system">Tunjukkan Apl Sistem</string>
+    <string name="default_cfg">Resolusi lalai (apl bukan sistem tanpa tetapan khusus)</string>
+    <string name="status_none">Tiada apl dipasang</string>
+
+    <string name="detail_title">Resolusi Apl</string>
+    <string name="enable_override">Dayakan Tindih</string>
+    <string name="preset_label">Pratetap</string>
+    <string name="custom_label">Tersuai (piksel)</string>
+    <string name="width_hint">Lebar</string>
+    <string name="height_hint">Tinggi</string>
+    <string name="density_label">DPI (pilihan, biarkan kosong untuk ikut sistem)</string>
+    <string name="density_hint">cth. 200 / 240 / 320</string>
+    <string name="save_btn">Simpan</string>
+    <string name="remove_btn">Alih Keluar Tetapan (Pulihkan Lalai)</string>
+    <string name="saved_toast">Disimpan</string>
+    <string name="remove_toast">Tetapan apl dialih keluar</string>
+    <string name="invalid_res">Resolusi Tidak Sah</string>
+    <string name="write_failed">Gagal menulis</string>
+    <string name="save_failed">Gagal menyimpan</string>
+    <string name="failed">Gagal</string>
+    <string name="custom_prefix">Tersuai: </string>
+    <string name="default_prefix">Lalai: </string>
+    <string name="select_preset">Pilih pratetap…</string>
+    <string name="landscape">Landskap</string>
+    <string name="portrait">Potret</string>
+
+    <!-- default config editor (in list header or separate) -->
+    <string name="default_title">Tetapan Lalai (apl bukan sistem tanpa tetapan khusus)</string>
+
+    <string-array name="preset_names">
+        <item>1280 × 720</item>
+        <item>1600 × 900</item>
+        <item>1920 × 1080</item>
+        <item>2560 × 1440</item>
+        <item>3840 × 2160</item>
+    </string-array>
+</resources>

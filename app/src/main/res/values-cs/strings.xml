@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PICO 2D Resolution</string>
+    <string name="xposed_description">PICO 4: per-app 2D virtual-display resolution override (presets + custom + density).</string>
+
+    <string name="show_system">Zobrazit systémové aplikace</string>
+    <string name="default_cfg">Výchozí rozlišení (nesystémové aplikace bez specifického nastavení)</string>
+    <string name="status_none">Žádné nainstalované aplikace</string>
+
+    <string name="detail_title">Rozlišení aplikace</string>
+    <string name="enable_override">Povolit přepsání</string>
+    <string name="preset_label">Předvolba</string>
+    <string name="custom_label">Vlastní (pixely)</string>
+    <string name="width_hint">Šířka</string>
+    <string name="height_hint">Výška</string>
+    <string name="density_label">DPI (volitelné, nechte prázdné pro systémové)</string>
+    <string name="density_hint">např. 200 / 240 / 320</string>
+    <string name="save_btn">Uložit</string>
+    <string name="remove_btn">Odebrat nastavení (obnovit výchozí)</string>
+    <string name="saved_toast">Uloženo</string>
+    <string name="remove_toast">Nastavení aplikace bylo odebráno</string>
+    <string name="invalid_res">Neplatné rozlišení</string>
+    <string name="write_failed">Zápis selhal</string>
+    <string name="save_failed">Uložení selhalo</string>
+    <string name="failed">Selhalo</string>
+    <string name="custom_prefix">Vlastní: </string>
+    <string name="default_prefix">Výchozí: </string>
+    <string name="select_preset">Vybrat předvolbu…</string>
+    <string name="landscape">Na šířku</string>
+    <string name="portrait">Na výšku</string>
+
+    <!-- default config editor (in list header or separate) -->
+    <string name="default_title">Výchozí nastavení (nesystémové aplikace bez specifického nastavení)</string>
+
+    <string-array name="preset_names">
+        <item>1280 × 720</item>
+        <item>1600 × 900</item>
+        <item>1920 × 1080</item>
+        <item>2560 × 1440</item>
+        <item>3840 × 2160</item>
+    </string-array>
+</resources>
