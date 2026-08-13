@@ -50,9 +50,9 @@ public class AppDetailActivity extends Activity {
 
         if (TextUtils.isEmpty(pkg)) {
             tvTitle.setText(R.string.default_title);
-            tvPkg.setText("默认（未单独设置的非系统应用）");
+            tvPkg.setText(R.string.default_cfg);
         } else {
-            tvTitle.setText("应用分辨率");
+            tvTitle.setText(R.string.detail_title);
             tvPkg.setText(pkg);
         }
 
@@ -140,7 +140,7 @@ public class AppDetailActivity extends Activity {
 
     void save() {
         int w = parseInt(etW, 1602), h = parseInt(etH, 902);
-        if (w < 320 || h < 240) { Toast.makeText(this,"无效分辨率",Toast.LENGTH_SHORT).show(); return; }
+        if (w < 320 || h < 240) { Toast.makeText(this,R.string.invalid_res,Toast.LENGTH_SHORT).show(); return; }
         try {
             JSONObject root = Config.readRoot();
             JSONObject target;
@@ -159,10 +159,10 @@ public class AppDetailActivity extends Activity {
             if (!TextUtils.isEmpty(d)) target.put("density", parseIntStr(d));
             else target.remove("density");
             boolean ok = Config.writeRoot(root);
-            Toast.makeText(this, ok ? getString(R.string.saved_toast) : "写入失败(root)", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, ok ? getString(R.string.saved_toast) : getString(R.string.write_failed), Toast.LENGTH_LONG).show();
             if (ok) finish();
         } catch (Throwable t) {
-            Toast.makeText(this, "保存失败: "+t, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.save_failed) + ": " + t, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -177,9 +177,9 @@ public class AppDetailActivity extends Activity {
                 root.remove("default");
             }
             boolean ok = Config.writeRoot(root);
-            Toast.makeText(this, ok ? getString(R.string.remove_toast) : "写入失败", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, ok ? getString(R.string.remove_toast) : getString(R.string.write_failed), Toast.LENGTH_LONG).show();
             if (ok) finish();
-        } catch (Throwable t) { Toast.makeText(this,"失败",Toast.LENGTH_LONG).show(); }
+        } catch (Throwable t) { Toast.makeText(this, R.string.failed, Toast.LENGTH_SHORT).show(); }
     }
 
     static int parseInt(EditText e, int def) {

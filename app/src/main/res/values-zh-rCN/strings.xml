@@ -19,6 +19,12 @@
     <string name="remove_btn">移除设置（恢复默认）</string>
     <string name="saved_toast">已保存</string>
     <string name="remove_toast">已移除该应用设置</string>
+    <string name="invalid_res">无效分辨率</string>
+    <string name="write_failed">写入失败</string>
+    <string name="save_failed">保存失败</string>
+    <string name="failed">失败</string>
+    <string name="custom_prefix">自定义: </string>
+    <string name="default_prefix">默认: </string>
     <string name="select_preset">选择预设…</string>
     <string name="landscape">横屏</string>
     <string name="portrait">竖屏</string>

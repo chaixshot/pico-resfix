@@ -19,6 +19,15 @@
     <string name="remove_btn">Rimuovi impostazioni (ripristina predefinite)</string>
     <string name="saved_toast">Salvato</string>
     <string name="remove_toast">Impostazioni app rimosse</string>
+    <string name="invalid_res">Risoluzione non valida</string>
+    <string name="write_failed">Scrittura non riuscita</string>
+    <string name="save_failed">Salvataggio non riuscito</string>
+    <string name="failed">Fallito</string>
+    <string name="custom_prefix">Personalizzato: </string>
+    <string name="default_prefix">Predefinito: </string>
+    <string name="select_preset">Seleziona predefinito…</string>
+    <string name="landscape">Orizzontale</string>
+    <string name="portrait">Verticale</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Impostazioni predefinite (app non di sistema senza impostazioni specifiche)</string>

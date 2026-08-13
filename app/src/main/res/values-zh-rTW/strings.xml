@@ -19,6 +19,15 @@
     <string name="remove_btn">移除設置（恢復預設）</string>
     <string name="saved_toast">已保存</string>
     <string name="remove_toast">已移除該應用設置</string>
+    <string name="invalid_res">無效解析度</string>
+    <string name="write_failed">寫入失敗</string>
+    <string name="save_failed">儲存失敗</string>
+    <string name="failed">失敗</string>
+    <string name="custom_prefix">自定義: </string>
+    <string name="default_prefix">預設: </string>
+    <string name="select_preset">選擇預設…</string>
+    <string name="landscape">橫屏</string>
+    <string name="portrait">豎屏</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">預設設置（未單獨配置的非系統應用）</string>

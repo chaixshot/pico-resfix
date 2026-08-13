@@ -19,6 +19,15 @@
     <string name="remove_btn">Ayarları Kaldır (Varsayılana Dön)</string>
     <string name="saved_toast">Kaydedildi</string>
     <string name="remove_toast">Uygulama ayarları kaldırıldı</string>
+    <string name="invalid_res">Geçersiz Çözünürlük</string>
+    <string name="write_failed">Yazma başarısız</string>
+    <string name="save_failed">Kaydetme başarısız</string>
+    <string name="failed">Başarısız</string>
+    <string name="custom_prefix">Özel: </string>
+    <string name="default_prefix">Varsayılan: </string>
+    <string name="select_preset">Önayar seçin…</string>
+    <string name="landscape">Yatay</string>
+    <string name="portrait">Dikey</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Varsayılan Ayarlar (özel ayarları olmayan uygulamalar)</string>

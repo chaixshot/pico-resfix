@@ -92,9 +92,10 @@ public class AppListActivity extends Activity {
             h.label.setText(e.label != null ? e.label : e.pkg);
             h.pkg.setText(e.pkg);
             h.sys.setVisibility(e.isSystem ? View.VISIBLE : View.GONE);
-            String res = e.hasOverride
-                    ? ("自定义: " + e.w + "x" + e.h + (e.density > 0 ? " @" + e.density : ""))
-                    : ("默认: " + e.w + "x" + e.h + " @" + e.density);
+            String prefix = e.hasOverride
+                    ? h.root.getContext().getString(R.string.custom_prefix)
+                    : h.root.getContext().getString(R.string.default_prefix);
+            String res = prefix + e.w + "x" + e.h + (e.density > 0 ? " @" + e.density : "");
             h.res.setText(res);
             h.root.setOnClickListener(v -> {
                 Intent i = new Intent(AppListActivity.this, AppDetailActivity.class);

@@ -19,6 +19,15 @@
     <string name="remove_btn">Poista asetukset (palauta oletus)</string>
     <string name="saved_toast">Tallennettu</string>
     <string name="remove_toast">Sovelluksen asetukset poistettu</string>
+    <string name="invalid_res">Virheellinen resoluutio</string>
+    <string name="write_failed">Kirjoittaminen epäonnistui</string>
+    <string name="save_failed">Tallennus epäonnistui</string>
+    <string name="failed">Epäonnistui</string>
+    <string name="custom_prefix">Mukautettu: </string>
+    <string name="default_prefix">Oletus: </string>
+    <string name="select_preset">Valitse esiasetus…</string>
+    <string name="landscape">Vaaka</string>
+    <string name="portrait">Pysty</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Oletusasetukset (ei-järjestelmäsovellukset ilman omia asetuksia)</string>

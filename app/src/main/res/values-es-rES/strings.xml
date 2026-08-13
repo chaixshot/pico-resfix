@@ -19,6 +19,15 @@
     <string name="remove_btn">Eliminar ajustes (restaurar predeterminados)</string>
     <string name="saved_toast">Guardado</string>
     <string name="remove_toast">Ajustes de la aplicación eliminados</string>
+    <string name="invalid_res">Resolución no válida</string>
+    <string name="write_failed">Error al escribir</string>
+    <string name="save_failed">Error al guardar</string>
+    <string name="failed">Error</string>
+    <string name="custom_prefix">Personalizado: </string>
+    <string name="default_prefix">Predeterminado: </string>
+    <string name="select_preset">Seleccionar preestablecido…</string>
+    <string name="landscape">Horizontal</string>
+    <string name="portrait">Vertical</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Ajustes predeterminados (apps no del sistema sin ajustes específicos)</string>

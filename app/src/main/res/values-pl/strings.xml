@@ -19,6 +19,15 @@
     <string name="remove_btn">Usuń ustawienia (przywróć domyślne)</string>
     <string name="saved_toast">Zapisano</string>
     <string name="remove_toast">Usunięto ustawienia aplikacji</string>
+    <string name="invalid_res">Nieprawidłowa rozdzielczość</string>
+    <string name="write_failed">Zapisywanie nie powiodło się</string>
+    <string name="save_failed">Zapisywanie nie powiodło się</string>
+    <string name="failed">Niepowodzenie</string>
+    <string name="custom_prefix">Własne: </string>
+    <string name="default_prefix">Domyślne: </string>
+    <string name="select_preset">Wybierz predefiniowane…</string>
+    <string name="landscape">Pozioma</string>
+    <string name="portrait">Pionowa</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Ustawienia domyślne (aplikacje bez własnych ustawień)</string>

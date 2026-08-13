@@ -19,6 +19,15 @@
     <string name="remove_btn">Κατάργηση ρυθμίσεων (επαναφορά προεπιλογών)</string>
     <string name="saved_toast">Αποθηκεύτηκε</string>
     <string name="remove_toast">Οι ρυθμίσεις της εφαρμογής καταργήθηκαν</string>
+    <string name="invalid_res">Μη έγκυρη ανάλυση</string>
+    <string name="write_failed">Η εγγραφή απέτυχε</string>
+    <string name="save_failed">Η αποθήκευση απέτυχε</string>
+    <string name="failed">Απέτυχε</string>
+    <string name="custom_prefix">Προσαρμοσμένο: </string>
+    <string name="default_prefix">Προεπιλογή: </string>
+    <string name="select_preset">Επιλογή προεπιλογής…</string>
+    <string name="landscape">Οριζόντιος προσανατολισμός</string>
+    <string name="portrait">Κατακόρυφος προσανατολισμός</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Προεπιλεγμένες ρυθμίσεις (εφαρμογές χωρίς ειδικές ρυθμίσεις)</string>

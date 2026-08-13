@@ -19,6 +19,15 @@
     <string name="remove_btn">Einstellungen entfernen (Standard wiederherstellen)</string>
     <string name="saved_toast">Gespeichert</string>
     <string name="remove_toast">App-Einstellungen entfernt</string>
+    <string name="invalid_res">Ungültige Auflösung</string>
+    <string name="write_failed">Schreiben fehlgeschlagen</string>
+    <string name="save_failed">Speichern fehlgeschlagen</string>
+    <string name="failed">Fehlgeschlagen</string>
+    <string name="custom_prefix">Benutzerdefiniert: </string>
+    <string name="default_prefix">Standard: </string>
+    <string name="select_preset">Voreinstellung auswählen…</string>
+    <string name="landscape">Querformat</string>
+    <string name="portrait">Hochformat</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Standardeinstellungen (Nicht-System-Apps ohne spezifische Einstellungen)</string>

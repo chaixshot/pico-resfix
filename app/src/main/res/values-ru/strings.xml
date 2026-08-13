@@ -19,6 +19,15 @@
     <string name="remove_btn">Удалить настройки (вернуть по умолчанию)</string>
     <string name="saved_toast">Сохранено</string>
     <string name="remove_toast">Настройки приложения удалены</string>
+    <string name="invalid_res">Неверное разрешение</string>
+    <string name="write_failed">Ошибка записи</string>
+    <string name="save_failed">Ошибка сохранения</string>
+    <string name="failed">Ошибка</string>
+    <string name="custom_prefix">Вручную: </string>
+    <string name="default_prefix">По умолчанию: </string>
+    <string name="select_preset">Выберите предустановку…</string>
+    <string name="landscape">Альбомная</string>
+    <string name="portrait">Портретная</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Настройки по умолчанию (для приложений без настроек)</string>

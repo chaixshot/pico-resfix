@@ -19,6 +19,15 @@
     <string name="remove_btn">Alih Keluar Tetapan (Pulihkan Lalai)</string>
     <string name="saved_toast">Disimpan</string>
     <string name="remove_toast">Tetapan apl dialih keluar</string>
+    <string name="invalid_res">Resolusi Tidak Sah</string>
+    <string name="write_failed">Gagal menulis</string>
+    <string name="save_failed">Gagal menyimpan</string>
+    <string name="failed">Gagal</string>
+    <string name="custom_prefix">Tersuai: </string>
+    <string name="default_prefix">Lalai: </string>
+    <string name="select_preset">Pilih pratetap…</string>
+    <string name="landscape">Landskap</string>
+    <string name="portrait">Potret</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Tetapan Lalai (apl bukan sistem tanpa tetapan khusus)</string>

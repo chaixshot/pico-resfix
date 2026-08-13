@@ -19,6 +19,15 @@
     <string name="remove_btn">ลบการตั้งค่า (คืนค่าเริ่มต้น)</string>
     <string name="saved_toast">บันทึกแล้ว</string>
     <string name="remove_toast">ลบการตั้งค่าของแอปแล้ว</string>
+    <string name="invalid_res">ความละเอียดไม่ถูกต้อง</string>
+    <string name="write_failed">เขียนไม่สำเร็จ</string>
+    <string name="save_failed">บันทึกไม่สำเร็จ</string>
+    <string name="failed">ล้มเหลว</string>
+    <string name="custom_prefix">กำหนดเอง: </string>
+    <string name="default_prefix">เริ่มต้น: </string>
+    <string name="select_preset">เลือกค่าที่ตั้งไว้ล่วงหน้า…</string>
+    <string name="landscape">แนวนอน</string>
+    <string name="portrait">แนวตั้ง</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">การตั้งค่าเริ่มต้น (แอปที่ไม่ได้ตั้งค่าเฉพาะ)</string>

@@ -19,6 +19,15 @@
     <string name="remove_btn">Odebrat nastavení (obnovit výchozí)</string>
     <string name="saved_toast">Uloženo</string>
     <string name="remove_toast">Nastavení aplikace bylo odebráno</string>
+    <string name="invalid_res">Neplatné rozlišení</string>
+    <string name="write_failed">Zápis selhal</string>
+    <string name="save_failed">Uložení selhalo</string>
+    <string name="failed">Selhalo</string>
+    <string name="custom_prefix">Vlastní: </string>
+    <string name="default_prefix">Výchozí: </string>
+    <string name="select_preset">Vybrat předvolbu…</string>
+    <string name="landscape">Na šířku</string>
+    <string name="portrait">Na výšku</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Výchozí nastavení (nesystémové aplikace bez specifického nastavení)</string>

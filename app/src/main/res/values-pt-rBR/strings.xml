@@ -19,6 +19,15 @@
     <string name="remove_btn">Remover configurações (restaurar padrão)</string>
     <string name="saved_toast">Salvo</string>
     <string name="remove_toast">Configurações do app removidas</string>
+    <string name="invalid_res">Resolução inválida</string>
+    <string name="write_failed">Falha na gravação</string>
+    <string name="save_failed">Falha ao salvar</string>
+    <string name="failed">Falhou</string>
+    <string name="custom_prefix">Personalizado: </string>
+    <string name="default_prefix">Padrão: </string>
+    <string name="select_preset">Selecionar predefinição…</string>
+    <string name="landscape">Paisagem</string>
+    <string name="portrait">Retrato</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Configurações padrão (apps não do sistema sem configurações específicas)</string>

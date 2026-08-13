@@ -19,6 +19,15 @@
     <string name="remove_btn">Remove Settings (Restore Default)</string>
     <string name="saved_toast">Saved</string>
     <string name="remove_toast">App settings removed</string>
+    <string name="invalid_res">Invalid Resolution</string>
+    <string name="write_failed">Write failed</string>
+    <string name="save_failed">Save failed</string>
+    <string name="failed">Failed</string>
+    <string name="custom_prefix">Custom: </string>
+    <string name="default_prefix">Default: </string>
+    <string name="select_preset">Select preset…</string>
+    <string name="landscape">Landscape</string>
+    <string name="portrait">Portrait</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Default Settings (non-system apps without specific settings)</string>
