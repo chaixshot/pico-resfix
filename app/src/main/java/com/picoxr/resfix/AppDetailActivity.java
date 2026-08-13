@@ -1,11 +1,15 @@
 package com.picoxr.resfix;
 
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +33,7 @@ public class AppDetailActivity extends AppCompatActivity {
 
     String pkg;
     TextView tvTitle, tvPkg;
+    ImageView ivIcon;
     MaterialSwitch swEnable;
     Spinner spPreset, spPresetSwap;
     TextInputEditText etW, etH, etDensity;
@@ -45,15 +50,15 @@ public class AppDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         pkg = getIntent().getStringExtra("pkg");
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("");
         }
 
         tvTitle = findViewById(R.id.tv_title);
         tvPkg = findViewById(R.id.tv_pkg);
+        ivIcon = findViewById(R.id.iv_icon);
         swEnable = findViewById(R.id.sw_enable);
         spPreset = findViewById(R.id.sp_preset);
         spPresetSwap = findViewById(R.id.sp_preset_swap);
@@ -66,9 +71,18 @@ public class AppDetailActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(pkg)) {
             tvTitle.setText(R.string.default_title);
             tvPkg.setText(R.string.default_cfg);
+            ivIcon.setImageResource(R.mipmap.ic_launcher);
         } else {
-            tvTitle.setText(R.string.detail_title);
             tvPkg.setText(pkg);
+            try {
+                PackageManager pm = getPackageManager();
+                ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
+                tvTitle.setText(pm.getApplicationLabel(ai));
+                ivIcon.setImageDrawable(pm.getApplicationIcon(ai));
+            } catch (Exception e) {
+                tvTitle.setText(R.string.detail_title);
+                ivIcon.setImageResource(android.R.drawable.sym_def_app_icon);
+            }
         }
 
         // presets
