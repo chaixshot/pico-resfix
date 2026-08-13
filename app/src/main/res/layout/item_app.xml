@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="8dp"
-    android:layout_marginVertical="8dp"
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="4dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
     app:cardBackgroundColor="@color/card_bg"
@@ -13,59 +13,75 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="@null" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_label"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textStyle="bold" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_sys"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:cardBackgroundColor="?attr/colorTertiaryContainer"
-                app:cardCornerRadius="4dp"
-                app:cardElevation="0dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tv_sys"
+                    android:id="@+id/tv_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_sys"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="6dp"
-                    android:paddingVertical="2dp"
-                    android:text="@string/tag_system"
-                    android:textAppearance="?attr/textAppearanceLabelSmall"
-                    android:textColor="?attr/colorOnTertiaryContainer" />
-            </com.google.android.material.card.MaterialCardView>
+                    android:visibility="gone"
+                    app:cardBackgroundColor="?attr/colorTertiaryContainer"
+                    app:cardCornerRadius="4dp"
+                    app:cardElevation="0dp">
+
+                    <TextView
+                        android:id="@+id/tv_sys"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="2dp"
+                        android:text="@string/tag_system"
+                        android:textAppearance="?attr/textAppearanceLabelSmall"
+                        android:textColor="?attr/colorOnTertiaryContainer" />
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_pkg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:alpha="0.7"
+                android:textAppearance="?attr/textAppearanceBodySmall" />
+
+            <TextView
+                android:id="@+id/tv_res"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceBodyMedium" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/tv_pkg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:alpha="0.7"
-            android:textAppearance="?attr/textAppearanceBodySmall" />
-
-        <TextView
-            android:id="@+id/tv_res"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textStyle="bold"
-            android:textAppearance="?attr/textAppearanceBodyMedium" />
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

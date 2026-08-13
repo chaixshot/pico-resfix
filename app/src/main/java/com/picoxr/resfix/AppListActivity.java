@@ -1,12 +1,17 @@
 package com.picoxr.resfix;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,7 +24,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Main screen: lists installed 2D (launcher) apps. A "show system apps" switch filters
@@ -34,6 +43,9 @@ public class AppListActivity extends AppCompatActivity {
     FloatingActionButton fabDefault;
     AppAdapter adapter;
     Config.GlobalCfg glob;
+    private final ExecutorService executor = Executors.newFixedThreadPool(4);
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Map<String, Drawable> iconCache = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +82,12 @@ public class AppListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         reload();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executor.shutdown();
     }
 
     void reload() {
@@ -117,6 +135,29 @@ public class AppListActivity extends AppCompatActivity {
                 i.putExtra("pkg", e.pkg);
                 startActivity(i);
             });
+
+            // Lazy load icon
+            h.icon.setImageResource(android.R.drawable.sym_def_app_icon);
+            h.tag = e.pkg;
+            final String pkgName = e.pkg;
+            Drawable cached = iconCache.get(pkgName);
+            if (cached != null) {
+                h.icon.setImageDrawable(cached);
+            } else {
+                executor.execute(() -> {
+                    try {
+                        PackageManager pm = getPackageManager();
+                        final Drawable icon = pm.getApplicationIcon(pkgName);
+                        iconCache.put(pkgName, icon);
+                        handler.post(() -> {
+                            if (pkgName.equals(h.tag)) {
+                                h.icon.setImageDrawable(icon);
+                            }
+                        });
+                    } catch (Exception ignored) {
+                    }
+                });
+            }
         }
 
         @Override
@@ -124,9 +165,11 @@ public class AppListActivity extends AppCompatActivity {
 
         class VH extends RecyclerView.ViewHolder {
             View root, cardSys; TextView label, pkg, res;
+            ImageView icon; String tag;
             VH(View v) { super(v); root = v; label = v.findViewById(R.id.tv_label);
                 pkg = v.findViewById(R.id.tv_pkg); res = v.findViewById(R.id.tv_res);
-                cardSys = v.findViewById(R.id.card_sys); }
+                cardSys = v.findViewById(R.id.card_sys);
+                icon = v.findViewById(R.id.iv_icon); }
         }
     }
 }
