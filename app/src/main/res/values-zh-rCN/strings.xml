@@ -23,20 +23,14 @@
     <string name="write_failed">写入失败</string>
     <string name="save_failed">保存失败</string>
     <string name="failed">失败</string>
+    <string name="tag_system">系统</string>
     <string name="custom_prefix">自定义: </string>
     <string name="default_prefix">默认: </string>
     <string name="select_preset">选择预设…</string>
-    <string name="landscape">横屏</string>
-    <string name="portrait">竖屏</string>
+    <string name="search_hint">搜索应用…</string>
+    <string name="floating">悬浮</string>
+    <string name="dock">停靠</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">默认设置（未单独配置的非系统应用）</string>
-
-    <string-array name="preset_names">
-        <item>1280 × 720</item>
-        <item>1600 × 900</item>
-        <item>1920 × 1080</item>
-        <item>2560 × 1440</item>
-        <item>3840 × 2160</item>
-    </string-array>
 </resources>

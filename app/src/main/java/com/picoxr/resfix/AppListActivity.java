@@ -6,11 +6,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,8 +44,10 @@ public class AppListActivity extends AppCompatActivity {
     MaterialSwitch swSystem;
     TextView status;
     FloatingActionButton fabDefault;
+    EditText etSearch;
     AppAdapter adapter;
     Config.GlobalCfg glob;
+    private List<Config.AppEntry> allApps;
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Map<String, Drawable> iconCache = new HashMap<>();
@@ -59,12 +64,18 @@ public class AppListActivity extends AppCompatActivity {
         recycler = findViewById(R.id.recycler);
         status = findViewById(R.id.status);
         fabDefault = findViewById(R.id.fab_default);
+        etSearch = findViewById(R.id.et_search);
 
         recycler.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new AppAdapter();
         recycler.setAdapter(adapter);
 
         fabDefault.setOnClickListener(v -> openDefaultEditor());
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { filter(s.toString()); }
+            @Override public void afterTextChanged(Editable s) {}
+        });
     }
 
     @Override
@@ -93,20 +104,38 @@ public class AppListActivity extends AppCompatActivity {
     void reload() {
         glob = Config.getGlobal();
         boolean showSys = swSystem != null && swSystem.isChecked();
-        List<Config.AppEntry> apps = Config.listApps(this, !showSys, glob);
+        allApps = Config.listApps(this, !showSys, glob);
 
         // Sort: Custom first, then by label alphabet
-        apps.sort((a, b) -> {
+        allApps.sort((a, b) -> {
             if (a.hasOverride != b.hasOverride) {
                 return a.hasOverride ? -1 : 1;
             }
             return String.valueOf(a.label).compareToIgnoreCase(String.valueOf(b.label));
         });
 
-        android.util.Log.i("ResFixGUI", "listApps returned " + apps.size()
+        android.util.Log.i("ResFixGUI", "listApps returned " + allApps.size()
                 + " apps (showSystem=" + showSys + ")");
-        adapter.setApps(apps);
-        status.setVisibility(apps.isEmpty() ? View.VISIBLE : View.GONE);
+        
+        filter(etSearch.getText().toString());
+    }
+
+    void filter(String query) {
+        if (allApps == null) return;
+        List<Config.AppEntry> filtered;
+        if (android.text.TextUtils.isEmpty(query)) {
+            filtered = allApps;
+        } else {
+            filtered = new java.util.ArrayList<>();
+            String q = query.toLowerCase();
+            for (Config.AppEntry e : allApps) {
+                if (String.valueOf(e.label).toLowerCase().contains(q) || e.pkg.toLowerCase().contains(q)) {
+                    filtered.add(e);
+                }
+            }
+        }
+        adapter.setApps(filtered);
+        status.setVisibility(filtered.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
     void openDefaultEditor() {

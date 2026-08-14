@@ -23,20 +23,14 @@
     <string name="write_failed">Scrierea a eșuat</string>
     <string name="save_failed">Salvarea a eșuat</string>
     <string name="failed">Eșuat</string>
+    <string name="tag_system">Sistem</string>
     <string name="custom_prefix">Personalizat: </string>
     <string name="default_prefix">Implicit: </string>
     <string name="select_preset">Selectați presetarea…</string>
-    <string name="landscape">Peisaj</string>
-    <string name="portrait">Portret</string>
+    <string name="search_hint">Căutați aplicații…</string>
+    <string name="floating">Plutitor</string>
+    <string name="dock">Andocare</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Setări implicite (aplicații non-sistem fără setări specifice)</string>
-
-    <string-array name="preset_names">
-        <item>1280 × 720</item>
-        <item>1600 × 900</item>
-        <item>1920 × 1080</item>
-        <item>2560 × 1440</item>
-        <item>3840 × 2160</item>
-    </string-array>
 </resources>

@@ -23,20 +23,14 @@
     <string name="write_failed">เขียนไม่สำเร็จ</string>
     <string name="save_failed">บันทึกไม่สำเร็จ</string>
     <string name="failed">ล้มเหลว</string>
+    <string name="tag_system">ระบบ</string>
     <string name="custom_prefix">กำหนดเอง: </string>
     <string name="default_prefix">เริ่มต้น: </string>
     <string name="select_preset">เลือกค่าที่ตั้งไว้ล่วงหน้า…</string>
-    <string name="landscape">แนวนอน</string>
-    <string name="portrait">แนวตั้ง</string>
+    <string name="search_hint">ค้นหาแอป…</string>
+    <string name="floating">ลอย</string>
+    <string name="dock">แท่นวาง</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">การตั้งค่าเริ่มต้น (แอปที่ไม่ได้ตั้งค่าเฉพาะ)</string>
-
-    <string-array name="preset_names">
-        <item>1280 × 720</item>
-        <item>1600 × 900</item>
-        <item>1920 × 1080</item>
-        <item>2560 × 1440</item>
-        <item>3840 × 2160</item>
-    </string-array>
 </resources>

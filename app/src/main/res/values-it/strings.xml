@@ -23,20 +23,14 @@
     <string name="write_failed">Scrittura non riuscita</string>
     <string name="save_failed">Salvataggio non riuscito</string>
     <string name="failed">Fallito</string>
+    <string name="tag_system">Sistema</string>
     <string name="custom_prefix">Personalizzato: </string>
     <string name="default_prefix">Predefinito: </string>
     <string name="select_preset">Seleziona predefinito…</string>
-    <string name="landscape">Orizzontale</string>
-    <string name="portrait">Verticale</string>
+    <string name="search_hint">Cerca app…</string>
+    <string name="floating">Fluttuante</string>
+    <string name="dock">Ancorato</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Impostazioni predefinite (app non di sistema senza impostazioni specifiche)</string>
-
-    <string-array name="preset_names">
-        <item>1280 × 720</item>
-        <item>1600 × 900</item>
-        <item>1920 × 1080</item>
-        <item>2560 × 1440</item>
-        <item>3840 × 2160</item>
-    </string-array>
 </resources>

@@ -23,20 +23,14 @@
     <string name="write_failed">Ошибка записи</string>
     <string name="save_failed">Ошибка сохранения</string>
     <string name="failed">Ошибка</string>
+    <string name="tag_system">Система</string>
     <string name="custom_prefix">Вручную: </string>
     <string name="default_prefix">По умолчанию: </string>
     <string name="select_preset">Выберите предустановку…</string>
-    <string name="landscape">Альбомная</string>
-    <string name="portrait">Портретная</string>
+    <string name="search_hint">Поиск приложений…</string>
+    <string name="floating">Плавающее</string>
+    <string name="dock">Закрепленное</string>
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Настройки по умолчанию (для приложений без настроек)</string>
-
-    <string-array name="preset_names">
-        <item>1280 × 720</item>
-        <item>1600 × 900</item>
-        <item>1920 × 1080</item>
-        <item>2560 × 1440</item>
-        <item>3840 × 2160</item>
-    </string-array>
 </resources>
