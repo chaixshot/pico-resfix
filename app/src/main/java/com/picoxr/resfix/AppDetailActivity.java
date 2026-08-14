@@ -168,7 +168,7 @@ public class AppDetailActivity extends AppCompatActivity {
         JSONObject root = Config.readRoot();
         JSONObject target = null;
         boolean enabled = true;
-        boolean dock = false;
+        boolean isDock = TextUtils.isEmpty(pkg) && swDock.isChecked();
         try {
             if (TextUtils.isEmpty(pkg)) {
                 target = Config.defaultObj(root);
@@ -177,7 +177,7 @@ public class AppDetailActivity extends AppCompatActivity {
                 if (apps.has(pkg)) {
                     target = apps.getJSONObject(pkg);
                     enabled = !target.optBoolean("disabled", false);
-                    dock = target.optBoolean("dock", false);
+                    isDock = target.optBoolean("dock", false);
                 }
             }
         } catch (Throwable ignored) {}
@@ -191,7 +191,7 @@ public class AppDetailActivity extends AppCompatActivity {
             etW.setText("1602"); etH.setText("902");
         }
         swEnable.setChecked(enabled);
-        swDock.setChecked(dock);
+        swDock.setChecked(isDock);
         boolean en = enabled || TextUtils.isEmpty(pkg); // default always editable
         spPreset.setEnabled(en);
         spPresetSwap.setEnabled(en);
