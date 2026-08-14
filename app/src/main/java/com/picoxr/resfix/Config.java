@@ -89,9 +89,6 @@ public final class Config {
         return g;
     }
 
-    /** List installed apps (any with a launchable activity).
-     *  PICO does not expose most 2D apps via the standard MAIN/LAUNCHER intent, so we list ALL
-     *  installed apps that have at least one activity (covers the full third-party set). */
     public static List<AppEntry> listApps(Context ctx, boolean showUser, boolean showSystem, boolean showVR, GlobalCfg glob) {
         List<AppEntry> out = new ArrayList<>();
         try {
@@ -106,35 +103,44 @@ public final class Config {
                 if (pkg == null || pkg.equals(ctx.getPackageName())) continue; // hide ourselves
 
                 boolean isVR = ai.metaData != null && "vr".equals(ai.metaData.getString("pvr.app.type"));
-                
-                // Check metadata for "pico.vr.position: near" or "pvr.2dtovr.mode: 6"
                 boolean isDock = isAppDockMode(pm, pkg, ai);
+                boolean isSystem = (ai.flags & (ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0;
 
-                boolean sys = (ai.flags & (ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0;
-                
-                if (isVR && !showVR) continue;
-                if (!isVR && sys && !showSystem) continue;
-                if (!isVR && !sys && !showUser) continue;
+                boolean hasOverride = false;
+                int overW = 0, overH = 0, overD = -1;
+                boolean overDock = isDock;
+
+                if (appsJ.has(pkg)) {
+                    JSONObject a = appsJ.optJSONObject(pkg);
+                    if (a != null && !a.optBoolean("disabled", false)) {
+                        hasOverride = true;
+                        overW = a.optInt("w", 0);
+                        overH = a.optInt("h", 0);
+                        overD = a.has("density") ? a.getInt("density") : -1;
+                        if (a.has("dock")) overDock = a.optBoolean("dock", false);
+                    }
+                }
+
+                // Filtering: skip if not active filter AND no override
+                if (!hasOverride) {
+                    if (isVR && !showVR) continue;
+                    if (!isVR && isSystem && !showSystem) continue;
+                    if (!isVR && !isSystem && !showUser) continue;
+                }
                 
                 AppEntry e = new AppEntry();
                 e.pkg = pkg;
                 CharSequence lb = ai.loadLabel(pm);
                 e.label = (lb != null) ? lb : pkg;
-                e.isSystem = sys;
-                e.isDock = isDock;
+                e.isSystem = isSystem;
+                e.isDock = overDock;
+                e.hasOverride = hasOverride;
 
-                if (appsJ.has(pkg)) {
-                    JSONObject a = appsJ.optJSONObject(pkg);
-                    if (a != null && !a.optBoolean("disabled", false)) {
-                        e.hasOverride = true;
-                        e.w = a.optInt("w", 0);
-                        e.h = a.optInt("h", 0);
-                        e.density = a.has("density") ? a.getInt("density") : -1;
-                        if (a.has("dock"))
-                            e.isDock = a.optBoolean("dock", false);
-                    }
-                }
-                if (!e.hasOverride) {
+                if (hasOverride) {
+                    e.w = overW;
+                    e.h = overH;
+                    e.density = overD;
+                } else {
                     if (e.isDock) {
                         e.w = glob.dockWidth; e.h = glob.dockHeight; e.density = glob.dockDensity;
                     } else {
