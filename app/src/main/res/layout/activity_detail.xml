@@ -307,7 +307,7 @@
                                         app:boxCornerRadiusTopStart="10dp"
                                         app:boxStrokeColor="@color/box_stroke_selector"
                                         app:cursorColor="@color/primary"
-                                        app:hintTextColor="@android:color/primary_text_dark">
+                                        app:hintTextColor="?attr/colorOnPrimaryContainer">
 
                                         <com.google.android.material.textfield.TextInputEditText
                                             android:id="@+id/et_w"
@@ -342,7 +342,7 @@
                                         app:boxCornerRadiusTopStart="10dp"
                                         app:boxStrokeColor="@color/box_stroke_selector"
                                         app:cursorColor="@color/primary"
-                                        app:hintTextColor="@android:color/primary_text_dark">
+                                        app:hintTextColor="?attr/colorOnPrimaryContainer">
 
                                         <com.google.android.material.textfield.TextInputEditText
                                             android:id="@+id/et_h"
@@ -386,7 +386,7 @@
                                     app:boxBackgroundColor="@color/dropdown_bg"
                                     app:boxStrokeColor="@color/box_stroke_selector"
                                     app:cursorColor="@color/primary"
-                                    app:hintTextColor="@android:color/primary_text_dark">
+                                    app:hintTextColor="?attr/colorOnPrimaryContainer">
 
                                     <com.google.android.material.textfield.TextInputEditText
                                         android:id="@+id/et_density"
@@ -423,7 +423,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="@string/remove_btn"
-                    android:textColor="?attr/colorError" />
+                    android:textColor="@color/pico_red" />
 
             </LinearLayout>
 
