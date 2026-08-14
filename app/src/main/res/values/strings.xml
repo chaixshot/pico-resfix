@@ -9,7 +9,7 @@
 
     <string name="detail_title">App Resolution</string>
     <string name="enable_override">Enable Override</string>
-    <string name="enable_dock">Launch in Dock</string>
+    <string name="enable_dock">Enable Dock</string>
     <string name="preset_label">Preset</string>
     <string name="custom_label">Custom (pixels)</string>
     <string name="width_hint">Width</string>
@@ -25,6 +25,7 @@
     <string name="save_failed">Save failed</string>
     <string name="failed">Failed</string>
     <string name="tag_system">System</string>
+    <string name="tag_user">User</string>
     <string name="custom_prefix">Custom: </string>
     <string name="default_prefix">Default: </string>
     <string name="select_preset">Select preset…</string>
@@ -44,4 +45,6 @@
         <item>2560 × 1440</item>
         <item>3840 × 2160</item>
     </string-array>
+    <string name="tag_dock">Dock</string>
+    <string name="tag_vr">VR</string>
 </resources>

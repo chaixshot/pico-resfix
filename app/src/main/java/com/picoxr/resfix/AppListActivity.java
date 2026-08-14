@@ -24,8 +24,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,12 +41,15 @@ import java.util.concurrent.Executors;
 public class AppListActivity extends AppCompatActivity {
 
     RecyclerView recycler;
-    MaterialSwitch swSystem;
     TextView status;
     FloatingActionButton fabDefault;
     EditText etSearch;
+    ImageView ivClearSearch;
     AppAdapter adapter;
     Config.GlobalCfg glob;
+    boolean showUser = true;
+    boolean showSystem = false;
+    boolean showVR = false;
     private List<Config.AppEntry> allApps;
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -65,15 +68,20 @@ public class AppListActivity extends AppCompatActivity {
         status = findViewById(R.id.status);
         fabDefault = findViewById(R.id.fab_default);
         etSearch = findViewById(R.id.et_search);
+        ivClearSearch = findViewById(R.id.iv_clear_search);
 
         recycler.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new AppAdapter();
         recycler.setAdapter(adapter);
 
         fabDefault.setOnClickListener(v -> openDefaultEditor());
+        ivClearSearch.setOnClickListener(v -> etSearch.setText(""));
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { filter(s.toString()); }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ivClearSearch.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+                filter(s.toString());
+            }
             @Override public void afterTextChanged(Editable s) {}
         });
     }
@@ -81,12 +89,44 @@ public class AppListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_list, menu);
-        MenuItem item = menu.findItem(R.id.menu_show_system);
-        swSystem = (MaterialSwitch) item.getActionView();
-        if (swSystem != null) {
-            swSystem.setOnCheckedChangeListener((b, c) -> reload());
+        MenuItem item = menu.findItem(R.id.menu_filter);
+        View actionView = item.getActionView();
+        if (actionView != null) {
+            MaterialButton btnUser = actionView.findViewById(R.id.btn_filter_user);
+            MaterialButton btnSys = actionView.findViewById(R.id.btn_filter_system);
+            MaterialButton btnVR = actionView.findViewById(R.id.btn_filter_vr);
+
+            updateFilterButtonStyle(btnUser, showUser);
+            updateFilterButtonStyle(btnSys, showSystem);
+            updateFilterButtonStyle(btnVR, showVR);
+
+            btnUser.setOnClickListener(v -> {
+                showUser = !showUser;
+                updateFilterButtonStyle(btnUser, showUser);
+                reload();
+            });
+            btnSys.setOnClickListener(v -> {
+                showSystem = !showSystem;
+                updateFilterButtonStyle(btnSys, showSystem);
+                reload();
+            });
+            btnVR.setOnClickListener(v -> {
+                showVR = !showVR;
+                updateFilterButtonStyle(btnVR, showVR);
+                reload();
+            });
         }
         return true;
+    }
+
+    private void updateFilterButtonStyle(MaterialButton btn, boolean active) {
+        if (active) {
+            btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(R.color.toggle_button)));
+            btn.setTextColor(getColor(android.R.color.white));
+        } else {
+            btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(R.color.card_bg)));
+            btn.setTextColor(getColor(android.R.color.darker_gray));
+        }
     }
 
     @Override
@@ -103,8 +143,7 @@ public class AppListActivity extends AppCompatActivity {
 
     void reload() {
         glob = Config.getGlobal();
-        boolean showSys = swSystem != null && swSystem.isChecked();
-        allApps = Config.listApps(this, !showSys, glob);
+        allApps = Config.listApps(this, showUser, showSystem, showVR, glob);
 
         // Sort: Custom first, then by label alphabet
         allApps.sort((a, b) -> {
@@ -115,7 +154,7 @@ public class AppListActivity extends AppCompatActivity {
         });
 
         android.util.Log.i("ResFixGUI", "listApps returned " + allApps.size()
-                + " apps (showSystem=" + showSys + ")");
+                + " apps (showUser=" + showUser + ", showSystem=" + showSystem + ")");
         
         filter(etSearch.getText().toString());
     }
@@ -165,6 +204,7 @@ public class AppListActivity extends AppCompatActivity {
             h.pkg.setText(e.pkg);
             h.pkg.setSelected(true);
             h.cardSys.setVisibility(e.isSystem ? View.VISIBLE : View.GONE);
+            h.cardDock.setVisibility(e.isDock ? View.VISIBLE : View.GONE);
             String prefix = e.hasOverride
                     ? h.root.getContext().getString(R.string.custom_prefix)
                     : h.root.getContext().getString(R.string.default_prefix);
@@ -209,11 +249,12 @@ public class AppListActivity extends AppCompatActivity {
         public int getItemCount() { return apps == null ? 0 : apps.size(); }
 
         class VH extends RecyclerView.ViewHolder {
-            View root, cardSys; TextView label, pkg, res;
+            View root, cardSys, cardDock; TextView label, pkg, res;
             ImageView icon; String tag;
             VH(View v) { super(v); root = v; label = v.findViewById(R.id.tv_label);
                 pkg = v.findViewById(R.id.tv_pkg); res = v.findViewById(R.id.tv_res);
                 cardSys = v.findViewById(R.id.card_sys);
+                cardDock = v.findViewById(R.id.card_dock);
                 icon = v.findViewById(R.id.iv_icon); }
         }
     }

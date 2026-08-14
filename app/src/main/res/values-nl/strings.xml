@@ -24,6 +24,7 @@
     <string name="save_failed">Opslaan mislukt</string>
     <string name="failed">Mislukt</string>
     <string name="tag_system">Systeem</string>
+    <string name="tag_user">Gebruiker</string>
     <string name="custom_prefix">Aangepast: </string>
     <string name="default_prefix">Standaard: </string>
     <string name="select_preset">Selecteer voorinstelling…</string>
@@ -33,4 +34,8 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Standaardinstellingen (apps zonder specifieke instellingen)</string>
+    <string name="enable_dock">Dock inschakelen</string>
+    <string name="landscape">Liggend</string>
+    <string name="portrait">Staand</string>
+    <string name="tag_dock">Dock</string>
 </resources>

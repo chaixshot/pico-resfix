@@ -24,6 +24,7 @@
     <string name="save_failed">儲存失敗</string>
     <string name="failed">失敗</string>
     <string name="tag_system">系統</string>
+    <string name="tag_user">用戶</string>
     <string name="custom_prefix">自定義: </string>
     <string name="default_prefix">預設: </string>
     <string name="select_preset">選擇預設…</string>
@@ -33,4 +34,8 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">預設設置（未單獨配置的非系統應用）</string>
+    <string name="enable_dock">啟用停靠欄</string>
+    <string name="landscape">橫向</string>
+    <string name="portrait">縱向</string>
+    <string name="tag_dock">底欄</string>
 </resources>

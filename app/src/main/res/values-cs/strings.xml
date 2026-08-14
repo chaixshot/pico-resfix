@@ -24,6 +24,7 @@
     <string name="save_failed">Uložení selhalo</string>
     <string name="failed">Selhalo</string>
     <string name="tag_system">Systém</string>
+    <string name="tag_user">Uživatel</string>
     <string name="custom_prefix">Vlastní: </string>
     <string name="default_prefix">Výchozí: </string>
     <string name="select_preset">Vybrat předvolbu…</string>
@@ -33,4 +34,8 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Výchozí nastavení (nesystémové aplikace bez specifického nastavení)</string>
+    <string name="enable_dock">Povolit dok</string>
+    <string name="landscape">Na šířku</string>
+    <string name="portrait">Na výšku</string>
+    <string name="tag_dock">Dock</string>
 </resources>

@@ -95,18 +95,24 @@ public class ResFix implements IXposedHookLoadPackage {
         } catch (Throwable ignored) { return null; }
     }
 
-    /** True when this package should use PICO's near-panel (Dock) window stack. */
-    static boolean isDockEnabled(String pkg) {
-        if (pkg == null) return false;
+    /**
+     * Returns the user's Dock preference for a package.
+     * null: No override (let system decide)
+     * true: Force Near-panel (Dock)
+     * false: Force Floating-panel
+     */
+    static Boolean getDockOverride(String pkg) {
+        String s = readConfigText();
+        if (pkg == null || s == null) return null;
         try {
-            String s = readConfigText();
-            if (s == null) return false;
+
+
             JSONObject apps = new JSONObject(s).optJSONObject("apps");
-            JSONObject app = apps != null ? apps.optJSONObject(pkg) : null;
-            return app != null && app.optBoolean("dock", false);
-        } catch (Throwable ignored) {
-            return false;
-        }
+            if (apps != null && apps.has(pkg)) {
+                return apps.getJSONObject(pkg).optBoolean("dock", false);
+            }
+        } catch (Throwable ignored) {}
+        return null;
     }
 
     static boolean isNonSystemApp(Object container) {
@@ -174,9 +180,15 @@ public class ResFix implements IXposedHookLoadPackage {
                         protected void beforeHookedMethod(MethodHookParam param) {
                             Object info = param.args[0];
                             String pkg = fieldString(info, "packageName");
-                            if (!isDockEnabled(pkg)) return;
-                            param.setResult(2002); // AppRecord.convertPositionToWindowType("near")
-                            XposedBridge.log(TAG + ": Dock " + pkg + " -> near panel (type 2002)");
+                            Boolean isDockEnabled = getDockOverride(pkg);
+
+                            if(isDockEnabled != null)
+                                if (isDockEnabled) {
+                                    param.setResult(2002); // AppRecord.convertPositionToWindowType("near")
+                                    XposedBridge.log(TAG + ": Dock " + pkg + " -> near panel (type 2002)");
+                                }else{
+                                    param.setResult(2001);
+                                }
                         }
                     });
 
@@ -192,9 +204,13 @@ public class ResFix implements IXposedHookLoadPackage {
                         protected void beforeHookedMethod(MethodHookParam param) {
                             Object info = param.args[0];
                             String pkg = fieldString(info, "packageName");
-                            if (isDockEnabled(pkg)) {
-                                param.setResult(2002);
-                            }
+                            Boolean isDockEnabled = getDockOverride(pkg);
+
+                            if(isDockEnabled != null)
+                                if (isDockEnabled)
+                                    param.setResult(2002);
+                                else
+                                    param.setResult(2001);
                         }
                     });
 
@@ -206,18 +222,34 @@ public class ResFix implements IXposedHookLoadPackage {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) {
                             String pkg = pkgFromThis(param.thisObject);
-                            if (!isDockEnabled(pkg)) return;
-                            try {
-                                XposedHelpers.setObjectField(param.thisObject, "mAppResizeable", Boolean.TRUE);
-                            } catch (Throwable ignored) {}
+                            Boolean isDockEnabled = getDockOverride(pkg);
+
+                            if(isDockEnabled != null)
+                                if (isDockEnabled){
+                                    try {
+                                        XposedHelpers.setObjectField(param.thisObject, "mAppResizeable", Boolean.TRUE);
+                                    } catch (Throwable ignored) {
+                                    }
+                                }
+                                else{
+                                    try {
+                                        XposedHelpers.setObjectField(param.thisObject, "mAppResizeable", Boolean.FALSE);
+                                    } catch (Throwable ignored) {
+                                    }
+                                }
                         }
                     });
             XposedHelpers.findAndHookMethod(appRecord, "resizeable", new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) {
-                    if (isDockEnabled(pkgFromThis(param.thisObject))) {
-                        param.setResult(true);
-                    }
+                    String pkg = pkgFromThis(param.thisObject);
+                    Boolean isDockEnabled = getDockOverride(pkg);
+
+                    if(isDockEnabled != null)
+                        if (isDockEnabled)
+                            param.setResult(true);
+                        else
+                            param.setResult(false);
                 }
             });
 
@@ -235,11 +267,17 @@ public class ResFix implements IXposedHookLoadPackage {
                         protected void beforeHookedMethod(MethodHookParam param) {
                             boolean visible = (Boolean) param.args[0];
                             int changeType = (Integer) param.args[1];
-                            if (!visible && changeType == 6 && isDockEnabled(pkgFromThis(param.thisObject))) {
-                                XposedBridge.log(TAG + ": keep Dock visible during fullscreen "
-                                        + pkgFromThis(param.thisObject));
-                                param.setResult(false);
-                            }
+                            String pkg = pkgFromThis(param.thisObject);
+                            Boolean isDockEnabled = getDockOverride(pkg);
+
+                            if(isDockEnabled != null)
+                                if (!visible && changeType == 6 && isDockEnabled) {
+                                    XposedBridge.log(TAG + ": keep Dock visible during fullscreen "
+                                            + pkgFromThis(param.thisObject));
+                                    param.setResult(false);
+                                }
+                                else
+                                    param.setResult(true);
                         }
                     });
 

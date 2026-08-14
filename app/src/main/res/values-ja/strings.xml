@@ -24,6 +24,7 @@
     <string name="save_failed">保存に失敗しました</string>
     <string name="failed">失敗</string>
     <string name="tag_system">システム</string>
+    <string name="tag_user">ユーザー</string>
     <string name="custom_prefix">カスタム: </string>
     <string name="default_prefix">デフォルト: </string>
     <string name="select_preset">プリセットを選択…</string>
@@ -33,4 +34,8 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">デフォルト設定 (個別に設定されていない非システムアプリ)</string>
+    <string name="enable_dock">ドックを有効にする</string>
+    <string name="landscape">横向き</string>
+    <string name="portrait">縦向き</string>
+    <string name="tag_dock">ドック</string>
 </resources>

@@ -165,10 +165,11 @@ public class AppDetailActivity extends AppCompatActivity {
     }
 
     void loadCurrent() {
+        Config.GlobalCfg glob = Config.getGlobal();
         JSONObject root = Config.readRoot();
         JSONObject target = null;
         boolean enabled = true;
-        boolean dock = false;
+        boolean isDock = TextUtils.isEmpty(pkg) && swDock.isChecked();
         try {
             if (TextUtils.isEmpty(pkg)) {
                 target = Config.defaultObj(root);
@@ -177,21 +178,49 @@ public class AppDetailActivity extends AppCompatActivity {
                 if (apps.has(pkg)) {
                     target = apps.getJSONObject(pkg);
                     enabled = !target.optBoolean("disabled", false);
-                    dock = target.optBoolean("dock", false);
+                    isDock = target.optBoolean("dock", false);
+                } else {
+                    isDock = Config.isAppDockMode(getPackageManager(), pkg, null);
                 }
             }
         } catch (Throwable ignored) {}
-        if (target != null) {
-            try {
-                etW.setText(String.valueOf(target.optInt("w", 1602)));
-                etH.setText(String.valueOf(target.optInt("h", 902)));
-                if (target.has("density")) etDensity.setText(String.valueOf(target.getInt("density")));
-            } catch (Throwable ignored) {}
+
+        if (TextUtils.isEmpty(pkg)) {
+            if (target != null) {
+                if (isDock) {
+                    etW.setText(String.valueOf(target.optInt("near_w", glob.dockWidth)));
+                    etH.setText(String.valueOf(target.optInt("near_h", glob.dockHeight)));
+                    etDensity.setText(target.has("near_density") ? String.valueOf(target.optInt("near_density")) : String.valueOf(glob.dockDensity));
+                } else {
+                    etW.setText(String.valueOf(target.optInt("w", glob.floatingWidth)));
+                    etH.setText(String.valueOf(target.optInt("h", glob.floatingHeight)));
+                    etDensity.setText(target.has("density") ? String.valueOf(target.optInt("density")) : String.valueOf(glob.floatingDensity));
+                }
+            } else {
+                if (isDock) {
+                    etW.setText(String.valueOf(glob.dockWidth));
+                    etH.setText(String.valueOf(glob.dockHeight));
+                    etDensity.setText(String.valueOf(glob.dockDensity));
+                } else {
+                    etW.setText(String.valueOf(glob.floatingWidth));
+                    etH.setText(String.valueOf(glob.floatingHeight));
+                    etDensity.setText(String.valueOf(glob.floatingDensity));
+                }
+            }
         } else {
-            etW.setText("1602"); etH.setText("902");
+            if (target != null) {
+                etW.setText(String.valueOf(target.optInt("w", isDock ? glob.dockWidth : glob.floatingWidth)));
+                etH.setText(String.valueOf(target.optInt("h", isDock ? glob.dockHeight : glob.floatingHeight)));
+                etDensity.setText(String.valueOf(target.optInt("density", isDock ? glob.dockDensity : glob.floatingDensity)));
+            } else {
+                etW.setText(String.valueOf(isDock ? glob.dockWidth : glob.floatingWidth));
+                etH.setText(String.valueOf(isDock ? glob.dockHeight : glob.floatingHeight));
+                etDensity.setText(String.valueOf(isDock ? glob.dockDensity : glob.floatingDensity));
+            }
+            swDock.setChecked(isDock);
         }
+
         swEnable.setChecked(enabled);
-        swDock.setChecked(dock);
         boolean en = enabled || TextUtils.isEmpty(pkg); // default always editable
         spPreset.setEnabled(en);
         spPresetSwap.setEnabled(en);
@@ -199,26 +228,35 @@ public class AppDetailActivity extends AppCompatActivity {
     }
 
     void save() {
-        int w = parseInt(etW, 1602), h = parseInt(etH, 902);
+        Config.GlobalCfg glob = Config.getGlobal();
+        boolean isDockInEditor = swDock.isChecked();
+        int defW = isDockInEditor ? glob.dockWidth : glob.floatingWidth;
+        int defH = isDockInEditor ? glob.dockHeight : glob.floatingHeight;
+        
+        int w = parseInt(etW, defW), h = parseInt(etH, defH);
         if (w < 320 || h < 240) { Toast.makeText(this,R.string.invalid_res,Toast.LENGTH_SHORT).show(); return; }
         try {
             JSONObject root = Config.readRoot();
-            JSONObject target;
             if (TextUtils.isEmpty(pkg)) {
-                target = Config.defaultObj(root);
+                JSONObject target = Config.defaultObj(root);
                 root.put("default", target);
+                String pfx = isDockInEditor ? "near_" : "";
+                target.put(pfx + "w", w); target.put(pfx + "h", h);
+                String d = etDensity.getText() != null ? etDensity.getText().toString().trim() : "";
+                if (!TextUtils.isEmpty(d)) target.put(pfx + "density", parseIntStr(d));
+                else target.remove(pfx + "density");
             } else {
                 JSONObject apps = Config.appsObj(root);
-                target = apps.optJSONObject(pkg);
+                JSONObject target = apps.optJSONObject(pkg);
                 if (target == null) { target = new JSONObject(); apps.put(pkg, target); }
                 root.put("apps", apps);
                 target.put("disabled", !swEnable.isChecked());
                 target.put("dock", swDock.isChecked());
+                target.put("w", w); target.put("h", h);
+                String d = etDensity.getText() != null ? etDensity.getText().toString().trim() : "";
+                if (!TextUtils.isEmpty(d)) target.put("density", parseIntStr(d));
+                else target.remove("density");
             }
-            target.put("w", w); target.put("h", h);
-            String d = etDensity.getText() != null ? etDensity.getText().toString().trim() : "";
-            if (!TextUtils.isEmpty(d)) target.put("density", parseIntStr(d));
-            else target.remove("density");
             boolean ok = Config.writeRoot(root);
             Toast.makeText(this, ok ? getString(R.string.saved_toast) : getString(R.string.write_failed), Toast.LENGTH_LONG).show();
             if (ok) finish();

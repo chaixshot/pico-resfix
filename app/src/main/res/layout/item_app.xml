@@ -65,7 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    app:cardBackgroundColor="?attr/colorTertiaryContainer"
+                    app:cardBackgroundColor="@color/pico_red"
                     app:cardCornerRadius="4dp"
                     app:cardElevation="0dp">
 
@@ -77,7 +77,28 @@
                         android:paddingVertical="2dp"
                         android:text="@string/tag_system"
                         android:textAppearance="?attr/textAppearanceLabelSmall"
-                        android:textColor="?attr/colorOnTertiaryContainer" />
+                        android:textColor="?attr/colorOnPrimaryContainer" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_dock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:visibility="gone"
+                    app:cardBackgroundColor="@color/pico_green"
+                    app:cardCornerRadius="4dp"
+                    app:cardElevation="0dp">
+
+                    <TextView
+                        android:id="@+id/tv_dock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="2dp"
+                        android:text="@string/tag_dock"
+                        android:textAppearance="?attr/textAppearanceLabelSmall"
+                        android:textColor="?attr/colorOnPrimaryContainer" />
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
