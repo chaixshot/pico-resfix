@@ -43,8 +43,8 @@
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
                 android:paddingHorizontal="70dp"
-                android:paddingVertical="10dp"
-                android:paddingBottom="50dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="100dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
         </androidx.cardview.widget.CardView>
     </LinearLayout>
