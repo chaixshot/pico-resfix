@@ -33,4 +33,7 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Tetapan Lalai (apl bukan sistem tanpa tetapan khusus)</string>
+    <string name="enable_dock">Dayakan Dok</string>
+    <string name="landscape">Landskap</string>
+    <string name="portrait">Potret</string>
 </resources>

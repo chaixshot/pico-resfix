@@ -33,4 +33,7 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Προεπιλεγμένες ρυθμίσεις (εφαρμογές χωρίς ειδικές ρυθμίσεις)</string>
+    <string name="enable_dock">Ενεργοποίηση Dock</string>
+    <string name="landscape">Οριζόντια</string>
+    <string name="portrait">Κατακόρυφα</string>
 </resources>

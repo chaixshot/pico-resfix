@@ -33,4 +33,7 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">預設設置（未單獨配置的非系統應用）</string>
+    <string name="enable_dock">啟用停靠欄</string>
+    <string name="landscape">橫向</string>
+    <string name="portrait">縱向</string>
 </resources>

@@ -33,4 +33,7 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">기본 설정 (별도 설정이 없는 비시스템 앱)</string>
+    <string name="enable_dock">독 활성화</string>
+    <string name="landscape">가로</string>
+    <string name="portrait">세로</string>
 </resources>

@@ -33,4 +33,7 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Standardindstillinger (ikke-systemapps uden specifikke indstillinger)</string>
+    <string name="enable_dock">Aktiver dock</string>
+    <string name="landscape">Liggende</string>
+    <string name="portrait">Stående</string>
 </resources>

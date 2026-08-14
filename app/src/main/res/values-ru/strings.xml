@@ -33,4 +33,7 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Настройки по умолчанию (для приложений без настроек)</string>
+    <string name="enable_dock">Включить док</string>
+    <string name="landscape">Альбомная</string>
+    <string name="portrait">Книжная</string>
 </resources>

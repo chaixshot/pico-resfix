@@ -33,4 +33,7 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Varsayılan Ayarlar (özel ayarları olmayan uygulamalar)</string>
+    <string name="enable_dock">Dock\'u etkinleştir</string>
+    <string name="landscape">Yatay</string>
+    <string name="portrait">Dikey</string>
 </resources>

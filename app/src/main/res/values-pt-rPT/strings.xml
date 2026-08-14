@@ -33,4 +33,7 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Definições predefinidas (aplicações não do sistema sem definições específicas)</string>
+    <string name="enable_dock">Ativar dock</string>
+    <string name="landscape">Paisagem</string>
+    <string name="portrait">Retrato</string>
 </resources>

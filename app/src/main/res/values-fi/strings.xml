@@ -33,4 +33,7 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Oletusasetukset (ei-järjestelmäsovellukset ilman omia asetuksia)</string>
+    <string name="enable_dock">Ota telakka käyttöön</string>
+    <string name="landscape">Vaaka</string>
+    <string name="portrait">Pysty</string>
 </resources>
