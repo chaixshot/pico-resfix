@@ -24,6 +24,7 @@
     <string name="save_failed">Gagal menyimpan</string>
     <string name="failed">Gagal</string>
     <string name="tag_system">Sistem</string>
+    <string name="tag_user">Pengguna</string>
     <string name="custom_prefix">Tersuai: </string>
     <string name="default_prefix">Lalai: </string>
     <string name="select_preset">Pilih pratetap…</string>
@@ -33,4 +34,8 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Tetapan Lalai (apl bukan sistem tanpa tetapan khusus)</string>
+    <string name="enable_dock">Dayakan Dok</string>
+    <string name="landscape">Landskap</string>
+    <string name="portrait">Potret</string>
+    <string name="tag_dock">Dok</string>
 </resources>

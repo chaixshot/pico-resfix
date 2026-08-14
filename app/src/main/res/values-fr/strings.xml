@@ -24,6 +24,7 @@
     <string name="save_failed">Échec de l\'enregistrement</string>
     <string name="failed">Échec</string>
     <string name="tag_system">Système</string>
+    <string name="tag_user">Utilisateur</string>
     <string name="custom_prefix">Personnalisé : </string>
     <string name="default_prefix">Par défaut : </string>
     <string name="select_preset">Sélectionner un préréglage…</string>
@@ -33,4 +34,8 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Paramètres par défaut (apps non-système sans paramètres spécifiques)</string>
+    <string name="enable_dock">Activer le dock</string>
+    <string name="landscape">Paysage</string>
+    <string name="portrait">Portrait</string>
+    <string name="tag_dock">Dock</string>
 </resources>

@@ -138,6 +138,7 @@
                         <com.google.android.material.card.MaterialCardView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
+                            android:layout_marginRight="10dp"
                             android:layout_weight="1"
                             app:cardBackgroundColor="@color/card_bg"
                             app:cardCornerRadius="16dp"
@@ -151,28 +152,32 @@
                                 android:layout_gravity="center"
                                 android:padding="16dp"
                                 android:text="@string/enable_override"
-                                android:textAppearance="?attr/textAppearanceTitleMedium" />
+                                android:textAppearance="?attr/textAppearanceTitleMedium"
+                                app:trackTint="@color/switch_selector" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- Enable Dock -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/card_bg"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="0dp">
+
+                            <com.google.android.material.materialswitch.MaterialSwitch
+                                android:id="@+id/sw_dock"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="16dp"
+                                android:text="@string/enable_dock"
+                                android:textAppearance="?attr/textAppearanceTitleMedium"
+                                app:trackTint="@color/switch_selector" />
                         </com.google.android.material.card.MaterialCardView>
 
                     </LinearLayout>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        app:cardBackgroundColor="@color/card_bg"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
-                        app:strokeWidth="0dp">
-
-                        <com.google.android.material.materialswitch.MaterialSwitch
-                            android:id="@+id/sw_dock"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="16dp"
-                            android:text="@string/enable_dock"
-                            android:textAppearance="?attr/textAppearanceTitleMedium" />
-                    </com.google.android.material.card.MaterialCardView>
 
                     <!-- Presets Section -->
                     <com.google.android.material.card.MaterialCardView
@@ -201,17 +206,20 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:baselineAligned="false"
+                                android:clipToPadding="false"
                                 android:orientation="horizontal">
 
                                 <LinearLayout
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:orientation="vertical">
+                                    android:orientation="vertical"
+                                    android:paddingRight="5dp">
 
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginBottom="10dp"
                                         android:text="@string/floating"
                                         android:textAppearance="?attr/textAppearanceLabelSmall" />
 
@@ -219,18 +227,22 @@
                                         android:id="@+id/sp_preset"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:minHeight="48dp" />
+                                        android:background="@drawable/bg_dropdown"
+                                        android:minHeight="48dp"
+                                        android:popupBackground="@drawable/bg_dropdown" />
                                 </LinearLayout>
 
                                 <LinearLayout
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:orientation="vertical">
+                                    android:orientation="vertical"
+                                    android:paddingLeft="5dp">
 
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginBottom="10dp"
                                         android:text="@string/dock"
                                         android:textAppearance="?attr/textAppearanceLabelSmall" />
 
@@ -238,7 +250,9 @@
                                         android:id="@+id/sp_preset_swap"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:minHeight="48dp" />
+                                        android:background="@drawable/bg_dropdown"
+                                        android:minHeight="48dp"
+                                        android:popupBackground="@drawable/bg_dropdown" />
                                 </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>
@@ -285,14 +299,23 @@
                                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
-                                        android:layout_weight="1">
+                                        android:layout_weight="1"
+                                        app:boxBackgroundColor="@color/dropdown_bg"
+                                        app:boxCornerRadiusBottomEnd="10dp"
+                                        app:boxCornerRadiusBottomStart="10dp"
+                                        app:boxCornerRadiusTopEnd="10dp"
+                                        app:boxCornerRadiusTopStart="10dp"
+                                        app:boxStrokeColor="@color/box_stroke_selector"
+                                        app:cursorColor="@color/primary"
+                                        app:hintTextColor="?attr/colorOnPrimaryContainer">
 
                                         <com.google.android.material.textfield.TextInputEditText
                                             android:id="@+id/et_w"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:hint="@string/width_hint"
-                                            android:inputType="number" />
+                                            android:inputType="number"
+                                            android:textColorHighlight="@color/toggle_button" />
                                     </com.google.android.material.textfield.TextInputLayout>
 
                                     <com.google.android.material.button.MaterialButton
@@ -300,6 +323,7 @@
                                         android:layout_width="25dp"
                                         android:layout_height="35dp"
                                         android:layout_marginHorizontal="10dp"
+                                        android:backgroundTint="@color/card_bg"
                                         app:cornerRadius="5dp"
                                         app:icon="@android:drawable/ic_menu_close_clear_cancel"
                                         app:iconGravity="textStart"
@@ -310,14 +334,23 @@
                                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
-                                        android:layout_weight="1">
+                                        android:layout_weight="1"
+                                        app:boxBackgroundColor="@color/dropdown_bg"
+                                        app:boxCornerRadiusBottomEnd="10dp"
+                                        app:boxCornerRadiusBottomStart="10dp"
+                                        app:boxCornerRadiusTopEnd="10dp"
+                                        app:boxCornerRadiusTopStart="10dp"
+                                        app:boxStrokeColor="@color/box_stroke_selector"
+                                        app:cursorColor="@color/primary"
+                                        app:hintTextColor="?attr/colorOnPrimaryContainer">
 
                                         <com.google.android.material.textfield.TextInputEditText
                                             android:id="@+id/et_h"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:hint="@string/height_hint"
-                                            android:inputType="number" />
+                                            android:inputType="number"
+                                            android:textColorHighlight="@color/toggle_button" />
                                     </com.google.android.material.textfield.TextInputLayout>
                                 </LinearLayout>
                             </LinearLayout>
@@ -349,14 +382,23 @@
                                 <com.google.android.material.textfield.TextInputLayout
                                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
+                                    android:layout_height="wrap_content"
+                                    app:boxBackgroundColor="@color/dropdown_bg"
+                                    app:boxStrokeColor="@color/box_stroke_selector"
+                                    app:cursorColor="@color/primary"
+                                    app:hintTextColor="?attr/colorOnPrimaryContainer">
 
                                     <com.google.android.material.textfield.TextInputEditText
                                         android:id="@+id/et_density"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:hint="@string/density_hint"
-                                        android:inputType="number" />
+                                        android:inputType="number"
+                                        android:textColorHighlight="@color/toggle_button"
+                                        app:boxCornerRadiusBottomEnd="10dp"
+                                        app:boxCornerRadiusBottomStart="10dp"
+                                        app:boxCornerRadiusTopEnd="10dp"
+                                        app:boxCornerRadiusTopStart="10dp" />
                                 </com.google.android.material.textfield.TextInputLayout>
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
@@ -368,7 +410,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginBottom="8dp"
-                        android:backgroundTint="@color/button_bg"
+                        android:backgroundTint="@color/card_bg"
                         android:padding="12dp"
                         android:text="@string/save_btn"
                         android:textColor="@color/design_default_color_surface" />
@@ -381,7 +423,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="@string/remove_btn"
-                    android:textColor="?attr/colorError" />
+                    android:textColor="@color/pico_red" />
 
             </LinearLayout>
 

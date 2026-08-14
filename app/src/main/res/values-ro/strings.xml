@@ -24,6 +24,7 @@
     <string name="save_failed">Salvarea a eșuat</string>
     <string name="failed">Eșuat</string>
     <string name="tag_system">Sistem</string>
+    <string name="tag_user">Utilizator</string>
     <string name="custom_prefix">Personalizat: </string>
     <string name="default_prefix">Implicit: </string>
     <string name="select_preset">Selectați presetarea…</string>
@@ -33,4 +34,8 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Setări implicite (aplicații non-sistem fără setări specifice)</string>
+    <string name="enable_dock">Activați dock-ul</string>
+    <string name="landscape">Vedere</string>
+    <string name="portrait">Portret</string>
+    <string name="tag_dock">Dock</string>
 </resources>

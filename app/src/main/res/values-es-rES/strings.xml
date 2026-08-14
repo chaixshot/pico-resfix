@@ -24,6 +24,7 @@
     <string name="save_failed">Error al guardar</string>
     <string name="failed">Error</string>
     <string name="tag_system">Sistema</string>
+    <string name="tag_user">Usuario</string>
     <string name="custom_prefix">Personalizado: </string>
     <string name="default_prefix">Predeterminado: </string>
     <string name="select_preset">Seleccionar preestablecido…</string>
@@ -33,4 +34,8 @@
 
     <!-- default config editor (in list header or separate) -->
     <string name="default_title">Ajustes predeterminados (apps no del sistema sin ajustes específicos)</string>
+    <string name="enable_dock">Activar dock</string>
+    <string name="landscape">Paisaje</string>
+    <string name="portrait">Retrato</string>
+    <string name="tag_dock">Dock</string>
 </resources>

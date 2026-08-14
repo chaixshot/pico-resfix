@@ -1,20 +1,17 @@
 package com.picoxr.resfix;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -32,11 +29,13 @@ public final class Config {
         public CharSequence label;
         public boolean isSystem;
         public boolean hasOverride;
+        public boolean isDock;
         public int w, h, density;   // effective values
     }
 
     public static class GlobalCfg {
-        public int w = 1602, h = 902, density = 200;   // stock 1602x902 (matches physical window, no clipping)
+        public int floatingWidth = 1602, floatingHeight = 902, floatingDensity = 200;   // Far mode default
+        public int dockWidth = 1127, dockHeight = 752, dockDensity = 200; // Near mode default
         public boolean applyThird = true, applySystem = false;
     }
 
@@ -76,19 +75,21 @@ public final class Config {
         GlobalCfg g = new GlobalCfg();
         try {
             JSONObject d = defaultObj(readRoot());
-            g.w = d.optInt("w", g.w);
-            g.h = d.optInt("h", g.h);
-            g.density = d.has("density") ? d.getInt("density") : g.density;
+            g.floatingWidth = d.optInt("w", g.floatingWidth);
+            g.floatingHeight = d.optInt("h", g.floatingHeight);
+            g.floatingDensity = d.has("density") ? d.getInt("density") : g.floatingDensity;
+
+            g.dockWidth = d.optInt("near_w", g.dockWidth);
+            g.dockHeight = d.optInt("near_h", g.dockHeight);
+            g.dockDensity = d.has("near_density") ? d.getInt("near_density") : g.dockDensity;
+
             g.applyThird = d.optBoolean("applyThird", true);
             g.applySystem = d.optBoolean("applySystem", false);
         } catch (Throwable ignored) {}
         return g;
     }
 
-    /** List installed apps (any with a launchable activity). filterSystem hides system apps.
-     *  PICO does not expose most 2D apps via the standard MAIN/LAUNCHER intent, so we list ALL
-     *  installed apps that have at least one activity (covers the full third-party set). */
-    public static List<AppEntry> listApps(Context ctx, boolean filterSystem, GlobalCfg glob) {
+    public static List<AppEntry> listApps(Context ctx, boolean showUser, boolean showSystem, boolean showVR, GlobalCfg glob) {
         List<AppEntry> out = new ArrayList<>();
         try {
             PackageManager pm = ctx.getPackageManager();
@@ -100,29 +101,81 @@ public final class Config {
             for (ApplicationInfo ai : sorted) {
                 String pkg = ai.packageName;
                 if (pkg == null || pkg.equals(ctx.getPackageName())) continue; // hide ourselves
-                boolean sys = (ai.flags & (ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0;
-                if (sys && filterSystem) continue;
+
+                boolean isVR = ai.metaData != null && "vr".equals(ai.metaData.getString("pvr.app.type"));
+                boolean isDock = isAppDockMode(pm, pkg, ai);
+                boolean isSystem = (ai.flags & (ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0;
+
+                boolean hasOverride = false;
+                int overW = 0, overH = 0, overD = -1;
+                boolean overDock = isDock;
+
+                if (appsJ.has(pkg)) {
+                    JSONObject a = appsJ.optJSONObject(pkg);
+                    if (a != null && !a.optBoolean("disabled", false)) {
+                        hasOverride = true;
+                        overW = a.optInt("w", 0);
+                        overH = a.optInt("h", 0);
+                        overD = a.has("density") ? a.getInt("density") : -1;
+                        if (a.has("dock")) overDock = a.optBoolean("dock", false);
+                    }
+                }
+
+                // Filtering: skip if not active filter AND no override
+                if (!hasOverride) {
+                    if (isVR && !showVR) continue;
+                    if (!isVR && isSystem && !showSystem) continue;
+                    if (!isVR && !isSystem && !showUser) continue;
+                }
+                
                 AppEntry e = new AppEntry();
                 e.pkg = pkg;
                 CharSequence lb = ai.loadLabel(pm);
                 e.label = (lb != null) ? lb : pkg;
-                e.isSystem = sys;
-                if (appsJ.has(pkg)) {
-                    JSONObject a = appsJ.optJSONObject(pkg);
-                    if (a != null && !a.optBoolean("disabled", false)) {
-                        e.hasOverride = true;
-                        e.w = a.optInt("w", 0);
-                        e.h = a.optInt("h", 0);
-                        e.density = a.has("density") ? a.getInt("density") : -1;
+                e.isSystem = isSystem;
+                e.isDock = overDock;
+                e.hasOverride = hasOverride;
+
+                if (hasOverride) {
+                    e.w = overW;
+                    e.h = overH;
+                    e.density = overD;
+                } else {
+                    if (e.isDock) {
+                        e.w = glob.dockWidth; e.h = glob.dockHeight; e.density = glob.dockDensity;
+                    } else {
+                        e.w = glob.floatingWidth; e.h = glob.floatingHeight; e.density = glob.floatingDensity;
                     }
-                }
-                if (!e.hasOverride) {
-                    e.w = glob.w; e.h = glob.h; e.density = glob.density;
                 }
                 out.add(e);
             }
         } catch (Throwable ignored) {}
         return out;
+    }
+
+    public static boolean isAppDockMode(PackageManager pm, String pkg, ApplicationInfo ai) {
+        try {
+            if (ai == null) ai = pm.getApplicationInfo(pkg, PackageManager.GET_META_DATA);
+            if (isMetadataNear(ai.metaData)) return true;
+            PackageInfo pi = pm.getPackageInfo(pkg, PackageManager.GET_ACTIVITIES | PackageManager.GET_META_DATA);
+            if (pi.activities != null) {
+                for (ActivityInfo act : pi.activities) {
+                    if (isMetadataNear(act.metaData)) return true;
+                }
+            }
+        } catch (Throwable ignored) {}
+        return false;
+    }
+
+    public static boolean isMetadataNear(android.os.Bundle meta) {
+        if (meta == null) return false;
+        if ("near".equals(meta.getString("pico.vr.position"))) return true;
+        Object mode = meta.get("pvr.2dtovr.mode");
+        if (mode != null) {
+            String s = String.valueOf(mode);
+            return "6".equals(s) || "near".equals(s);
+        }
+        return false;
     }
 
     // --- write (via su) ---
