@@ -86,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:visibility="gone"
-                    app:cardBackgroundColor="@color/button_bg"
+                    app:cardBackgroundColor="@color/card_bg"
                     app:cardCornerRadius="4dp"
                     app:cardElevation="0dp">
 

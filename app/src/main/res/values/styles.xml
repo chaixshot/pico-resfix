@@ -8,11 +8,11 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:forceDarkAllowed">false</item>
 
-        <item name="colorPrimary">@color/button_bg</item>
+        <item name="colorPrimary">@color/card_bg</item>
         <item name="colorOnPrimary">@color/design_default_color_background</item>
         <item name="colorControlActivated">@color/primary</item>
 
-        <item name="colorPrimaryContainer">@color/button_bg</item>
+        <item name="colorPrimaryContainer">@color/card_bg</item>
         <item name="colorOnPrimaryContainer">@color/design_default_color_background</item>
     </style>
 </resources>

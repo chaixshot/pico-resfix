@@ -118,7 +118,7 @@ public class AppListActivity extends AppCompatActivity {
             btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(R.color.toggle_button)));
             btn.setTextColor(getColor(android.R.color.white));
         } else {
-            btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(R.color.button_bg)));
+            btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(R.color.card_bg)));
             btn.setTextColor(getColor(android.R.color.darker_gray));
         }
     }
