@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary">#3e8bff</color>
+    <color name="primary_alpha_70">#833E8BFF</color>
 
     <color name="main_bg">#1e1e1e</color>
     <color name="content_bg">#292929</color>

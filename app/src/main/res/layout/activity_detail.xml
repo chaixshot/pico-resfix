@@ -152,7 +152,8 @@
                                 android:layout_gravity="center"
                                 android:padding="16dp"
                                 android:text="@string/enable_override"
-                                android:textAppearance="?attr/textAppearanceTitleMedium" />
+                                android:textAppearance="?attr/textAppearanceTitleMedium"
+                                app:trackTint="@color/switch_selector" />
                         </com.google.android.material.card.MaterialCardView>
 
                         <!-- Enable Dock -->
@@ -172,7 +173,8 @@
                                 android:layout_gravity="center"
                                 android:padding="16dp"
                                 android:text="@string/enable_dock"
-                                android:textAppearance="?attr/textAppearanceTitleMedium" />
+                                android:textAppearance="?attr/textAppearanceTitleMedium"
+                                app:trackTint="@color/switch_selector" />
                         </com.google.android.material.card.MaterialCardView>
 
                     </LinearLayout>
@@ -303,6 +305,7 @@
                                         android:layout_width="25dp"
                                         android:layout_height="35dp"
                                         android:layout_marginHorizontal="10dp"
+                                        android:backgroundTint="@color/button_bg"
                                         app:cornerRadius="5dp"
                                         app:icon="@android:drawable/ic_menu_close_clear_cancel"
                                         app:iconGravity="textStart"
