@@ -44,6 +44,7 @@ public class AppListActivity extends AppCompatActivity {
     TextView status;
     FloatingActionButton fabDefault;
     EditText etSearch;
+    ImageView ivClearSearch;
     AppAdapter adapter;
     Config.GlobalCfg glob;
     boolean showUser = true;
@@ -67,15 +68,20 @@ public class AppListActivity extends AppCompatActivity {
         status = findViewById(R.id.status);
         fabDefault = findViewById(R.id.fab_default);
         etSearch = findViewById(R.id.et_search);
+        ivClearSearch = findViewById(R.id.iv_clear_search);
 
         recycler.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new AppAdapter();
         recycler.setAdapter(adapter);
 
         fabDefault.setOnClickListener(v -> openDefaultEditor());
+        ivClearSearch.setOnClickListener(v -> etSearch.setText(""));
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { filter(s.toString()); }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ivClearSearch.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+                filter(s.toString());
+            }
             @Override public void afterTextChanged(Editable s) {}
         });
     }
