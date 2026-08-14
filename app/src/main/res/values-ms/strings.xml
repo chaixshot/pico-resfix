@@ -24,6 +24,7 @@
     <string name="save_failed">Gagal menyimpan</string>
     <string name="failed">Gagal</string>
     <string name="tag_system">Sistem</string>
+    <string name="tag_user">Pengguna</string>
     <string name="custom_prefix">Tersuai: </string>
     <string name="default_prefix">Lalai: </string>
     <string name="select_preset">Pilih pratetap…</string>

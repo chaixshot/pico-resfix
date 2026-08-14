@@ -24,6 +24,7 @@
     <string name="save_failed">Lagring mislykkedes</string>
     <string name="failed">Mislykkedes</string>
     <string name="tag_system">System</string>
+    <string name="tag_user">Bruker</string>
     <string name="custom_prefix">Tilpasset: </string>
     <string name="default_prefix">Standard: </string>
     <string name="select_preset">Velg forhåndsinnstilling…</string>

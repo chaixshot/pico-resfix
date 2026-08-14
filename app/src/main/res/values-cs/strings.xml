@@ -24,6 +24,7 @@
     <string name="save_failed">Uložení selhalo</string>
     <string name="failed">Selhalo</string>
     <string name="tag_system">Systém</string>
+    <string name="tag_user">Uživatel</string>
     <string name="custom_prefix">Vlastní: </string>
     <string name="default_prefix">Výchozí: </string>
     <string name="select_preset">Vybrat předvolbu…</string>

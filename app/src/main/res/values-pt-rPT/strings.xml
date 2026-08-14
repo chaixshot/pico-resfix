@@ -24,6 +24,7 @@
     <string name="save_failed">Falha ao guardar</string>
     <string name="failed">Falhou</string>
     <string name="tag_system">Sistema</string>
+    <string name="tag_user">Utilizador</string>
     <string name="custom_prefix">Personalizado: </string>
     <string name="default_prefix">Predefinido: </string>
     <string name="select_preset">Selecionar predefinição…</string>

@@ -24,6 +24,7 @@
     <string name="save_failed">Η αποθήκευση απέτυχε</string>
     <string name="failed">Απέτυχε</string>
     <string name="tag_system">Σύστημα</string>
+    <string name="tag_user">Χρήστης</string>
     <string name="custom_prefix">Προσαρμοσμένο: </string>
     <string name="default_prefix">Προεπιλογή: </string>
     <string name="select_preset">Επιλογή προεπιλογής…</string>

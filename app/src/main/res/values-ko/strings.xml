@@ -24,6 +24,7 @@
     <string name="save_failed">저장 실패</string>
     <string name="failed">실패</string>
     <string name="tag_system">시스템</string>
+    <string name="tag_user">사용자</string>
     <string name="custom_prefix">사용자 지정: </string>
     <string name="default_prefix">기본값: </string>
     <string name="select_preset">프리셋 선택…</string>

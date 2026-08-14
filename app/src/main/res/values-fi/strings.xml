@@ -24,6 +24,7 @@
     <string name="save_failed">Tallennus epäonnistui</string>
     <string name="failed">Epäonnistui</string>
     <string name="tag_system">Järjestelmä</string>
+    <string name="tag_user">Käyttäjä</string>
     <string name="custom_prefix">Mukautettu: </string>
     <string name="default_prefix">Oletus: </string>
     <string name="select_preset">Valitse esiasetus…</string>

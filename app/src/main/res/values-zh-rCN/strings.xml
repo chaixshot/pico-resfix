@@ -31,5 +31,7 @@
     <string name="landscape">横屏</string>
     <string name="portrait">竖屏</string>
     <string name="default_title">默认设置（未单独配置的非系统应用）</string>
+    <string name="tag_system">系统</string>
+    <string name="tag_user">用户</string>
     <string name="tag_dock">底栏</string>
 </resources>

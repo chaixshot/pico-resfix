@@ -24,6 +24,7 @@
     <string name="save_failed">Ошибка сохранения</string>
     <string name="failed">Ошибка</string>
     <string name="tag_system">Система</string>
+    <string name="tag_user">Пользователь</string>
     <string name="custom_prefix">Вручную: </string>
     <string name="default_prefix">По умолчанию: </string>
     <string name="select_preset">Выберите предустановку…</string>

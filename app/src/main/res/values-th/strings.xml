@@ -24,6 +24,7 @@
     <string name="save_failed">บันทึกไม่สำเร็จ</string>
     <string name="failed">ล้มเหลว</string>
     <string name="tag_system">ระบบ</string>
+    <string name="tag_user">ผู้ใช้</string>
     <string name="custom_prefix">กำหนดเอง: </string>
     <string name="default_prefix">เริ่มต้น: </string>
     <string name="select_preset">เลือกค่าที่ตั้งไว้ล่วงหน้า…</string>

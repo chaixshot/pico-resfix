@@ -89,10 +89,10 @@ public final class Config {
         return g;
     }
 
-    /** List installed apps (any with a launchable activity). filterSystem hides system apps.
+    /** List installed apps (any with a launchable activity).
      *  PICO does not expose most 2D apps via the standard MAIN/LAUNCHER intent, so we list ALL
      *  installed apps that have at least one activity (covers the full third-party set). */
-    public static List<AppEntry> listApps(Context ctx, boolean filterSystem, GlobalCfg glob) {
+    public static List<AppEntry> listApps(Context ctx, boolean showUser, boolean showSystem, boolean showVR, GlobalCfg glob) {
         List<AppEntry> out = new ArrayList<>();
         try {
             PackageManager pm = ctx.getPackageManager();
@@ -104,12 +104,17 @@ public final class Config {
             for (ApplicationInfo ai : sorted) {
                 String pkg = ai.packageName;
                 if (pkg == null || pkg.equals(ctx.getPackageName())) continue; // hide ourselves
+
+                boolean isVR = ai.metaData != null && "vr".equals(ai.metaData.getString("pvr.app.type"));
                 
                 // Check metadata for "pico.vr.position: near" or "pvr.2dtovr.mode: 6"
                 boolean isDock = isAppDockMode(pm, pkg, ai);
 
                 boolean sys = (ai.flags & (ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0;
-                if (sys && filterSystem) continue;
+                
+                if (isVR && !showVR) continue;
+                if (!isVR && sys && !showSystem) continue;
+                if (!isVR && !sys && !showUser) continue;
                 
                 AppEntry e = new AppEntry();
                 e.pkg = pkg;

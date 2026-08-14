@@ -24,6 +24,7 @@
     <string name="save_failed">Salvarea a eșuat</string>
     <string name="failed">Eșuat</string>
     <string name="tag_system">Sistem</string>
+    <string name="tag_user">Utilizator</string>
     <string name="custom_prefix">Personalizat: </string>
     <string name="default_prefix">Implicit: </string>
     <string name="select_preset">Selectați presetarea…</string>
