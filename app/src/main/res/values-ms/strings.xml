@@ -36,4 +36,5 @@
     <string name="enable_dock">Dayakan Dok</string>
     <string name="landscape">Landskap</string>
     <string name="portrait">Potret</string>
+    <string name="tag_dock">Dok</string>
 </resources>

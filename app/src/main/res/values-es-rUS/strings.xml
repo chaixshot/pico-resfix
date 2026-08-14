@@ -36,4 +36,5 @@
     <string name="enable_dock">Activar dock</string>
     <string name="landscape">Paisaje</string>
     <string name="portrait">Retrato</string>
+    <string name="tag_dock">Dock</string>
 </resources>

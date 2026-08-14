@@ -36,4 +36,5 @@
     <string name="enable_dock">Dock\'u etkinleştir</string>
     <string name="landscape">Yatay</string>
     <string name="portrait">Dikey</string>
+    <string name="tag_dock">Dock</string>
 </resources>

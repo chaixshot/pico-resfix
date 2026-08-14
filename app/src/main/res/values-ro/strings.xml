@@ -36,4 +36,5 @@
     <string name="enable_dock">Activați dock-ul</string>
     <string name="landscape">Vedere</string>
     <string name="portrait">Portret</string>
+    <string name="tag_dock">Dock</string>
 </resources>

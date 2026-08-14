@@ -165,6 +165,7 @@ public class AppListActivity extends AppCompatActivity {
             h.pkg.setText(e.pkg);
             h.pkg.setSelected(true);
             h.cardSys.setVisibility(e.isSystem ? View.VISIBLE : View.GONE);
+            h.cardDock.setVisibility(e.isDock ? View.VISIBLE : View.GONE);
             String prefix = e.hasOverride
                     ? h.root.getContext().getString(R.string.custom_prefix)
                     : h.root.getContext().getString(R.string.default_prefix);
@@ -209,11 +210,12 @@ public class AppListActivity extends AppCompatActivity {
         public int getItemCount() { return apps == null ? 0 : apps.size(); }
 
         class VH extends RecyclerView.ViewHolder {
-            View root, cardSys; TextView label, pkg, res;
+            View root, cardSys, cardDock; TextView label, pkg, res;
             ImageView icon; String tag;
             VH(View v) { super(v); root = v; label = v.findViewById(R.id.tv_label);
                 pkg = v.findViewById(R.id.tv_pkg); res = v.findViewById(R.id.tv_res);
                 cardSys = v.findViewById(R.id.card_sys);
+                cardDock = v.findViewById(R.id.card_dock);
                 icon = v.findViewById(R.id.iv_icon); }
         }
     }

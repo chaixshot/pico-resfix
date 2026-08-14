@@ -44,4 +44,5 @@
         <item>2560 × 1440</item>
         <item>3840 × 2160</item>
     </string-array>
+    <string name="tag_dock">Dock</string>
 </resources>

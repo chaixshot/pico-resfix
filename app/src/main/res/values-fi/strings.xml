@@ -36,4 +36,5 @@
     <string name="enable_dock">Ota telakka käyttöön</string>
     <string name="landscape">Vaaka</string>
     <string name="portrait">Pysty</string>
+    <string name="tag_dock">Dock</string>
 </resources>

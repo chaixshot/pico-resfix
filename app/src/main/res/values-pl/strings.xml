@@ -36,4 +36,5 @@
     <string name="enable_dock">Włącz dok</string>
     <string name="landscape">Pozioma</string>
     <string name="portrait">Pionowa</string>
+    <string name="tag_dock">Dock</string>
 </resources>

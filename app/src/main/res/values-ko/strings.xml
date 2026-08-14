@@ -36,4 +36,5 @@
     <string name="enable_dock">독 활성화</string>
     <string name="landscape">가로</string>
     <string name="portrait">세로</string>
+    <string name="tag_dock">독</string>
 </resources>

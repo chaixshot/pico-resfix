@@ -29,7 +29,7 @@ public final class Config {
         public CharSequence label;
         public boolean isSystem;
         public boolean hasOverride;
-        public boolean isNearMode;
+        public boolean isDock;
         public int w, h, density;   // effective values
     }
 
@@ -116,7 +116,7 @@ public final class Config {
                 CharSequence lb = ai.loadLabel(pm);
                 e.label = (lb != null) ? lb : pkg;
                 e.isSystem = sys;
-                e.isNearMode = isDock;
+                e.isDock = isDock;
 
                 if (appsJ.has(pkg)) {
                     JSONObject a = appsJ.optJSONObject(pkg);
@@ -125,10 +125,12 @@ public final class Config {
                         e.w = a.optInt("w", 0);
                         e.h = a.optInt("h", 0);
                         e.density = a.has("density") ? a.getInt("density") : -1;
+                        if (a.has("dock"))
+                            e.isDock = a.optBoolean("dock", false);
                     }
                 }
                 if (!e.hasOverride) {
-                    if (e.isNearMode) {
+                    if (e.isDock) {
                         e.w = glob.dockWidth; e.h = glob.dockHeight; e.density = glob.dockDensity;
                     } else {
                         e.w = glob.floatingWidth; e.h = glob.floatingHeight; e.density = glob.floatingDensity;

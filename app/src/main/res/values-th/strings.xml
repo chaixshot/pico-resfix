@@ -36,4 +36,5 @@
     <string name="enable_dock">เปิดใช้งานด็อก</string>
     <string name="landscape">แนวนอน</string>
     <string name="portrait">แนวตั้ง</string>
+    <string name="tag_dock">ด็อก</string>
 </resources>
