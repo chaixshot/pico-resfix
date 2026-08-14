@@ -10,8 +10,8 @@ android {
         applicationId "com.picoxr.resfix"
         minSdk 29
         targetSdk 34
-        versionCode 2
-        versionName "1.1"
+        versionCode 3
+        versionName "1.2"
     }
 
     buildTypes {
@@ -42,8 +42,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
-    // Xposed API is provided by the LSPosed/Vector framework at runtime.
-    // We compile against the local stub jar (compileOnly) so the real Xposed
-    // classes are NOT bundled into the APK (Vector refuses modules that bundle them).
-    compileOnly files('libs/xposed-api.jar')
+    // Vector's legacy bridge exposes the older API signature where hook helpers
+    // return XC_MethodHook.Unhook. Keep this compile-only so it is never bundled.
+    compileOnly files('libs/vector-legacy-xposed-api.jar')
 }

@@ -13,7 +13,7 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 /**
- * ResFix hook — per-app virtual-display resolution override for PICO 4.
+ * ResFix hook — per-app virtual-display resolution and dock-mode override for PICO 4.
  *
  * We hook AppContainer.createVirtualDisplay(String,int,int,int,int) in
  * com.picovr.systemext, invoked by AppRecord as createVirtualDisplay("NS_APP[<pkg>]",
@@ -28,7 +28,13 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  *
  * Config: /data/local/tmp/resfix.cfg (JSON)
  *   { "default": { "w":1920,"h":1080,"density":200,"applyThird":true,"applySystem":false },
- *     "apps":    { "<pkg>": { "w":2560,"h":1440,"density":240 } } }
+ *     "apps":    { "<pkg>": { "w":2560,"h":1440,"density":240,"dock":true } } }
+ *
+ * Dock mode reproduces the SystemExt-visible parts of Pico2Dock's manifest patch at runtime:
+ * near-panel routing (type 2002), native 900 x 600 dp layout, resizable-panel support, and
+ * persistence while a fullscreen app is shown.
+ * It deliberately does not mark the target as a VR app: pvr.2dtovr.mode is consumed outside
+ * this Java launch path and treating a normal Android activity as VR would be unsafe.
  */
 public class ResFix implements IXposedHookLoadPackage {
 
@@ -89,6 +95,20 @@ public class ResFix implements IXposedHookLoadPackage {
         } catch (Throwable ignored) { return null; }
     }
 
+    /** True when this package should use PICO's near-panel (Dock) window stack. */
+    static boolean isDockEnabled(String pkg) {
+        if (pkg == null) return false;
+        try {
+            String s = readConfigText();
+            if (s == null) return false;
+            JSONObject apps = new JSONObject(s).optJSONObject("apps");
+            JSONObject app = apps != null ? apps.optJSONObject(pkg) : null;
+            return app != null && app.optBoolean("dock", false);
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
     static boolean isNonSystemApp(Object container) {
         if (container == null) return true;
         try {
@@ -141,8 +161,88 @@ public class ResFix implements IXposedHookLoadPackage {
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lp) throws Throwable {
         if (lp.packageName == null || !"com.picovr.systemext".equals(lp.packageName)) return;
         try {
+            Class<?> activityInfo = XposedHelpers.findClass("android.content.pm.ActivityInfo", lp.classLoader);
+            Class<?> appManagerUtils = XposedHelpers.findClass(
+                    "com.bytedance.nativeshell.appmanager.AppManagerUtils", lp.classLoader);
+
+            // AppRecord construction resolves the window type through this method. Returning 2002
+            // before the record is built routes the app into the native near-panel Dock stack
+            // without changing its installed package metadata.
+            XposedHelpers.findAndHookMethod(appManagerUtils, "getWindowType", activityInfo,
+                    new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) {
+                            Object info = param.args[0];
+                            String pkg = fieldString(info, "packageName");
+                            if (!isDockEnabled(pkg)) return;
+                            param.setResult(2002); // AppRecord.convertPositionToWindowType("near")
+                            XposedBridge.log(TAG + ": Dock " + pkg + " -> near panel (type 2002)");
+                        }
+                    });
+
+            Class<?> appRecord = XposedHelpers.findClass(
+                    "com.bytedance.nativeshell.appmanager.AppRecord", lp.classLoader);
+
+            // ActivityStarterControl reaches this sibling resolver via isNearPanel(). Hook it as
+            // well so a Dock app is immediately allowed while an immersive VR activity is active,
+            // matching the native near-panel policy rather than merely changing its final layer.
+            XposedHelpers.findAndHookMethod(appRecord, "getWindowType", activityInfo,
+                    new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) {
+                            Object info = param.args[0];
+                            String pkg = fieldString(info, "packageName");
+                            if (isDockEnabled(pkg)) {
+                                param.setResult(2002);
+                            }
+                        }
+                    });
+
+            // Pico2Dock writes android:resizeableActivity="true" into every activity. SystemExt
+            // records the parsed flag in mAppResizeable; keep that state true for runtime-Docked
+            // apps so panel resize affordances do not depend on the original APK manifest.
+            XposedHelpers.findAndHookMethod(appRecord, "prepareAppData", "android.content.Context",
+                    new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) {
+                            String pkg = pkgFromThis(param.thisObject);
+                            if (!isDockEnabled(pkg)) return;
+                            try {
+                                XposedHelpers.setObjectField(param.thisObject, "mAppResizeable", Boolean.TRUE);
+                            } catch (Throwable ignored) {}
+                        }
+                    });
+            XposedHelpers.findAndHookMethod(appRecord, "resizeable", new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) {
+                    if (isDockEnabled(pkgFromThis(param.thisObject))) {
+                        param.setResult(true);
+                    }
+                }
+            });
+
             Class<?> appContainer = XposedHelpers.findClass(
                     "com.bytedance.nativeshell.appmanager.AppContainer", lp.classLoader);
+
+            // A NoNavigationBar/fullscreen AppRecord normally hides every visible 2002 panel
+            // through updateVisible(false, VISIBLE_CHANGE_BY_HIDE_BY_FULLSCREEN_SHOW == 6).
+            // Pico2Dock's custom-panel path remains usable in fullscreen content, so preserve
+            // only configured Dock records for that specific reason. User closes, Home, screen
+            // state, seethrough, and every non-Dock panel keep the stock visibility policy.
+            XposedHelpers.findAndHookMethod(appContainer, "updateVisible", boolean.class, int.class,
+                    new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) {
+                            boolean visible = (Boolean) param.args[0];
+                            int changeType = (Integer) param.args[1];
+                            if (!visible && changeType == 6 && isDockEnabled(pkgFromThis(param.thisObject))) {
+                                XposedBridge.log(TAG + ": keep Dock visible during fullscreen "
+                                        + pkgFromThis(param.thisObject));
+                                param.setResult(false);
+                            }
+                        }
+                    });
+
             XposedHelpers.findAndHookMethod(appContainer, "createVirtualDisplay",
                     String.class, int.class, int.class, int.class, int.class,
                     new XC_MethodHook() {
@@ -180,7 +280,7 @@ public class ResFix implements IXposedHookLoadPackage {
                                     + " (mScale-consistent)");
                         }
                     });
-            XposedBridge.log(TAG + ": installed (per-app, mScale-consistent)");
+            XposedBridge.log(TAG + ": installed (per-app resolution + Dock mode)");
         } catch (Throwable t) {
             XposedBridge.log(TAG + ": hook failed");
             XposedBridge.log(t);

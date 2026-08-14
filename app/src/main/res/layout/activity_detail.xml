@@ -156,6 +156,24 @@
 
                     </LinearLayout>
 
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        app:cardBackgroundColor="@color/card_bg"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/sw_dock"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp"
+                            android:text="@string/enable_dock"
+                            android:textAppearance="?attr/textAppearanceTitleMedium" />
+                    </com.google.android.material.card.MaterialCardView>
+
                     <!-- Presets Section -->
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"

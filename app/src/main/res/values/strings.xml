@@ -9,6 +9,7 @@
 
     <string name="detail_title">App Resolution</string>
     <string name="enable_override">Enable Override</string>
+    <string name="enable_dock">Launch in Dock</string>
     <string name="preset_label">Preset</string>
     <string name="custom_label">Custom (pixels)</string>
     <string name="width_hint">Width</string>

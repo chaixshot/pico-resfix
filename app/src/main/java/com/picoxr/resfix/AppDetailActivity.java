@@ -34,7 +34,7 @@ public class AppDetailActivity extends AppCompatActivity {
     String pkg;
     TextView tvTitle, tvPkg;
     ImageView ivIcon;
-    MaterialSwitch swEnable;
+    MaterialSwitch swEnable, swDock;
     Spinner spPreset, spPresetSwap;
     TextInputEditText etW, etH, etDensity;
     MaterialButton btnSave, btnRemove, btnSwapVal;
@@ -59,6 +59,7 @@ public class AppDetailActivity extends AppCompatActivity {
         tvPkg = findViewById(R.id.tv_pkg);
         ivIcon = findViewById(R.id.iv_icon);
         swEnable = findViewById(R.id.sw_enable);
+        swDock = findViewById(R.id.sw_dock);
         spPreset = findViewById(R.id.sp_preset);
         spPresetSwap = findViewById(R.id.sp_preset_swap);
         etW = findViewById(R.id.et_w);
@@ -124,6 +125,9 @@ public class AppDetailActivity extends AppCompatActivity {
         });
 
         loadCurrent();
+        if (TextUtils.isEmpty(pkg)) {
+            swDock.setVisibility(View.GONE);
+        }
         swEnable.setOnCheckedChangeListener((x, checked) -> {
             spPreset.setEnabled(checked);
             spPresetSwap.setEnabled(checked);
@@ -164,6 +168,7 @@ public class AppDetailActivity extends AppCompatActivity {
         JSONObject root = Config.readRoot();
         JSONObject target = null;
         boolean enabled = true;
+        boolean dock = false;
         try {
             if (TextUtils.isEmpty(pkg)) {
                 target = Config.defaultObj(root);
@@ -172,6 +177,7 @@ public class AppDetailActivity extends AppCompatActivity {
                 if (apps.has(pkg)) {
                     target = apps.getJSONObject(pkg);
                     enabled = !target.optBoolean("disabled", false);
+                    dock = target.optBoolean("dock", false);
                 }
             }
         } catch (Throwable ignored) {}
@@ -185,6 +191,7 @@ public class AppDetailActivity extends AppCompatActivity {
             etW.setText("1602"); etH.setText("902");
         }
         swEnable.setChecked(enabled);
+        swDock.setChecked(dock);
         boolean en = enabled || TextUtils.isEmpty(pkg); // default always editable
         spPreset.setEnabled(en);
         spPresetSwap.setEnabled(en);
@@ -206,6 +213,7 @@ public class AppDetailActivity extends AppCompatActivity {
                 if (target == null) { target = new JSONObject(); apps.put(pkg, target); }
                 root.put("apps", apps);
                 target.put("disabled", !swEnable.isChecked());
+                target.put("dock", swDock.isChecked());
             }
             target.put("w", w); target.put("h", h);
             String d = etDensity.getText() != null ? etDensity.getText().toString().trim() : "";
