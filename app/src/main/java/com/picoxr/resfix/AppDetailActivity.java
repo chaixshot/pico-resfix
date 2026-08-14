@@ -178,7 +178,11 @@ public class AppDetailActivity extends AppCompatActivity {
                 if (apps.has(pkg)) {
                     target = apps.getJSONObject(pkg);
                     enabled = !target.optBoolean("disabled", false);
-                    isDock = target.optBoolean("dock", false);
+                    // Keep legacy resolution-only entries on the APK's native window route.
+                    // A missing dock key means no window-mode override, not Floating.
+                    isDock = target.has("dock")
+                            ? target.optBoolean("dock", false)
+                            : Config.isAppDockMode(getPackageManager(), pkg, null);
                 } else {
                     isDock = Config.isAppDockMode(getPackageManager(), pkg, null);
                 }

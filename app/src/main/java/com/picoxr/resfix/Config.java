@@ -112,12 +112,20 @@ public final class Config {
 
                 if (appsJ.has(pkg)) {
                     JSONObject a = appsJ.optJSONObject(pkg);
-                    if (a != null && !a.optBoolean("disabled", false)) {
-                        hasOverride = true;
+                    if (a != null) {
+                        boolean resolutionEnabled = !a.optBoolean("disabled", false);
+                        // Dock routing remains active even when resolution overriding is disabled.
+                        // Treat that as a configured entry so filters cannot hide it.
+                        hasOverride = resolutionEnabled || a.has("dock");
                         overW = a.optInt("w", 0);
                         overH = a.optInt("h", 0);
                         overD = a.has("density") ? a.getInt("density") : -1;
                         if (a.has("dock")) overDock = a.optBoolean("dock", false);
+                        if (!resolutionEnabled) {
+                            overW = 0;
+                            overH = 0;
+                            overD = -1;
+                        }
                     }
                 }
 
@@ -136,7 +144,7 @@ public final class Config {
                 e.isDock = overDock;
                 e.hasOverride = hasOverride;
 
-                if (hasOverride) {
+                if (overW > 0 && overH > 0) {
                     e.w = overW;
                     e.h = overH;
                     e.density = overD;
