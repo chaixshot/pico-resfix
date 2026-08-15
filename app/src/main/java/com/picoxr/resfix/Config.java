@@ -37,6 +37,7 @@ public final class Config {
         public int floatingWidth = 1602, floatingHeight = 902, floatingDensity = 200;   // Far mode default
         public int dockWidth = 1127, dockHeight = 752, dockDensity = 200; // Near mode default
         public boolean applyThird = true, applySystem = false;
+        public boolean showUser = true, showSystem = false, showVR = false;
     }
 
     // --- read ---
@@ -85,6 +86,10 @@ public final class Config {
 
             g.applyThird = d.optBoolean("applyThird", true);
             g.applySystem = d.optBoolean("applySystem", false);
+
+            g.showUser = d.optBoolean("showUser", true);
+            g.showSystem = d.optBoolean("showSystem", false);
+            g.showVR = d.optBoolean("showVR", false);
         } catch (Throwable ignored) {}
         return g;
     }
@@ -132,8 +137,10 @@ public final class Config {
                 // Filtering: skip if not active filter AND no override
                 if (!hasOverride) {
                     if (isVR && !showVR) continue;
-                    if (!isVR && isSystem && !showSystem) continue;
-                    if (!isVR && !isSystem && !showUser) continue;
+                    if (!isVR) {
+                        if (isSystem && !showSystem) continue;
+                        if (!isSystem && !showUser) continue;
+                    }
                 }
                 
                 AppEntry e = new AppEntry();

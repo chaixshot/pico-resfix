@@ -103,23 +103,39 @@ public class AppListActivity extends AppCompatActivity {
             btnUser.setOnClickListener(v -> {
                 showUser = !showUser;
                 updateFilterButtonStyle(btnUser, showUser);
+                saveFilters();
                 reload();
             });
             btnSys.setOnClickListener(v -> {
                 showSystem = !showSystem;
                 updateFilterButtonStyle(btnSys, showSystem);
+                saveFilters();
                 reload();
             });
             btnVR.setOnClickListener(v -> {
                 showVR = !showVR;
                 updateFilterButtonStyle(btnVR, showVR);
+                saveFilters();
                 reload();
             });
         }
         return true;
     }
 
+    private void saveFilters() {
+        try {
+            org.json.JSONObject root = Config.readRoot();
+            org.json.JSONObject d = Config.defaultObj(root);
+            d.put("showUser", showUser);
+            d.put("showSystem", showSystem);
+            d.put("showVR", showVR);
+            root.put("default", d);
+            Config.writeRoot(root);
+        } catch (Throwable ignored) {}
+    }
+
     private void updateFilterButtonStyle(MaterialButton btn, boolean active) {
+        if (btn == null) return;
         if (active) {
             btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(R.color.toggle_button)));
             btn.setTextColor(getColor(android.R.color.white));
@@ -143,6 +159,10 @@ public class AppListActivity extends AppCompatActivity {
 
     void reload() {
         glob = Config.getGlobal();
+        showUser = glob.showUser;
+        showSystem = glob.showSystem;
+        showVR = glob.showVR;
+
         allApps = Config.listApps(this, showUser, showSystem, showVR, glob);
 
         // Sort: Custom first, then by label alphabet
@@ -154,7 +174,7 @@ public class AppListActivity extends AppCompatActivity {
         });
 
         android.util.Log.i("ResFixGUI", "listApps returned " + allApps.size()
-                + " apps (showUser=" + showUser + ", showSystem=" + showSystem + ")");
+                + " apps (showUser=" + showUser + ", showSystem=" + showSystem + ", showVR=" + showVR + ")");
         
         filter(etSearch.getText().toString());
     }
