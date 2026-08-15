@@ -37,7 +37,7 @@ public class AppDetailActivity extends AppCompatActivity {
     MaterialSwitch swEnable, swDock;
     Spinner spPreset, spPresetSwap;
     TextInputEditText etW, etH, etDensity;
-    MaterialButton btnSave, btnRemove, btnSwapVal;
+    MaterialButton btnSave, btnApplyRestart, btnRemove, btnSwapVal;
 
     final String[] resFloatArr = {"1280 × 722","1600 × 902","1920 × 1082","2560 × 1442","3840 × 2162"};
     final String[] resDockArr = {"807 × 432","1127 × 752","1447 × 1072","1767 × 1392","2087 × 1712"};
@@ -66,6 +66,7 @@ public class AppDetailActivity extends AppCompatActivity {
         etH = findViewById(R.id.et_h);
         etDensity = findViewById(R.id.et_density);
         btnSave = findViewById(R.id.btn_save);
+        btnApplyRestart = findViewById(R.id.btn_apply_restart);
         btnRemove = findViewById(R.id.btn_remove);
         btnSwapVal = findViewById(R.id.btn_swap_val);
 
@@ -127,6 +128,7 @@ public class AppDetailActivity extends AppCompatActivity {
         loadCurrent();
         if (TextUtils.isEmpty(pkg)) {
             swDock.setVisibility(View.GONE);
+            btnApplyRestart.setVisibility(View.GONE);
         }
         swEnable.setOnCheckedChangeListener((x, checked) -> {
             spPreset.setEnabled(checked);
@@ -135,6 +137,9 @@ public class AppDetailActivity extends AppCompatActivity {
         });
 
         btnSave.setOnClickListener(v -> save());
+        btnApplyRestart.setOnClickListener(v -> {
+            if (save()) restartTargetApp();
+        });
         btnRemove.setOnClickListener(v -> removeOverride());
         btnSwapVal.setOnClickListener(v -> {
             Editable tw = etW.getText();
@@ -231,14 +236,17 @@ public class AppDetailActivity extends AppCompatActivity {
         etW.setEnabled(en); etH.setEnabled(en); etDensity.setEnabled(en);
     }
 
-    void save() {
+    boolean save() {
         Config.GlobalCfg glob = Config.getGlobal();
         boolean isDockInEditor = swDock.isChecked();
         int defW = isDockInEditor ? glob.dockWidth : glob.floatingWidth;
         int defH = isDockInEditor ? glob.dockHeight : glob.floatingHeight;
         
         int w = parseInt(etW, defW), h = parseInt(etH, defH);
-        if (w < 320 || h < 240) { Toast.makeText(this,R.string.invalid_res,Toast.LENGTH_SHORT).show(); return; }
+        if (w < 320 || h < 240) {
+            Toast.makeText(this, R.string.invalid_res, Toast.LENGTH_SHORT).show();
+            return false;
+        }
         try {
             JSONObject root = Config.readRoot();
             if (TextUtils.isEmpty(pkg)) {
@@ -263,10 +271,32 @@ public class AppDetailActivity extends AppCompatActivity {
             }
             boolean ok = Config.writeRoot(root);
             Toast.makeText(this, ok ? getString(R.string.saved_toast) : getString(R.string.write_failed), Toast.LENGTH_LONG).show();
-            if (ok) finish();
+            return ok;
         } catch (Throwable t) {
             Toast.makeText(this, getString(R.string.save_failed) + ": " + t, Toast.LENGTH_LONG).show();
+            return false;
         }
+    }
+
+    void restartTargetApp() {
+        final String targetPkg = pkg;
+        new Thread(() -> {
+            boolean restarted = false;
+            try {
+                Process process = new ProcessBuilder("su", "-c",
+                        "am force-stop " + targetPkg + "; monkey -p " + targetPkg + " 1")
+                        .redirectErrorStream(true)
+                        .start();
+                restarted = process.waitFor() == 0;
+            } catch (Throwable ignored) {}
+
+            final boolean success = restarted;
+            runOnUiThread(() -> {
+                Toast.makeText(this, success ? R.string.app_restarted_toast : R.string.restart_failed,
+                        Toast.LENGTH_LONG).show();
+                if (success) finish();
+            });
+        }).start();
     }
 
     void removeOverride() {
