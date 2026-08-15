@@ -7,6 +7,8 @@ Allows **per-app configuration** of 2D virtual display resolution (no longer loc
 
 Implemented by injecting into `com.picovr.systemext` using **Zygisk Vector (LSPosed compatible framework)** — no system APK replacement required.
 
+**Current release: v1.3**
+
 ---
 
 ## Prerequisites
@@ -24,7 +26,7 @@ Implemented by injecting into `com.picovr.systemext` using **Zygisk Vector (LSPo
 |---|---|---|
 | 2D App Virtual Display Resolution | 1602×902 (density 200) | **Per-app configuration** (Default 2560×1440) |
 | DPI | Fixed at 200 | **Overridable per-app** (Optional) |
-| Window Mode | Far-field Floating | **Switchable to Near-field Dock per-app** |
+| Window Mode | APK-defined Floating or Dock | **Force Floating or Near-field Dock per app** |
 | Scope | All 2D Apps | **Enabled by default for non-system apps, optional for system apps** |
 
 - Only changes resolution (px) + optional DPI. **Without changing density, it results in supersampling, keeping the aspect ratio unchanged.**
@@ -74,10 +76,10 @@ Config path: /data/local/tmp/resfix.cfg (JSON)
 
 - `default`: Uniform resolution for non-configured non-system apps (when applyThird=true).
 - `apps.<pkg>`: Individual override for an app (use `"disabled": true` to disable).
-- `apps.<pkg>.dock`: When `true`, routes this app to the native Near-field Dock; this setting is independent of resolution override.
+- `apps.<pkg>.dock`: `true` routes the app to the native Near-field Dock (type 2002); `false` forces the normal far floating window (type 3002), including apps previously converted by Pico2Dock. This setting is independent of resolution override.
 - `density` omitted = Follow system; `-1`/non-existent = Do not change density.
 
-Changes require fully closing and restarting the target app.
+After changing a per-app setting, use **Apply & Restart App** to save it and restart the selected target app. The plain **Save** button writes the configuration without restarting it. Default settings have no single target app, so they still require restarting affected apps manually.
 
 ---
 
@@ -96,5 +98,11 @@ gradle :app:assembleDebug
 1. `adb install -r app-debug.apk`
 2. Update LSPosed module database `apk_path`
 3. `adb reboot` (Vector rescans modules)
-4. Open "PICO 2D Resolution" on Home → App List → Tap an app to set resolution or enable Dock → Save
-5. Restart the target 2D app to apply changes
+4. Open "PICO 2D Resolution" on Home → App List → Tap an app to configure its resolution and window mode
+5. Use **Apply & Restart App** to save and immediately restart that app
+
+---
+
+## 7. Versioning
+
+Android `versionName`, Git tag, GitHub Release title, and release APK filename use the same version number. For example, v1.3 is published as tag `1.3` with `Pico-ResFix-v1.3.apk`.
