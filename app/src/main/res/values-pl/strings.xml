@@ -39,4 +39,7 @@
     <string name="portrait">Pionowa</string>
     <string name="tag_dock">Dock</string>
     <string name="tag_modified">Zmodyfikowano</string>
+    <string name="apply_restart_btn">Zastosuj i uruchom ponownie</string>
+    <string name="app_restarted_toast">Aplikacja została uruchomiona ponownie</string>
+    <string name="restart_failed">Ponowne uruchomienie nie powiodło se</string>
 </resources>

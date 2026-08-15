@@ -39,4 +39,7 @@
     <string name="portrait">Κατακόρυφα</string>
     <string name="tag_dock">Dock</string>
     <string name="tag_modified">Τροποποιήθηκε</string>
+    <string name="apply_restart_btn">Εφαρμογή &amp; Επανεκκίνηση</string>
+    <string name="app_restarted_toast">Η εφαρμογή επανεκκινήθηκε</string>
+    <string name="restart_failed">Η επανεκκίνηση απέτυχε</string>
 </resources>

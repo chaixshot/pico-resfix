@@ -39,4 +39,7 @@
     <string name="portrait">แนวตั้ง</string>
     <string name="tag_dock">ด็อก</string>
     <string name="tag_modified">แก้ไขแล้ว</string>
+    <string name="apply_restart_btn">นำไปใช้และเริ่มต้นใหม่</string>
+    <string name="app_restarted_toast">เริ่มต้นแอปพลิเคชันใหม่แล้ว</string>
+    <string name="restart_failed">เริ่มต้นใหม่ล้มเหลว</string>
 </resources>

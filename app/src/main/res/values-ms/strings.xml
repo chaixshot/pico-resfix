@@ -39,4 +39,7 @@
     <string name="portrait">Potret</string>
     <string name="tag_dock">Dok</string>
     <string name="tag_modified">Diubah suai</string>
+    <string name="apply_restart_btn">Guna &amp; Mulakan Semula</string>
+    <string name="app_restarted_toast">Aplikasi dimulakan semula</string>
+    <string name="restart_failed">Gagal mulakan semula</string>
 </resources>

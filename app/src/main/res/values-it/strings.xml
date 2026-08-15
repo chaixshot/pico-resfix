@@ -39,4 +39,7 @@
     <string name="portrait">Verticale</string>
     <string name="tag_dock">Dock</string>
     <string name="tag_modified">Modificato</string>
+    <string name="apply_restart_btn">Applica e riavvia</string>
+    <string name="app_restarted_toast">Applicazione riavviata</string>
+    <string name="restart_failed">Riavvio non riuscito</string>
 </resources>

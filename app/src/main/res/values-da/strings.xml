@@ -39,4 +39,7 @@
     <string name="portrait">Stående</string>
     <string name="tag_dock">Dock</string>
     <string name="tag_modified">Ændret</string>
+    <string name="apply_restart_btn">Anvend og genstart</string>
+    <string name="app_restarted_toast">Applikationen er genstartet</string>
+    <string name="restart_failed">Genstart mislykkedes</string>
 </resources>
