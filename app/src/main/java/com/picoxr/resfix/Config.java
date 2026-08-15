@@ -72,6 +72,16 @@ public final class Config {
         return new JSONObject();
     }
 
+    public static JSONObject ensureAppsObj(JSONObject root) {
+        try {
+            JSONObject apps = appsObj(root);
+            root.put("apps", apps);
+            return apps;
+        } catch (Throwable t) {
+            return new JSONObject();
+        }
+    }
+
     public static GlobalCfg getGlobal() {
         GlobalCfg g = new GlobalCfg();
         try {
@@ -199,16 +209,75 @@ public final class Config {
     public static boolean writeRoot(JSONObject root) {
         String json = root.toString();
         try {
-            Process p = new ProcessBuilder("su", "-c",
-                    "cat > " + PATH).redirectErrorStream(false).start();
-            // write to su's stdin
+            Process p = new ProcessBuilder("su", "-c", "cat > " + PATH)
+                    .redirectErrorStream(false).start();
             java.io.OutputStream os = p.getOutputStream();
             os.write(json.getBytes(StandardCharsets.UTF_8));
-            os.flush(); os.close();
+            os.flush();
+            os.close();
             int code = p.waitFor();
             // ensure perms
             new ProcessBuilder("su", "-c", "chmod 666 " + PATH).start().waitFor();
             return code == 0;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    public static String applyBatchJson(String raw) {
+        if (raw == null) return "No input";
+        try {
+            JSONObject input = new JSONObject(raw.trim());
+            JSONObject root = readRoot();
+            JSONObject apps = ensureAppsObj(root);
+
+            int count = 0;
+
+            if (input.has("default")) {
+                root.put("default", input.getJSONObject("default"));
+                count++;
+            }
+
+            JSONObject batchApps = input.optJSONObject("apps");
+            if (batchApps != null) {
+                java.util.Iterator<String> keys = batchApps.keys();
+                while (keys.hasNext()) {
+                    String pkg = keys.next();
+                    JSONObject entry = batchApps.optJSONObject(pkg);
+                    if (entry == null) continue;
+                    apps.put(pkg, entry);
+                    count++;
+                }
+            }
+
+            if (count <= 0) return "No batch entries";
+            root.put("apps", apps);
+            return writeRoot(root) ? "Imported " + count + " item(s)" : "Write failed";
+        } catch (Throwable t) {
+            return "Import failed: " + t.getClass().getSimpleName();
+        }
+    }
+
+    public static boolean applyBatchSettings(List<String> packages, int w, int h, int density,
+            boolean enabled, boolean dock) {
+        if (packages == null || packages.isEmpty() || w < 320 || h < 240) return false;
+        try {
+            JSONObject root = readRoot();
+            JSONObject apps = ensureAppsObj(root);
+            for (String pkg : packages) {
+                if (pkg == null || pkg.isEmpty()) continue;
+                JSONObject entry = apps.optJSONObject(pkg);
+                if (entry == null) entry = new JSONObject();
+                entry.put("disabled", !enabled);
+                entry.put("dock", dock);
+                entry.put("w", w);
+                entry.put("h", h);
+                if (density > 0) entry.put("density", density);
+                else entry.remove("density");
+                apps.put(pkg, entry);
+            }
+            root.put("apps", apps);
+            return writeRoot(root);
         } catch (Throwable t) {
             return false;
         }

@@ -38,8 +38,5 @@
     <string name="landscape">Na šířku</string>
     <string name="portrait">Na výšku</string>
     <string name="tag_dock">Dock</string>
-    <string name="tag_modified">Upraveno</string>
-    <string name="apply_restart_btn">Použít a restartovat</string>
-    <string name="app_restarted_toast">Aplikace byla restartována</string>
-    <string name="restart_failed">Restartování se nezdařilo</string>
+    <string name="save_and_apply">Uložit a použít</string>
 </resources>

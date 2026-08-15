@@ -101,6 +101,29 @@ gradle :app:assembleDebug
 4. Open "PICO 2D Resolution" on Home → App List → Tap an app to configure its resolution and window mode
 5. Use **Apply & Restart App** to save and immediately restart that app
 
+### 批量更改
+
+主界面右上角菜单里的 `Batch Import` 支持一次导入多项配置。直接粘贴 JSON：
+
+```json
+{
+  "default": {
+    "w": 2560,
+    "h": 1440,
+    "density": 200,
+    "applyThird": true,
+    "applySystem": false
+  },
+  "apps": {
+    "com.example.app1": { "w": 1920, "h": 1080, "density": 240, "dock": true },
+    "com.example.app2": { "w": 2560, "h": 1440, "disabled": false },
+    "com.example.app3": { "disabled": true }
+  }
+}
+```
+
+同名包会直接覆盖原有项；`default` 会替换全局默认项。
+
 ---
 
 ## 7. Versioning

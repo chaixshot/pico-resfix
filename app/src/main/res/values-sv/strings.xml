@@ -38,8 +38,5 @@
     <string name="landscape">Liggande</string>
     <string name="portrait">Stående</string>
     <string name="tag_dock">Dock</string>
-    <string name="tag_modified">Ändrad</string>
-    <string name="apply_restart_btn">Använd och starta om</string>
-    <string name="app_restarted_toast">Applikationen har startats om</string>
-    <string name="restart_failed">Omstart misslyckades</string>
+    <string name="save_and_apply">Spara och tillämpa</string>
 </resources>

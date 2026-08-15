@@ -38,8 +38,5 @@
     <string name="landscape">Vedere</string>
     <string name="portrait">Portret</string>
     <string name="tag_dock">Dock</string>
-    <string name="tag_modified">Modificat</string>
-    <string name="apply_restart_btn">Aplicați și reporniți</string>
-    <string name="app_restarted_toast">Aplicația a fost repornită</string>
-    <string name="restart_failed">Repornirea a eșuat</string>
+    <string name="save_and_apply">Salvează și aplică</string>
 </resources>

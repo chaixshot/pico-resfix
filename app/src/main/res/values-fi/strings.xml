@@ -38,8 +38,5 @@
     <string name="landscape">Vaaka</string>
     <string name="portrait">Pysty</string>
     <string name="tag_dock">Dock</string>
-    <string name="tag_modified">Muokattu</string>
-    <string name="apply_restart_btn">Käytä ja käynnistä uudelleen</string>
-    <string name="app_restarted_toast">Sovellus käynnistettiin uudelleen</string>
-    <string name="restart_failed">Uudelleenkäynnistys epäonnistui</string>
+    <string name="save_and_apply">Tallenna ja käytä</string>
 </resources>

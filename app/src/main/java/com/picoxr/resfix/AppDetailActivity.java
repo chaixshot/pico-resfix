@@ -2,6 +2,7 @@ package com.picoxr.resfix;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,19 +28,25 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
 /**
  * Per-app (or default) resolution editor. If pkg == "" it edits the global default
  * for non-system apps (stored under "default"), otherwise under "apps[<pkg>]".
  */
 public class AppDetailActivity extends AppCompatActivity {
 
+    public static final String EXTRA_BATCH_PACKAGES = "batch_packages";
     String pkg;
+    ArrayList<String> batchPackages;
     TextView tvTitle, tvPkg;
     ImageView ivIcon;
     MaterialSwitch swEnable, swDock;
     Spinner spPreset, spPresetSwap;
     TextInputEditText etW, etH, etDensity;
-    MaterialButton btnSave, btnApplyRestart, btnRemove, btnSwapVal;
+    MaterialButton btnSave, btnSaveAndApply, btnRemove, btnSwapVal;
 
     final String[] resFloatArr = {"1280 × 722","1600 × 902","1920 × 1082","2560 × 1442","3840 × 2162"};
     final String[] resDockArr = {"807 × 432","1127 × 752","1447 × 1072","1767 × 1392","2087 × 1712"};
@@ -48,6 +57,8 @@ public class AppDetailActivity extends AppCompatActivity {
         super.onCreate(b);
         setContentView(R.layout.activity_detail);
         pkg = getIntent().getStringExtra("pkg");
+        batchPackages = getIntent().getStringArrayListExtra(EXTRA_BATCH_PACKAGES);
+        boolean isBatch = isBatchMode();
 
         Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
@@ -66,14 +77,24 @@ public class AppDetailActivity extends AppCompatActivity {
         etH = findViewById(R.id.et_h);
         etDensity = findViewById(R.id.et_density);
         btnSave = findViewById(R.id.btn_save);
-        btnApplyRestart = findViewById(R.id.btn_apply_restart);
+        btnSaveAndApply = findViewById(R.id.btn_save_and_apply);
         btnRemove = findViewById(R.id.btn_remove);
         btnSwapVal = findViewById(R.id.btn_swap_val);
 
-        if (TextUtils.isEmpty(pkg)) {
+        if (isBatch) {
+            tvTitle.setText(getString(R.string.batch_apps_title, batchPackages.size()));
+            tvPkg.setText(R.string.batch_apps_hint);
+            ivIcon.setImageResource(R.drawable.ic_batch_apps);
+            View appInfoCard = findViewById(R.id.card_app_info);
+            appInfoCard.setClickable(true);
+            appInfoCard.setContentDescription(getString(R.string.batch_apps_hint));
+            appInfoCard.setOnClickListener(v -> showBatchAppsPopup(v));
+            btnRemove.setVisibility(View.GONE);
+        } else if (TextUtils.isEmpty(pkg)) {
             tvTitle.setText(R.string.default_title);
             tvPkg.setText(R.string.default_cfg);
             ivIcon.setImageResource(R.mipmap.ic_launcher);
+            btnSaveAndApply.setVisibility(View.GONE);
         } else {
             tvPkg.setText(pkg);
             try {
@@ -126,9 +147,8 @@ public class AppDetailActivity extends AppCompatActivity {
         });
 
         loadCurrent();
-        if (TextUtils.isEmpty(pkg)) {
+        if (TextUtils.isEmpty(pkg) && !isBatch) {
             swDock.setVisibility(View.GONE);
-            btnApplyRestart.setVisibility(View.GONE);
         }
         swEnable.setOnCheckedChangeListener((x, checked) -> {
             spPreset.setEnabled(checked);
@@ -136,10 +156,8 @@ public class AppDetailActivity extends AppCompatActivity {
             etW.setEnabled(checked); etH.setEnabled(checked); etDensity.setEnabled(checked);
         });
 
-        btnSave.setOnClickListener(v -> save());
-        btnApplyRestart.setOnClickListener(v -> {
-            if (save()) restartTargetApp();
-        });
+        btnSave.setOnClickListener(v -> save(false));
+        btnSaveAndApply.setOnClickListener(v -> save(true));
         btnRemove.setOnClickListener(v -> removeOverride());
         btnSwapVal.setOnClickListener(v -> {
             Editable tw = etW.getText();
@@ -171,6 +189,14 @@ public class AppDetailActivity extends AppCompatActivity {
 
     void loadCurrent() {
         Config.GlobalCfg glob = Config.getGlobal();
+        if (isBatchMode()) {
+            etW.setText(String.valueOf(glob.floatingWidth));
+            etH.setText(String.valueOf(glob.floatingHeight));
+            etDensity.setText("");
+            swEnable.setChecked(true);
+            swDock.setChecked(false);
+            return;
+        }
         JSONObject root = Config.readRoot();
         JSONObject target = null;
         boolean enabled = true;
@@ -236,18 +262,28 @@ public class AppDetailActivity extends AppCompatActivity {
         etW.setEnabled(en); etH.setEnabled(en); etDensity.setEnabled(en);
     }
 
-    boolean save() {
+    void save(boolean applyAfterSaving) {
         Config.GlobalCfg glob = Config.getGlobal();
         boolean isDockInEditor = swDock.isChecked();
         int defW = isDockInEditor ? glob.dockWidth : glob.floatingWidth;
         int defH = isDockInEditor ? glob.dockHeight : glob.floatingHeight;
         
         int w = parseInt(etW, defW), h = parseInt(etH, defH);
-        if (w < 320 || h < 240) {
-            Toast.makeText(this, R.string.invalid_res, Toast.LENGTH_SHORT).show();
-            return false;
-        }
+        if (w < 320 || h < 240) { Toast.makeText(this,R.string.invalid_res,Toast.LENGTH_SHORT).show(); return; }
         try {
+            if (isBatchMode()) {
+                String densityText = etDensity.getText() != null ? etDensity.getText().toString().trim() : "";
+                int density = TextUtils.isEmpty(densityText) ? -1 : parseIntStr(densityText);
+                boolean ok = Config.applyBatchSettings(batchPackages, w, h, density,
+                        swEnable.isChecked(), swDock.isChecked());
+                Toast.makeText(this, ok ? getString(R.string.batch_updated, batchPackages.size())
+                        : getString(R.string.write_failed), Toast.LENGTH_LONG).show();
+                if (ok) {
+                    if (applyAfterSaving) restartApps(batchPackages);
+                    finish();
+                }
+                return;
+            }
             JSONObject root = Config.readRoot();
             if (TextUtils.isEmpty(pkg)) {
                 JSONObject target = Config.defaultObj(root);
@@ -271,32 +307,13 @@ public class AppDetailActivity extends AppCompatActivity {
             }
             boolean ok = Config.writeRoot(root);
             Toast.makeText(this, ok ? getString(R.string.saved_toast) : getString(R.string.write_failed), Toast.LENGTH_LONG).show();
-            return ok;
+            if (ok) {
+                if (applyAfterSaving && !TextUtils.isEmpty(pkg)) restartApps(java.util.Collections.singletonList(pkg));
+                finish();
+            }
         } catch (Throwable t) {
             Toast.makeText(this, getString(R.string.save_failed) + ": " + t, Toast.LENGTH_LONG).show();
-            return false;
         }
-    }
-
-    void restartTargetApp() {
-        final String targetPkg = pkg;
-        new Thread(() -> {
-            boolean restarted = false;
-            try {
-                Process process = new ProcessBuilder("su", "-c",
-                        "am force-stop " + targetPkg + "; monkey -p " + targetPkg + " 1")
-                        .redirectErrorStream(true)
-                        .start();
-                restarted = process.waitFor() == 0;
-            } catch (Throwable ignored) {}
-
-            final boolean success = restarted;
-            runOnUiThread(() -> {
-                Toast.makeText(this, success ? R.string.app_restarted_toast : R.string.restart_failed,
-                        Toast.LENGTH_LONG).show();
-                if (success) finish();
-            });
-        }).start();
     }
 
     void removeOverride() {
@@ -313,6 +330,151 @@ public class AppDetailActivity extends AppCompatActivity {
             Toast.makeText(this, ok ? getString(R.string.remove_toast) : getString(R.string.write_failed), Toast.LENGTH_LONG).show();
             if (ok) finish();
         } catch (Throwable t) { Toast.makeText(this, R.string.failed, Toast.LENGTH_SHORT).show(); }
+    }
+
+    private boolean isBatchMode() {
+        return batchPackages != null && !batchPackages.isEmpty();
+    }
+
+    private void showBatchAppsPopup(View anchor) {
+        if (!isBatchMode()) return;
+
+        LinearLayout content = new LinearLayout(this);
+        int padding = dp(14);
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(padding, padding, padding, padding);
+        content.setBackgroundResource(R.drawable.bg_dropdown);
+
+        ArrayList<String> packages = new ArrayList<>(batchPackages);
+        packages.sort((first, second) -> appLabel(first).compareToIgnoreCase(appLabel(second)));
+        for (String packageName : packages) {
+            LinearLayout row = new LinearLayout(this);
+            row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            row.setPadding(0, dp(6), 0, dp(6));
+
+            ImageView icon = new ImageView(this);
+            row.addView(icon, new LinearLayout.LayoutParams(dp(36), dp(36)));
+            try {
+                icon.setImageDrawable(getPackageManager().getApplicationIcon(packageName));
+            } catch (PackageManager.NameNotFoundException ignored) {
+                icon.setImageResource(android.R.drawable.sym_def_app_icon);
+            }
+
+            LinearLayout textColumn = new LinearLayout(this);
+            textColumn.setOrientation(LinearLayout.VERTICAL);
+
+            TextView name = new TextView(this);
+            name.setText(appLabel(packageName));
+            name.setTextColor(getColor(android.R.color.white));
+            name.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge);
+            name.setSingleLine(true);
+            name.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            textColumn.addView(name, new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+            TextView packageText = new TextView(this);
+            packageText.setText(packageName);
+            packageText.setTextColor(getColor(android.R.color.darker_gray));
+            packageText.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall);
+            packageText.setSingleLine(true);
+            packageText.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            textColumn.addView(packageText, new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+            LinearLayout.LayoutParams nameParams = new LinearLayout.LayoutParams(0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+            nameParams.setMarginStart(dp(12));
+            row.addView(textColumn, nameParams);
+            content.addView(row, new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        }
+
+        PopupWindow popup = new PopupWindow(content, Math.max(anchor.getWidth(), dp(260)),
+                LinearLayout.LayoutParams.WRAP_CONTENT, true);
+        popup.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        popup.setElevation(dp(12));
+        popup.setOutsideTouchable(true);
+        popup.showAsDropDown(anchor, 0, dp(8));
+    }
+
+    private String appLabel(String packageName) {
+        try {
+            ApplicationInfo appInfo = getPackageManager().getApplicationInfo(packageName, 0);
+            CharSequence label = getPackageManager().getApplicationLabel(appInfo);
+            return !TextUtils.isEmpty(label) ? label.toString() : packageName;
+        } catch (PackageManager.NameNotFoundException ignored) {
+            return packageName;
+        }
+    }
+
+    private int dp(int value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
+    }
+
+    private void restartApps(java.util.List<String> packages) {
+        String foregroundPackage = getForegroundPackage();
+        for (String packageName : packages) {
+            if (TextUtils.isEmpty(packageName)) continue;
+            try {
+                if (!isAppRunning(packageName)) continue;
+                new ProcessBuilder("su", "-c", "am force-stop " + packageName).start().waitFor();
+                launchPackage(packageName);
+            } catch (Throwable ignored) {
+                // Saving the configuration must still succeed when an app cannot be relaunched.
+            }
+        }
+        if (!TextUtils.isEmpty(foregroundPackage) && !packages.contains(foregroundPackage)) {
+            launchPackage(foregroundPackage);
+        }
+    }
+
+    private boolean isAppRunning(String packageName) {
+        try {
+            Process process = new ProcessBuilder("su", "-c", "pidof " + packageName)
+                    .redirectErrorStream(true)
+                    .start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String output = reader.readLine();
+            reader.close();
+            return process.waitFor() == 0 && !TextUtils.isEmpty(output);
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
+    private String getForegroundPackage() {
+        try {
+            Process process = new ProcessBuilder("su", "-c", "dumpsys window windows")
+                    .redirectErrorStream(true)
+                    .start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                int marker = line.indexOf("mCurrentFocus=");
+                if (marker < 0) continue;
+                int slash = line.indexOf('/', marker);
+                if (slash < 0) continue;
+                int space = line.lastIndexOf(' ', slash);
+                String component = line.substring(space + 1, slash).trim();
+                int brace = component.lastIndexOf('}');
+                return brace >= 0 ? component.substring(brace + 1) : component;
+            }
+            reader.close();
+            process.waitFor();
+        } catch (Throwable ignored) {
+        }
+        return null;
+    }
+
+    private void launchPackage(String packageName) {
+        try {
+            Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+            if (launchIntent != null) {
+                launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(launchIntent);
+            }
+        } catch (Throwable ignored) {
+        }
     }
 
     static int parseInt(TextInputEditText e, int def) {

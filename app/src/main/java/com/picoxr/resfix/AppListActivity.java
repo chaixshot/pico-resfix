@@ -15,21 +15,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import android.content.res.ColorStateList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -43,6 +50,8 @@ public class AppListActivity extends AppCompatActivity {
     RecyclerView recycler;
     TextView status;
     FloatingActionButton fabDefault;
+    FloatingActionButton fabBatch;
+    FloatingActionButton fabBatchEdit;
     EditText etSearch;
     ImageView ivClearSearch;
     AppAdapter adapter;
@@ -55,6 +64,8 @@ public class AppListActivity extends AppCompatActivity {
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Map<String, Drawable> iconCache = new HashMap<>();
+    private final Set<String> selectedPackages = new HashSet<>();
+    private boolean selectionMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +79,8 @@ public class AppListActivity extends AppCompatActivity {
         recycler = findViewById(R.id.recycler);
         status = findViewById(R.id.status);
         fabDefault = findViewById(R.id.fab_default);
+        fabBatch = findViewById(R.id.fab_batch);
+        fabBatchEdit = findViewById(R.id.fab_batch_edit);
         etSearch = findViewById(R.id.et_search);
         ivClearSearch = findViewById(R.id.iv_clear_search);
 
@@ -76,6 +89,23 @@ public class AppListActivity extends AppCompatActivity {
         recycler.setAdapter(adapter);
 
         fabDefault.setOnClickListener(v -> openDefaultEditor());
+        fabBatch.setOnClickListener(v -> {
+            if (!selectionMode) {
+                selectionMode = true;
+                updateBatchButtonState();
+                adapter.notifyDataSetChanged();
+            } else {
+                exitSelectionMode();
+            }
+        });
+        fabBatchEdit.setOnClickListener(v -> {
+            if (selectedPackages.isEmpty()) {
+                android.widget.Toast.makeText(this, R.string.batch_selection_empty,
+                        android.widget.Toast.LENGTH_SHORT).show();
+                return;
+            }
+            showBatchSettingsDialog();
+        });
         ivClearSearch.setOnClickListener(v -> etSearch.setText(""));
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -134,14 +164,75 @@ public class AppListActivity extends AppCompatActivity {
     private void saveFilters() {
         try {
             org.json.JSONObject root = Config.readRoot();
-            org.json.JSONObject d = Config.defaultObj(root);
-            d.put("showUser", showUser);
-            d.put("showSystem", showSystem);
-            d.put("showVR", showVR);
-            d.put("showModified", showModified);
-            root.put("default", d);
+            org.json.JSONObject defaults = Config.defaultObj(root);
+            defaults.put("showUser", showUser);
+            defaults.put("showSystem", showSystem);
+            defaults.put("showVR", showVR);
+            defaults.put("showModified", showModified);
+            root.put("default", defaults);
             Config.writeRoot(root);
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_import_batch) {
+            showBatchImportDialog();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showBatchImportDialog() {
+        EditText input = new EditText(this);
+        input.setMinLines(8);
+        input.setHint("{\n  \"apps\": {\n    \"com.example.app\": {\"w\":1920,\"h\":1080,\"density\":240,\"dock\":true}\n  }\n}");
+        new AlertDialog.Builder(this)
+                .setTitle("Batch Import")
+                .setMessage("Paste JSON with default and/or apps. Existing entries with the same package will be replaced.")
+                .setView(input)
+                .setPositiveButton("Import", (d, which) -> {
+                    String result = Config.applyBatchJson(String.valueOf(input.getText()));
+                    android.widget.Toast.makeText(this, result, android.widget.Toast.LENGTH_LONG).show();
+                    reload();
+                })
+                .setNegativeButton(android.R.string.cancel, (d, which) -> exitSelectionMode())
+                .show();
+    }
+
+    private void exitSelectionMode() {
+        selectedPackages.clear();
+        selectionMode = false;
+        updateBatchButtonState();
+        adapter.notifyDataSetChanged();
+    }
+
+    private void showBatchSettingsDialog() {
+        ArrayList<String> packages = new ArrayList<>(selectedPackages);
+        exitSelectionMode();
+        Intent intent = new Intent(this, AppDetailActivity.class);
+        intent.putStringArrayListExtra(AppDetailActivity.EXTRA_BATCH_PACKAGES,
+                packages);
+        startActivity(intent);
+    }
+
+    private void updateBatchButtonState() {
+        int color = getColor(selectionMode ? R.color.primary : R.color.dropdown_bg);
+        fabBatch.setBackgroundTintList(ColorStateList.valueOf(color));
+        fabBatchEdit.setVisibility(selectionMode ? View.VISIBLE : View.GONE);
+        fabBatch.setContentDescription(selectionMode
+                ? getString(R.string.batch_selected_count, selectedPackages.size())
+                : getString(R.string.batch_select));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (selectionMode) {
+            exitSelectionMode();
+            return;
+        }
+        super.onBackPressed();
     }
 
     private void updateFilterButtonStyle(MaterialButton btn, boolean active) {
@@ -173,7 +264,6 @@ public class AppListActivity extends AppCompatActivity {
         showSystem = glob.showSystem;
         showVR = glob.showVR;
         showModified = glob.showModified;
-
         allApps = Config.listApps(this, showUser, showSystem, showVR, showModified, glob);
 
         // Sort: Custom first, then by label alphabet
@@ -185,7 +275,7 @@ public class AppListActivity extends AppCompatActivity {
         });
 
         android.util.Log.i("ResFixGUI", "listApps returned " + allApps.size()
-                + " apps (showUser=" + showUser + ", showSystem=" + showSystem + ", showVR=" + showVR + ")");
+                + " apps (showUser=" + showUser + ", showSystem=" + showSystem + ")");
         
         filter(etSearch.getText().toString());
     }
@@ -246,10 +336,22 @@ public class AppListActivity extends AppCompatActivity {
             } else {
                 h.res.setTextColor(h.root.getContext().getColor(android.R.color.white));
             }
+            h.selected.setOnCheckedChangeListener(null);
+            h.selected.setVisibility(selectionMode ? View.VISIBLE : View.GONE);
+            h.selected.setChecked(selectedPackages.contains(e.pkg));
+            h.selected.setOnCheckedChangeListener((button, checked) -> {
+                if (checked) selectedPackages.add(e.pkg);
+                else selectedPackages.remove(e.pkg);
+                updateBatchButtonState();
+            });
             h.root.setOnClickListener(v -> {
-                Intent i = new Intent(AppListActivity.this, AppDetailActivity.class);
-                i.putExtra("pkg", e.pkg);
-                startActivity(i);
+                if (selectionMode) {
+                    h.selected.setChecked(!h.selected.isChecked());
+                } else {
+                    Intent i = new Intent(AppListActivity.this, AppDetailActivity.class);
+                    i.putExtra("pkg", e.pkg);
+                    startActivity(i);
+                }
             });
 
             // Lazy load icon
@@ -281,11 +383,12 @@ public class AppListActivity extends AppCompatActivity {
 
         class VH extends RecyclerView.ViewHolder {
             View root, cardSys, cardDock; TextView label, pkg, res;
-            ImageView icon; String tag;
+            ImageView icon; com.google.android.material.checkbox.MaterialCheckBox selected; String tag;
             VH(View v) { super(v); root = v; label = v.findViewById(R.id.tv_label);
                 pkg = v.findViewById(R.id.tv_pkg); res = v.findViewById(R.id.tv_res);
                 cardSys = v.findViewById(R.id.card_sys);
                 cardDock = v.findViewById(R.id.card_dock);
+                selected = v.findViewById(R.id.cb_selected);
                 icon = v.findViewById(R.id.iv_icon); }
         }
     }

@@ -38,8 +38,5 @@
     <string name="landscape">Альбомная</string>
     <string name="portrait">Книжная</string>
     <string name="tag_dock">Док</string>
-    <string name="tag_modified">Изменено</string>
-    <string name="apply_restart_btn">Применить и перезапустить</string>
-    <string name="app_restarted_toast">Приложение перезапущено</string>
-    <string name="restart_failed">Ошибка перезапуска</string>
+    <string name="save_and_apply">Сохранить и применить</string>
 </resources>

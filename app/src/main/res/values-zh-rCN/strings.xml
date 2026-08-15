@@ -15,6 +15,7 @@
     <string name="density_label">DPI（可选，留空=跟随系统）</string>
     <string name="density_hint">如 200 / 240 / 320</string>
     <string name="save_btn">保存</string>
+    <string name="save_and_apply">保存并应用</string>
     <string name="remove_btn">移除设置（恢复默认）</string>
     <string name="saved_toast">已保存</string>
     <string name="remove_toast">已移除该应用设置</string>
@@ -33,9 +34,8 @@
     <string name="default_title">默认设置（未单独配置的非系统应用）</string>
     <string name="tag_system">系统</string>
     <string name="tag_user">用户</string>
-    <string name="tag_dock">底栏</string>
     <string name="tag_modified">已修改</string>
-    <string name="apply_restart_btn">应用并重启</string>
-    <string name="app_restarted_toast">应用已重启</string>
-    <string name="restart_failed">重启失败</string>
+    <string name="tag_dock">底栏</string>
+    <string name="batch_apps_title">已选应用（%1$d）</string>
+    <string name="batch_apps_hint">点击查看已选应用</string>
 </resources>

@@ -38,8 +38,5 @@
     <string name="landscape">横向き</string>
     <string name="portrait">縦向き</string>
     <string name="tag_dock">ドック</string>
-    <string name="tag_modified">変更済み</string>
-    <string name="apply_restart_btn">適用して再起動</string>
-    <string name="app_restarted_toast">アプリケーションを再起動しました</string>
-    <string name="restart_failed">再起動に失敗しました</string>
+    <string name="save_and_apply">保存して適用</string>
 </resources>

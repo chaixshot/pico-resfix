@@ -38,8 +38,5 @@
     <string name="landscape">Landscape</string>
     <string name="portrait">Portrait</string>
     <string name="tag_dock">Dock</string>
-    <string name="tag_modified">Modified</string>
-    <string name="apply_restart_btn">Apply &amp; Restart</string>
-    <string name="app_restarted_toast">Application restarted</string>
-    <string name="restart_failed">Restart failed</string>
+    <string name="save_and_apply">Save and apply</string>
 </resources>

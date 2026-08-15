@@ -17,9 +17,7 @@
     <string name="density_label">DPI (optional, leave blank to follow system)</string>
     <string name="density_hint">e.g. 200 / 240 / 320</string>
     <string name="save_btn">Save</string>
-    <string name="apply_restart_btn">Apply &amp; Restart</string>
-    <string name="app_restarted_toast">Application restarted</string>
-    <string name="restart_failed">Restart failed</string>
+    <string name="save_and_apply">Save and apply</string>
     <string name="remove_btn">Remove Settings (Restore Default)</string>
     <string name="saved_toast">Saved</string>
     <string name="remove_toast">App settings removed</string>
@@ -29,6 +27,7 @@
     <string name="failed">Failed</string>
     <string name="tag_system">System</string>
     <string name="tag_user">User</string>
+    <string name="tag_modified">Modified</string>
     <string name="custom_prefix">Custom: </string>
     <string name="default_prefix">Default: </string>
     <string name="select_preset">Select preset…</string>
@@ -50,5 +49,16 @@
     </string-array>
     <string name="tag_dock">Dock</string>
     <string name="tag_vr">VR</string>
-    <string name="tag_modified">Modified</string>
+    <string name="batch_select">Select multiple apps</string>
+    <string name="batch_settings">Batch Settings</string>
+    <string name="batch_apps_title">Selected apps (%1$d)</string>
+    <string name="batch_apps_hint">Tap to view selected apps</string>
+    <string name="batch_edit">Edit selected apps</string>
+    <string name="batch_selection_title">Select apps</string>
+    <string name="batch_selection_empty">Select at least one app first</string>
+    <string name="batch_selected_count">%1$d selected</string>
+    <string name="batch_apply">Apply</string>
+    <string name="batch_enable">Enable resolution override</string>
+    <string name="batch_dock">Use Dock mode</string>
+    <string name="batch_updated">Updated %1$d apps</string>
 </resources>

@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/menu_import_batch"
+        android:title="Batch Import"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/menu_filter"
         android:title="@string/show_system"
         app:actionLayout="@layout/layout_filter_buttons"

@@ -59,15 +59,6 @@
         android:text="@string/status_none"
         android:visibility="gone" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_default"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/default_title"
-        app:srcCompat="@drawable/ic_settings" />
-
     <com.google.android.material.card.MaterialCardView
         android:layout_width="320dp"
         android:layout_height="wrap_content"
@@ -123,5 +114,42 @@
                 app:tint="@android:color/white" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:gravity="end"
+        android:orientation="vertical"
+        android:elevation="16dp">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_batch_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:contentDescription="@string/batch_edit"
+            android:visibility="gone"
+            app:backgroundTint="@color/toggle_button"
+            app:srcCompat="@drawable/ic_settings" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_batch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:contentDescription="@string/batch_select"
+            app:backgroundTint="@color/dropdown_bg"
+            app:srcCompat="@android:drawable/ic_menu_agenda" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_default"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/default_title"
+            app:backgroundTint="@color/dropdown_bg"
+            app:srcCompat="@drawable/ic_settings" />
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

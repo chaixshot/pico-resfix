@@ -38,8 +38,5 @@
     <string name="landscape">Liggend</string>
     <string name="portrait">Staand</string>
     <string name="tag_dock">Dock</string>
-    <string name="tag_modified">Gewijzigd</string>
-    <string name="apply_restart_btn">Toepassen en opnieuw opstarten</string>
-    <string name="app_restarted_toast">Applicatie opnieuw opgestart</string>
-    <string name="restart_failed">Opnieuw opstarten mislukt</string>
+    <string name="save_and_apply">Opslaan en toepassen</string>
 </resources>
