@@ -39,4 +39,7 @@
     <string name="portrait">Dikey</string>
     <string name="tag_dock">Dock</string>
     <string name="tag_modified">Değiştirildi</string>
+    <string name="apply_restart_btn">Uygula ve Yeniden Başlat</string>
+    <string name="app_restarted_toast">Uygulama yeniden başlatıldı</string>
+    <string name="restart_failed">Yeniden başlatma başarısız</string>
 </resources>

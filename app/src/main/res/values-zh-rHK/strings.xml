@@ -39,4 +39,7 @@
     <string name="portrait">縱向</string>
     <string name="tag_dock">底欄</string>
     <string name="tag_modified">已修改</string>
+    <string name="apply_restart_btn">套用並重新啟動</string>
+    <string name="app_restarted_toast">應用程式已重新啟動</string>
+    <string name="restart_failed">重新啟動失敗</string>
 </resources>

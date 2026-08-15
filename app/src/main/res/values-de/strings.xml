@@ -39,4 +39,7 @@
     <string name="portrait">Hochformat</string>
     <string name="tag_dock">Dock</string>
     <string name="tag_modified">Geändert</string>
+    <string name="apply_restart_btn">Anwenden und neu starten</string>
+    <string name="app_restarted_toast">Anwendung neu gestartet</string>
+    <string name="restart_failed">Neustart fehlgeschlagen</string>
 </resources>

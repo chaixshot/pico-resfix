@@ -39,4 +39,7 @@
     <string name="portrait">세로</string>
     <string name="tag_dock">독</string>
     <string name="tag_modified">수정됨</string>
+    <string name="apply_restart_btn">적용 및 재시작</string>
+    <string name="app_restarted_toast">애플리케이션이 재시작되었습니다</string>
+    <string name="restart_failed">재시작 실패</string>
 </resources>

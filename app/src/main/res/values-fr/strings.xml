@@ -39,4 +39,7 @@
     <string name="portrait">Portrait</string>
     <string name="tag_dock">Dock</string>
     <string name="tag_modified">Modifié</string>
+    <string name="apply_restart_btn">Appliquer et redémarrer</string>
+    <string name="app_restarted_toast">Application redémarrée</string>
+    <string name="restart_failed">Échec du redémarrage</string>
 </resources>

@@ -35,4 +35,7 @@
     <string name="tag_user">用户</string>
     <string name="tag_dock">底栏</string>
     <string name="tag_modified">已修改</string>
+    <string name="apply_restart_btn">应用并重启</string>
+    <string name="app_restarted_toast">应用已重启</string>
+    <string name="restart_failed">重启失败</string>
 </resources>

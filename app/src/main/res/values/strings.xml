@@ -17,9 +17,9 @@
     <string name="density_label">DPI (optional, leave blank to follow system)</string>
     <string name="density_hint">e.g. 200 / 240 / 320</string>
     <string name="save_btn">Save</string>
-    <string name="apply_restart_btn">Apply &amp; Restart App</string>
-    <string name="app_restarted_toast">Settings applied; app restarted</string>
-    <string name="restart_failed">Saved, but failed to restart app</string>
+    <string name="apply_restart_btn">Apply &amp; Restart</string>
+    <string name="app_restarted_toast">Application restarted</string>
+    <string name="restart_failed">Restart failed</string>
     <string name="remove_btn">Remove Settings (Restore Default)</string>
     <string name="saved_toast">Saved</string>
     <string name="remove_toast">App settings removed</string>
