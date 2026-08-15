@@ -38,4 +38,5 @@
     <string name="landscape">横向き</string>
     <string name="portrait">縦向き</string>
     <string name="tag_dock">ドック</string>
+    <string name="tag_modified">変更済み</string>
 </resources>

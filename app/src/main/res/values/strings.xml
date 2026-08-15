@@ -47,4 +47,5 @@
     </string-array>
     <string name="tag_dock">Dock</string>
     <string name="tag_vr">VR</string>
+    <string name="tag_modified">Modified</string>
 </resources>

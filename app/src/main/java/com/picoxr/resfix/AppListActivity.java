@@ -50,6 +50,7 @@ public class AppListActivity extends AppCompatActivity {
     boolean showUser = true;
     boolean showSystem = false;
     boolean showVR = false;
+    boolean showModified = true;
     private List<Config.AppEntry> allApps;
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -92,14 +93,22 @@ public class AppListActivity extends AppCompatActivity {
         MenuItem item = menu.findItem(R.id.menu_filter);
         View actionView = item.getActionView();
         if (actionView != null) {
+            MaterialButton btnMod = actionView.findViewById(R.id.btn_filter_modified);
             MaterialButton btnUser = actionView.findViewById(R.id.btn_filter_user);
             MaterialButton btnSys = actionView.findViewById(R.id.btn_filter_system);
             MaterialButton btnVR = actionView.findViewById(R.id.btn_filter_vr);
 
+            updateFilterButtonStyle(btnMod, showModified);
             updateFilterButtonStyle(btnUser, showUser);
             updateFilterButtonStyle(btnSys, showSystem);
             updateFilterButtonStyle(btnVR, showVR);
 
+            btnMod.setOnClickListener(v -> {
+                showModified = !showModified;
+                updateFilterButtonStyle(btnMod, showModified);
+                saveFilters();
+                reload();
+            });
             btnUser.setOnClickListener(v -> {
                 showUser = !showUser;
                 updateFilterButtonStyle(btnUser, showUser);
@@ -129,6 +138,7 @@ public class AppListActivity extends AppCompatActivity {
             d.put("showUser", showUser);
             d.put("showSystem", showSystem);
             d.put("showVR", showVR);
+            d.put("showModified", showModified);
             root.put("default", d);
             Config.writeRoot(root);
         } catch (Throwable ignored) {}
@@ -162,8 +172,9 @@ public class AppListActivity extends AppCompatActivity {
         showUser = glob.showUser;
         showSystem = glob.showSystem;
         showVR = glob.showVR;
+        showModified = glob.showModified;
 
-        allApps = Config.listApps(this, showUser, showSystem, showVR, glob);
+        allApps = Config.listApps(this, showUser, showSystem, showVR, showModified, glob);
 
         // Sort: Custom first, then by label alphabet
         allApps.sort((a, b) -> {

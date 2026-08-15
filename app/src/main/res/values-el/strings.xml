@@ -38,4 +38,5 @@
     <string name="landscape">Οριζόντια</string>
     <string name="portrait">Κατακόρυφα</string>
     <string name="tag_dock">Dock</string>
+    <string name="tag_modified">Τροποποιήθηκε</string>
 </resources>

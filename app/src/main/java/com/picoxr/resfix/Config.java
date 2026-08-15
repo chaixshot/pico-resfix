@@ -37,7 +37,7 @@ public final class Config {
         public int floatingWidth = 1602, floatingHeight = 902, floatingDensity = 200;   // Far mode default
         public int dockWidth = 1127, dockHeight = 752, dockDensity = 200; // Near mode default
         public boolean applyThird = true, applySystem = false;
-        public boolean showUser = true, showSystem = false, showVR = false;
+        public boolean showUser = true, showSystem = false, showVR = false, showModified = true;
     }
 
     // --- read ---
@@ -90,11 +90,12 @@ public final class Config {
             g.showUser = d.optBoolean("showUser", true);
             g.showSystem = d.optBoolean("showSystem", false);
             g.showVR = d.optBoolean("showVR", false);
+            g.showModified = d.optBoolean("showModified", true);
         } catch (Throwable ignored) {}
         return g;
     }
 
-    public static List<AppEntry> listApps(Context ctx, boolean showUser, boolean showSystem, boolean showVR, GlobalCfg glob) {
+    public static List<AppEntry> listApps(Context ctx, boolean showUser, boolean showSystem, boolean showVR, boolean showModified, GlobalCfg glob) {
         List<AppEntry> out = new ArrayList<>();
         try {
             PackageManager pm = ctx.getPackageManager();
@@ -135,6 +136,7 @@ public final class Config {
                 }
 
                 // Filtering: skip if not active filter AND no override
+                if (hasOverride && !showModified) continue;
                 if (!hasOverride) {
                     if (isVR && !showVR) continue;
                     if (!isVR) {
