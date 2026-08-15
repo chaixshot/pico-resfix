@@ -38,4 +38,5 @@
     <string name="landscape">Yatay</string>
     <string name="portrait">Dikey</string>
     <string name="tag_dock">Dock</string>
+    <string name="tag_modified">Değiştirildi</string>
 </resources>

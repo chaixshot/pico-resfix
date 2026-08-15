@@ -38,4 +38,5 @@
     <string name="landscape">가로</string>
     <string name="portrait">세로</string>
     <string name="tag_dock">독</string>
+    <string name="tag_modified">수정됨</string>
 </resources>

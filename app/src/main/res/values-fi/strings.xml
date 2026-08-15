@@ -38,4 +38,5 @@
     <string name="landscape">Vaaka</string>
     <string name="portrait">Pysty</string>
     <string name="tag_dock">Dock</string>
+    <string name="tag_modified">Muokattu</string>
 </resources>

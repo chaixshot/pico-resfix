@@ -38,4 +38,5 @@
     <string name="landscape">Liggend</string>
     <string name="portrait">Staand</string>
     <string name="tag_dock">Dock</string>
+    <string name="tag_modified">Gewijzigd</string>
 </resources>

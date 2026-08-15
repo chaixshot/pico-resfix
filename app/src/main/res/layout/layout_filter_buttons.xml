@@ -8,6 +8,20 @@
     android:padding="4dp">
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_filter_modified"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:text="@string/tag_modified"
+        android:textSize="12sp"
+        app:cornerRadius="6dp" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_filter_user"
         style="@style/Widget.Material3.Button.TonalButton"
         android:layout_width="wrap_content"

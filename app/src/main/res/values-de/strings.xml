@@ -38,4 +38,5 @@
     <string name="landscape">Querformat</string>
     <string name="portrait">Hochformat</string>
     <string name="tag_dock">Dock</string>
+    <string name="tag_modified">Geändert</string>
 </resources>

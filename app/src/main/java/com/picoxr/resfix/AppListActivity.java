@@ -50,6 +50,7 @@ public class AppListActivity extends AppCompatActivity {
     boolean showUser = true;
     boolean showSystem = false;
     boolean showVR = false;
+    boolean showModified = true;
     private List<Config.AppEntry> allApps;
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -92,34 +93,59 @@ public class AppListActivity extends AppCompatActivity {
         MenuItem item = menu.findItem(R.id.menu_filter);
         View actionView = item.getActionView();
         if (actionView != null) {
+            MaterialButton btnMod = actionView.findViewById(R.id.btn_filter_modified);
             MaterialButton btnUser = actionView.findViewById(R.id.btn_filter_user);
             MaterialButton btnSys = actionView.findViewById(R.id.btn_filter_system);
             MaterialButton btnVR = actionView.findViewById(R.id.btn_filter_vr);
 
+            updateFilterButtonStyle(btnMod, showModified);
             updateFilterButtonStyle(btnUser, showUser);
             updateFilterButtonStyle(btnSys, showSystem);
             updateFilterButtonStyle(btnVR, showVR);
 
+            btnMod.setOnClickListener(v -> {
+                showModified = !showModified;
+                updateFilterButtonStyle(btnMod, showModified);
+                saveFilters();
+                reload();
+            });
             btnUser.setOnClickListener(v -> {
                 showUser = !showUser;
                 updateFilterButtonStyle(btnUser, showUser);
+                saveFilters();
                 reload();
             });
             btnSys.setOnClickListener(v -> {
                 showSystem = !showSystem;
                 updateFilterButtonStyle(btnSys, showSystem);
+                saveFilters();
                 reload();
             });
             btnVR.setOnClickListener(v -> {
                 showVR = !showVR;
                 updateFilterButtonStyle(btnVR, showVR);
+                saveFilters();
                 reload();
             });
         }
         return true;
     }
 
+    private void saveFilters() {
+        try {
+            org.json.JSONObject root = Config.readRoot();
+            org.json.JSONObject d = Config.defaultObj(root);
+            d.put("showUser", showUser);
+            d.put("showSystem", showSystem);
+            d.put("showVR", showVR);
+            d.put("showModified", showModified);
+            root.put("default", d);
+            Config.writeRoot(root);
+        } catch (Throwable ignored) {}
+    }
+
     private void updateFilterButtonStyle(MaterialButton btn, boolean active) {
+        if (btn == null) return;
         if (active) {
             btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(R.color.toggle_button)));
             btn.setTextColor(getColor(android.R.color.white));
@@ -143,7 +169,12 @@ public class AppListActivity extends AppCompatActivity {
 
     void reload() {
         glob = Config.getGlobal();
-        allApps = Config.listApps(this, showUser, showSystem, showVR, glob);
+        showUser = glob.showUser;
+        showSystem = glob.showSystem;
+        showVR = glob.showVR;
+        showModified = glob.showModified;
+
+        allApps = Config.listApps(this, showUser, showSystem, showVR, showModified, glob);
 
         // Sort: Custom first, then by label alphabet
         allApps.sort((a, b) -> {
@@ -154,7 +185,7 @@ public class AppListActivity extends AppCompatActivity {
         });
 
         android.util.Log.i("ResFixGUI", "listApps returned " + allApps.size()
-                + " apps (showUser=" + showUser + ", showSystem=" + showSystem + ")");
+                + " apps (showUser=" + showUser + ", showSystem=" + showSystem + ", showVR=" + showVR + ")");
         
         filter(etSearch.getText().toString());
     }
