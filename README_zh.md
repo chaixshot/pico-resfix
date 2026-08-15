@@ -1,0 +1,100 @@
+[English](README.md) | [简体中文](README_zh.md) | [Русский](README_ru.md)
+
+# PICO 2D Resolution — Per-App Virtual-Display Resolution Mod
+
+针对 **PICO 4 标准版 (A8110, Android 10 / API 29)** 的 2D 平面应用分辨率解锁模块。
+允许**按应用单独设置** 2D 虚拟显示分辨率（不再锁定 1600×900）、自定义 DPI，并可将指定应用从远场浮窗切换至近场 Dock。
+
+用 **Zygisk Vector (LSPosed 兼容框架)** 注入 `com.picovr.systemext` 实现 —— 无需替换系统 APK。
+
+---
+
+## 前提条件
+
+- **设备**: PICO 4 头显 (支持 Phoenix/中国版固件)。
+- **权限**: 需要 **Root 权限** ([教程](https://pico4.wiki/guides/root/01-root/)) 以应用系统级更改。
+- **环境**: 必须安装并激活 **Magisk** 和 **LSPosed 框架** ([Zygisk Vector](https://github.com/JingMatrix/Vector))。
+- **LSPosed 作用域**: 确保在 LSPosed 模块作用域中勾选了 `com.picovr.systemext`。
+
+---
+
+## 一、效果
+
+| 项目 | 原厂 | 解锁后 |
+|---|---|---|
+| 2D 应用虚拟显示分辨率 | 1602×902 (density 200) | **按应用单独配置**（默认 2560×1440） |
+| DPI | 固定 200 | **可按应用覆盖**（可选） |
+| 窗口模式 | 远场浮窗 | **可按应用切换为近场 Dock** |
+| 作用范围 | 所有 2D 应用 | **非系统应用默认启用，系统应用可选** |
+
+- 只改分辨率（px）+ 可选 DPI，**不改 density 时是超采样效果，画面比例不变**。
+- 每应用独立配置，互不影响。
+
+---
+
+## 二、架构
+
+```
+PICO 4 (Android 10, API 29)
+└─ Magisk + Zygisk Vector v2.2 (LSPosed 兼容框架)
+   └─ 本模块 com.picoxr.resfix (mid)
+       ├─ LSPosed hook: ResFix
+       │    hook com.picovr.systemext 的
+       │    AppContainer.createVirtualDisplay(String,int,int,int,int)
+       │    → 解析 "NS_APP[<pkg>]" → 按包名查配置 → 覆盖 w/h(/density)
+       │    AppManagerUtils.getWindowType(ActivityInfo)
+       │    → 按包名将 Dock 应用返回为 near (type 2002)
+       └─ GUI: AppListActivity + AppDetailActivity
+            （应用列表 + 每应用分辨率设置）
+
+配置通道: /data/local/tmp/resfix.cfg (JSON)
+  - GUI App (root) 写入
+  - ResFix hook 每次 createVirtualDisplay 实时读取
+```
+
+---
+
+## 三、为什么 hook 而非替换 APK
+
+- `SystemExt` 是 `sharedUserId="android.uid.system"` 的 PERSISTENT 系统应用，自签名替换 APK 会被 PackageManager 拒绝。故用 LSPosed hook。
+
+---
+
+## 四、配置文件格式 (/data/local/tmp/resfix.cfg)
+
+```json
+{
+  "default": { "w": 2560, "h": 1440, "density": 200,
+               "applyThird": true, "applySystem": false },
+  "apps": {
+    "com.example.app": { "w": 1920, "h": 1080, "density": 240, "dock": true }
+  }
+}
+```
+
+- `default`: 未单独配置的非系统应用（applyThird=true 时）统一用此分辨率。
+- `apps.<pkg>`: 某应用的单独覆盖（禁用用 `"disabled": true`）。
+- `apps.<pkg>.dock`: `true` 时将此应用路由至原生近场 Dock；该设置独立于分辨率覆盖，关闭“启用覆盖”不会关闭 Dock。
+- `density` 省略 = 跟随系统；`-1`/不存在 = 不改 density。
+
+改动后需完全关闭并重新启动目标应用。
+
+---
+
+## 五、构建
+
+需要: JDK 17 + Android SDK (platform 34, build-tools 34) + Gradle 8.7
+
+```bash
+gradle :app:assembleDebug
+```
+
+---
+
+## 六、部署
+
+1. `adb install -r app-debug.apk`
+2. 更新 LSPosed 模块数据库 apk_path
+3. `adb reboot`（Vector 重新扫描模块）
+4. 桌面打开 "PICO 2D Resolution" → 应用列表 → 点应用设分辨率或打开“以停靠模式启动” → 保存
+5. 重开目标 2D 应用生效
