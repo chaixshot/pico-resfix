@@ -98,7 +98,8 @@ public class ResFix implements IXposedHookLoadPackage {
     /**
      * Per-app window mode override.
      * null means keep the target APK's native PICO metadata behavior; true selects Dock and
-     * false selects Floating. A missing "dock" key remains backwards-compatible as no override.
+     * false selects the normal far floating type (3002). A missing "dock" key remains
+     * backwards-compatible as no override.
      */
     static Boolean dockOverride(String pkg) {
         if (pkg == null) return null;
@@ -181,9 +182,9 @@ public class ResFix implements IXposedHookLoadPackage {
                             String pkg = fieldString(info, "packageName");
                             Boolean dock = dockOverride(pkg);
                             if (dock == null) return;
-                            param.setResult(dock ? 2002 : 2001);
+                            param.setResult(dock ? 2002 : 3002);
                             XposedBridge.log(TAG + ": " + pkg + " -> "
-                                    + (dock ? "Dock (type 2002)" : "Floating (type 2001)"));
+                                    + (dock ? "Dock (type 2002)" : "Floating (type 3002)"));
                         }
                     });
 
@@ -200,7 +201,7 @@ public class ResFix implements IXposedHookLoadPackage {
                             Object info = param.args[0];
                             String pkg = fieldString(info, "packageName");
                             Boolean dock = dockOverride(pkg);
-                            if (dock != null) param.setResult(dock ? 2002 : 2001);
+                            if (dock != null) param.setResult(dock ? 2002 : 3002);
                         }
                     });
 
@@ -241,10 +242,9 @@ public class ResFix implements IXposedHookLoadPackage {
                         protected void beforeHookedMethod(MethodHookParam param) {
                             boolean visible = (Boolean) param.args[0];
                             int changeType = (Integer) param.args[1];
-                            if (!visible && changeType == 6
-                                    && Boolean.TRUE.equals(dockOverride(pkgFromThis(param.thisObject)))) {
-                                XposedBridge.log(TAG + ": keep Dock visible during fullscreen "
-                                        + pkgFromThis(param.thisObject));
+                            String pkg = pkgFromThis(param.thisObject);
+                            if (!visible && changeType == 6 && Boolean.TRUE.equals(dockOverride(pkg))) {
+                                XposedBridge.log(TAG + ": keep Dock visible during fullscreen " + pkg);
                                 param.setResult(false);
                             }
                         }
