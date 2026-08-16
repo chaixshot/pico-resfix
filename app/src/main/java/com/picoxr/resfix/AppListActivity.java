@@ -218,7 +218,7 @@ public class AppListActivity extends AppCompatActivity {
     }
 
     private void updateBatchButtonState() {
-        int color = getColor(selectionMode ? R.color.primary : R.color.dropdown_bg);
+        int color = getColor(selectionMode ? R.color.toggle_button : R.color.dropdown_bg);
         fabBatch.setBackgroundTintList(ColorStateList.valueOf(color));
         fabBatchEdit.setVisibility(selectionMode ? View.VISIBLE : View.GONE);
         fabBatch.setContentDescription(selectionMode
@@ -340,9 +340,17 @@ public class AppListActivity extends AppCompatActivity {
             h.selected.setVisibility(selectionMode ? View.VISIBLE : View.GONE);
             h.selected.setChecked(selectedPackages.contains(e.pkg));
             h.selected.setOnCheckedChangeListener((button, checked) -> {
-                if (checked) selectedPackages.add(e.pkg);
-                else selectedPackages.remove(e.pkg);
-                updateBatchButtonState();
+                if (checked) {
+                    selectedPackages.add(e.pkg);
+                    updateBatchButtonState();
+                } else {
+                    selectedPackages.remove(e.pkg);
+                    if (selectionMode && selectedPackages.isEmpty()) {
+                        exitSelectionMode();
+                    } else {
+                        updateBatchButtonState();
+                    }
+                }
             });
             h.root.setOnClickListener(v -> {
                 if (selectionMode) {
@@ -352,6 +360,18 @@ public class AppListActivity extends AppCompatActivity {
                     i.putExtra("pkg", e.pkg);
                     startActivity(i);
                 }
+            });
+
+            h.root.setOnLongClickListener(v -> {
+                if (!selectionMode) {
+                    selectionMode = true;
+                    selectedPackages.add(e.pkg);
+                    updateBatchButtonState();
+                    adapter.notifyDataSetChanged();
+                } else {
+                    h.selected.setChecked(!h.selected.isChecked());
+                }
+                return true;
             });
 
             // Lazy load icon

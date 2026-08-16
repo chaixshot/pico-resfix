@@ -31,12 +31,23 @@
     <string name="search_hint">Apps zoeken…</string>
     <string name="floating">Zwevend</string>
     <string name="dock">Dock</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Standaardinstellingen (apps zonder specifieke instellingen)</string>
     <string name="enable_dock">Dock inschakelen</string>
     <string name="landscape">Liggend</string>
     <string name="portrait">Staand</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Opslaan en toepassen</string>
+    <string name="tag_modified">Gewijzigd</string>
+    <string name="batch_select">Meerdere apps selecteren</string>
+    <string name="batch_settings">Batchinstellingen</string>
+    <string name="batch_apps_title">Geselecteerde apps (%1$d)</string>
+    <string name="batch_apps_hint">Tik om geselecteerde apps te bekijken</string>
+    <string name="batch_edit">Geselecteerde apps bewerken</string>
+    <string name="batch_selection_title">Apps selecteren</string>
+    <string name="batch_selection_empty">Selecteer eerst minstens één app</string>
+    <string name="batch_selected_count">%1$d geselecteerd</string>
+    <string name="batch_apply">Toepassen</string>
+    <string name="batch_enable">Resolutie-overschrijving inschakelen</string>
+    <string name="batch_dock">Gebruik Dock-modus</string>
+    <string name="batch_updated">%1$d apps bijgewerkt</string>
 </resources>

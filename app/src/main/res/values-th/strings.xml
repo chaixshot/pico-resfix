@@ -31,12 +31,23 @@
     <string name="search_hint">ค้นหาแอป…</string>
     <string name="floating">ลอย</string>
     <string name="dock">แท่นวาง</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">การตั้งค่าเริ่มต้น (แอปที่ไม่ได้ตั้งค่าเฉพาะ)</string>
     <string name="enable_dock">เปิดใช้งานด็อก</string>
     <string name="landscape">แนวนอน</string>
     <string name="portrait">แนวตั้ง</string>
     <string name="tag_dock">ด็อก</string>
     <string name="save_and_apply">บันทึกและใช้</string>
+    <string name="tag_modified">แก้ไขแล้ว</string>
+    <string name="batch_select">เลือกหลายแอป</string>
+    <string name="batch_settings">การตั้งค่าแบบกลุ่ม</string>
+    <string name="batch_apps_title">แอปที่เลือก (%1$d)</string>
+    <string name="batch_apps_hint">แตะเพื่อดูแอปที่เลือก</string>
+    <string name="batch_edit">แก้ไขแอปที่เลือก</string>
+    <string name="batch_selection_title">เลือกแอป</string>
+    <string name="batch_selection_empty">เลือกอย่างน้อยหนึ่งแอปก่อน</string>
+    <string name="batch_selected_count">เลือกแล้ว %1$d</string>
+    <string name="batch_apply">นำไปใช้</string>
+    <string name="batch_enable">เปิดใช้งานการแทนที่ความละเอียด</string>
+    <string name="batch_dock">ใช้โหมด Dock</string>
+    <string name="batch_updated">อัปเดต %1$d แอปแล้ว</string>
 </resources>

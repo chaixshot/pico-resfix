@@ -38,4 +38,14 @@
     <string name="tag_dock">底栏</string>
     <string name="batch_apps_title">已选应用（%1$d）</string>
     <string name="batch_apps_hint">点击查看已选应用</string>
+    <string name="batch_select">选择多个应用</string>
+    <string name="batch_settings">批量设置</string>
+    <string name="batch_edit">编辑已选择的应用</string>
+    <string name="batch_selection_title">选择应用</string>
+    <string name="batch_selection_empty">请先选择至少一个应用</string>
+    <string name="batch_selected_count">已选择 %1$d 个</string>
+    <string name="batch_apply">应用</string>
+    <string name="batch_enable">启用分辨率覆盖</string>
+    <string name="batch_dock">使用基座模式</string>
+    <string name="batch_updated">已更新 %1$d 个应用</string>
 </resources>

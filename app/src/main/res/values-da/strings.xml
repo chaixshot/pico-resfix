@@ -31,12 +31,23 @@
     <string name="search_hint">Søg i apps…</string>
     <string name="floating">Flydende</string>
     <string name="dock">Dock</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Standardindstillinger (ikke-systemapps uden specifikke indstillinger)</string>
     <string name="enable_dock">Aktiver dock</string>
     <string name="landscape">Liggende</string>
     <string name="portrait">Stående</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Gem og anvend</string>
+    <string name="tag_modified">Ændret</string>
+    <string name="batch_select">Vælg flere apps</string>
+    <string name="batch_settings">Batch-indstillinger</string>
+    <string name="batch_apps_title">Valgte apps (%1$d)</string>
+    <string name="batch_apps_hint">Tryk for at se valgte apps</string>
+    <string name="batch_edit">Rediger valgte apps</string>
+    <string name="batch_selection_title">Vælg apps</string>
+    <string name="batch_selection_empty">Vælg mindst én app først</string>
+    <string name="batch_selected_count">%1$d valgt</string>
+    <string name="batch_apply">Anvend</string>
+    <string name="batch_enable">Aktiver tilsidesættelse af opløsning</string>
+    <string name="batch_dock">Brug Dock-tilstand</string>
+    <string name="batch_updated">Opdateret %1$d apps</string>
 </resources>

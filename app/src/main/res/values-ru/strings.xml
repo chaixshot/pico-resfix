@@ -31,12 +31,23 @@
     <string name="search_hint">Поиск приложений…</string>
     <string name="floating">Плавающее</string>
     <string name="dock">Закрепленное</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Настройки по умолчанию (для приложений без настроек)</string>
     <string name="enable_dock">Включить док</string>
     <string name="landscape">Альбомная</string>
     <string name="portrait">Книжная</string>
     <string name="tag_dock">Док</string>
     <string name="save_and_apply">Сохранить и применить</string>
+    <string name="tag_modified">Изменено</string>
+    <string name="batch_select">Выбрать несколько приложений</string>
+    <string name="batch_settings">Пакетные настройки</string>
+    <string name="batch_apps_title">Выбрано приложений (%1$d)</string>
+    <string name="batch_apps_hint">Нажмите, чтобы просмотреть выбранные приложения</string>
+    <string name="batch_edit">Редактировать выбранные приложения</string>
+    <string name="batch_selection_title">Выбрать приложения</string>
+    <string name="batch_selection_empty">Сначала выберите хотя бы одно приложение</string>
+    <string name="batch_selected_count">Выбрано: %1$d</string>
+    <string name="batch_apply">Применить</string>
+    <string name="batch_enable">Включить переопределение разрешения</string>
+    <string name="batch_dock">Использовать режим док-станции</string>
+    <string name="batch_updated">Обновлено приложений: %1$d</string>
 </resources>

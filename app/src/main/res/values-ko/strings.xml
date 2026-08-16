@@ -31,12 +31,23 @@
     <string name="search_hint">앱 검색…</string>
     <string name="floating">플로팅</string>
     <string name="dock">독</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">기본 설정 (별도 설정이 없는 비시스템 앱)</string>
     <string name="enable_dock">독 활성화</string>
     <string name="landscape">가로</string>
     <string name="portrait">세로</string>
     <string name="tag_dock">독</string>
     <string name="save_and_apply">저장 및 적용</string>
+    <string name="tag_modified">수정됨</string>
+    <string name="batch_select">여러 앱 선택</string>
+    <string name="batch_settings">일괄 설정</string>
+    <string name="batch_apps_title">선택된 앱 (%1$d)</string>
+    <string name="batch_apps_hint">탭하여 선택한 앱 보기</string>
+    <string name="batch_edit">선택한 앱 편집</string>
+    <string name="batch_selection_title">앱 선택</string>
+    <string name="batch_selection_empty">먼저 하나 이상의 앱을 선택하세요</string>
+    <string name="batch_selected_count">%1$d개 선택됨</string>
+    <string name="batch_apply">적용</string>
+    <string name="batch_enable">해상도 재정의 활성화</string>
+    <string name="batch_dock">독 모드 사용</string>
+    <string name="batch_updated">%1$d개의 앱이 업데이트됨</string>
 </resources>

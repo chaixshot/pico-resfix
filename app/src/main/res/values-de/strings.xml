@@ -31,12 +31,23 @@
     <string name="search_hint">Apps suchen…</string>
     <string name="floating">Schwebend</string>
     <string name="dock">Dock</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Standardeinstellungen (Nicht-System-Apps ohne spezifische Einstellungen)</string>
     <string name="enable_dock">Dock aktivieren</string>
     <string name="landscape">Querformat</string>
     <string name="portrait">Hochformat</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Speichern und anwenden</string>
+    <string name="tag_modified">Geändert</string>
+    <string name="batch_select">Mehrere Apps auswählen</string>
+    <string name="batch_settings">Batch-Einstellungen</string>
+    <string name="batch_apps_title">Ausgewählte Apps (%1$d)</string>
+    <string name="batch_apps_hint">Tippen, um ausgewählte Apps anzuzeigen</string>
+    <string name="batch_edit">Ausgewählte Apps bearbeiten</string>
+    <string name="batch_selection_title">Apps auswählen</string>
+    <string name="batch_selection_empty">Wählen Sie zuerst mindestens eine App aus</string>
+    <string name="batch_selected_count">%1$d ausgewählt</string>
+    <string name="batch_apply">Anwenden</string>
+    <string name="batch_enable">Auflösungs-Override aktivieren</string>
+    <string name="batch_dock">Dock-Modus verwenden</string>
+    <string name="batch_updated">%1$d Apps aktualisiert</string>
 </resources>

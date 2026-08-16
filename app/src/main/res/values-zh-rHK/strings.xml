@@ -31,12 +31,23 @@
     <string name="search_hint">搜尋應用程式…</string>
     <string name="floating">懸浮</string>
     <string name="dock">停靠</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">預設設置（未單獨配置的非系統應用）</string>
     <string name="enable_dock">啟用停靠欄</string>
     <string name="landscape">橫向</string>
     <string name="portrait">縱向</string>
     <string name="tag_dock">底欄</string>
     <string name="save_and_apply">保存並套用</string>
+    <string name="tag_modified">已修改</string>
+    <string name="batch_select">選擇多個應用</string>
+    <string name="batch_settings">批量設置</string>
+    <string name="batch_apps_title">已選擇的應用 (%1$d)</string>
+    <string name="batch_apps_hint">點擊查看已選擇的應用</string>
+    <string name="batch_edit">編輯已選擇的應用</string>
+    <string name="batch_selection_title">選擇應用</string>
+    <string name="batch_selection_empty">請先選擇至少一個應用</string>
+    <string name="batch_selected_count">已選擇 %1$d 個</string>
+    <string name="batch_apply">應用</string>
+    <string name="batch_enable">啟用解析度覆蓋</string>
+    <string name="batch_dock">使用基座模式</string>
+    <string name="batch_updated">已更新 %1$d 個應用</string>
 </resources>

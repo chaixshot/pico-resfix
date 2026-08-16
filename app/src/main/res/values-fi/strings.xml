@@ -31,12 +31,23 @@
     <string name="search_hint">Hae sovelluksia…</string>
     <string name="floating">Kelluva</string>
     <string name="dock">Telakka</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Oletusasetukset (ei-järjestelmäsovellukset ilman omia asetuksia)</string>
     <string name="enable_dock">Ota telakka käyttöön</string>
     <string name="landscape">Vaaka</string>
     <string name="portrait">Pysty</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Tallenna ja käytä</string>
+    <string name="tag_modified">Muokattu</string>
+    <string name="batch_select">Valitse useita sovelluksia</string>
+    <string name="batch_settings">Eräasetukset</string>
+    <string name="batch_apps_title">Valitut sovellukset (%1$d)</string>
+    <string name="batch_apps_hint">Napauta nähdäksesi valitut sovellukset</string>
+    <string name="batch_edit">Muokkaa valittuja sovelluksia</string>
+    <string name="batch_selection_title">Valitse sovellukset</string>
+    <string name="batch_selection_empty">Valitse ensin vähintään yksi sovellus</string>
+    <string name="batch_selected_count">%1$d valittu</string>
+    <string name="batch_apply">Käytä</string>
+    <string name="batch_enable">Ota resoluution ohitus käyttöön</string>
+    <string name="batch_dock">Käytä telakointitilaa</string>
+    <string name="batch_updated">Päivitetty %1$d sovellusta</string>
 </resources>

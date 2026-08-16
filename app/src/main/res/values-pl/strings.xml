@@ -31,12 +31,23 @@
     <string name="search_hint">Szukaj aplikacji…</string>
     <string name="floating">Pływający</string>
     <string name="dock">Dok</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Ustawienia domyślne (aplikacje bez własnych ustawień)</string>
     <string name="enable_dock">Włącz dok</string>
     <string name="landscape">Pozioma</string>
     <string name="portrait">Pionowa</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Zapisz i zastosuj</string>
+    <string name="tag_modified">Zmodyfikowano</string>
+    <string name="batch_select">Wybierz wiele aplikacji</string>
+    <string name="batch_settings">Ustawienia zbiorcze</string>
+    <string name="batch_apps_title">Wybrane aplikacje (%1$d)</string>
+    <string name="batch_apps_hint">Dotknij, aby wyświetlić wybrane aplikacje</string>
+    <string name="batch_edit">Edytuj wybrane aplikacje</string>
+    <string name="batch_selection_title">Wybierz aplikacje</string>
+    <string name="batch_selection_empty">Najpierw wybierz co najmniej jedną aplikację</string>
+    <string name="batch_selected_count">Wybrano: %1$d</string>
+    <string name="batch_apply">Zastosuj</string>
+    <string name="batch_enable">Włącz nadpisywanie rozdzielczości</string>
+    <string name="batch_dock">Użyj trybu Dock</string>
+    <string name="batch_updated">Zaktualizowano %1$d aplikacji</string>
 </resources>

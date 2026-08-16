@@ -31,12 +31,23 @@
     <string name="search_hint">Search apps…</string>
     <string name="floating">Floating</string>
     <string name="dock">Dock</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Default Settings (non-system apps without specific settings)</string>
     <string name="enable_dock">Enable Dock</string>
     <string name="landscape">Landscape</string>
     <string name="portrait">Portrait</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Save and apply</string>
+    <string name="tag_modified">Modified</string>
+    <string name="batch_select">Select multiple apps</string>
+    <string name="batch_settings">Batch Settings</string>
+    <string name="batch_apps_title">Selected apps (%1$d)</string>
+    <string name="batch_apps_hint">Tap to view selected apps</string>
+    <string name="batch_edit">Edit selected apps</string>
+    <string name="batch_selection_title">Select apps</string>
+    <string name="batch_selection_empty">Select at least one app first</string>
+    <string name="batch_selected_count">%1$d selected</string>
+    <string name="batch_apply">Apply</string>
+    <string name="batch_enable">Enable resolution override</string>
+    <string name="batch_dock">Use Dock mode</string>
+    <string name="batch_updated">Updated %1$d apps</string>
 </resources>

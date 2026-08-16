@@ -31,12 +31,23 @@
     <string name="search_hint">Uygulamaları ara…</string>
     <string name="floating">Yüzer</string>
     <string name="dock">Kenetli</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Varsayılan Ayarlar (özel ayarları olmayan uygulamalar)</string>
     <string name="enable_dock">Dock\'u etkinleştir</string>
     <string name="landscape">Yatay</string>
     <string name="portrait">Dikey</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Kaydet ve uygula</string>
+    <string name="tag_modified">Değiştirildi</string>
+    <string name="batch_select">Birden fazla uygulama seç</string>
+    <string name="batch_settings">Toplu Ayarlar</string>
+    <string name="batch_apps_title">Seçili uygulamalar (%1$d)</string>
+    <string name="batch_apps_hint">Seçili uygulamaları görüntülemek için dokunun</string>
+    <string name="batch_edit">Seçili uygulamaları düzenle</string>
+    <string name="batch_selection_title">Uygulamaları seç</string>
+    <string name="batch_selection_empty">Önce en az bir uygulama seçin</string>
+    <string name="batch_selected_count">%1$d seçildi</string>
+    <string name="batch_apply">Uygula</string>
+    <string name="batch_enable">Çözünürlük geçersiz kılmayı etkinleştir</string>
+    <string name="batch_dock">Dock modunu kullan</string>
+    <string name="batch_updated">%1$d uygulama güncellendi</string>
 </resources>

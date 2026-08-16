@@ -31,12 +31,23 @@
     <string name="search_hint">Pesquisar apps…</string>
     <string name="floating">Flutuante</string>
     <string name="dock">Fixado</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Configurações padrão (apps não do sistema sem configurações específicas)</string>
     <string name="enable_dock">Ativar dock</string>
     <string name="landscape">Paisagem</string>
     <string name="portrait">Retrato</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Salvar e aplicar</string>
+    <string name="tag_modified">Modificado</string>
+    <string name="batch_select">Selecionar vários apps</string>
+    <string name="batch_settings">Configurações em lote</string>
+    <string name="batch_apps_title">Apps selecionados (%1$d)</string>
+    <string name="batch_apps_hint">Toque para ver os apps selecionados</string>
+    <string name="batch_edit">Editar apps selecionados</string>
+    <string name="batch_selection_title">Selecionar apps</string>
+    <string name="batch_selection_empty">Selecione pelo menos um app primeiro</string>
+    <string name="batch_selected_count">%1$d selecionados</string>
+    <string name="batch_apply">Aplicar</string>
+    <string name="batch_enable">Ativar substituição de resolução</string>
+    <string name="batch_dock">Usar modo Dock</string>
+    <string name="batch_updated">%1$d apps atualizados</string>
 </resources>

@@ -36,17 +36,7 @@
     <string name="dock">Dock</string>
     <string name="landscape">Landscape</string>
     <string name="portrait">Portrait</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Default Settings (non-system apps without specific settings)</string>
-
-    <string-array name="preset_names">
-        <item>1280 × 720</item>
-        <item>1600 × 900</item>
-        <item>1920 × 1080</item>
-        <item>2560 × 1440</item>
-        <item>3840 × 2160</item>
-    </string-array>
     <string name="tag_dock">Dock</string>
     <string name="tag_vr">VR</string>
     <string name="batch_select">Select multiple apps</string>
