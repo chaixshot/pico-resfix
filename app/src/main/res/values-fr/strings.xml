@@ -39,4 +39,17 @@
     <string name="portrait">Portrait</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Enregistrer et appliquer</string>
+    <string name="tag_modified">Modifié</string>
+    <string name="batch_select">Sélectionner plusieurs applications</string>
+    <string name="batch_settings">Paramètres par lot</string>
+    <string name="batch_apps_title">Applications sélectionnées (%1$d)</string>
+    <string name="batch_apps_hint">Appuyez pour voir les applications sélectionnées</string>
+    <string name="batch_edit">Modifier les applications sélectionnées</string>
+    <string name="batch_selection_title">Sélectionner les applications</string>
+    <string name="batch_selection_empty">Sélectionnez d\'abord au moins une application</string>
+    <string name="batch_selected_count">%1$d sélectionnés</string>
+    <string name="batch_apply">Appliquer</string>
+    <string name="batch_enable">Activer le remplacement de la résolution</string>
+    <string name="batch_dock">Utiliser le mode Dock</string>
+    <string name="batch_updated">%1$d applications mises à jour</string>
 </resources>

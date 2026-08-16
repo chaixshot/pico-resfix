@@ -39,4 +39,17 @@
     <string name="portrait">縦向き</string>
     <string name="tag_dock">ドック</string>
     <string name="save_and_apply">保存して適用</string>
+    <string name="tag_modified">変更済み</string>
+    <string name="batch_select">複数のアプリを選択</string>
+    <string name="batch_settings">一括設定</string>
+    <string name="batch_apps_title">選択したアプリ (%1$d)</string>
+    <string name="batch_apps_hint">タップして選択したアプリを表示</string>
+    <string name="batch_edit">選択したアプリを編集</string>
+    <string name="batch_selection_title">アプリを選択</string>
+    <string name="batch_selection_empty">最初に少なくとも1つのアプリを選択してください</string>
+    <string name="batch_selected_count">%1$d 個選択済み</string>
+    <string name="batch_apply">適用</string>
+    <string name="batch_enable">解像度の上書きを有効にする</string>
+    <string name="batch_dock">ドックモードを使用</string>
+    <string name="batch_updated">%1$d 個のアプリを更新しました</string>
 </resources>

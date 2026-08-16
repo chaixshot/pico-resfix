@@ -39,4 +39,17 @@
     <string name="portrait">Stående</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Spara och tillämpa</string>
+    <string name="tag_modified">Ändrad</string>
+    <string name="batch_select">Markera flera appar</string>
+    <string name="batch_settings">Batchinställningar</string>
+    <string name="batch_apps_title">Valda appar (%1$d)</string>
+    <string name="batch_apps_hint">Tryck för att visa valda appar</string>
+    <string name="batch_edit">Redigera valda appar</string>
+    <string name="batch_selection_title">Välj appar</string>
+    <string name="batch_selection_empty">Välj minst en app först</string>
+    <string name="batch_selected_count">%1$d valda</string>
+    <string name="batch_apply">Använd</string>
+    <string name="batch_enable">Aktivera åsidosättning av upplösning</string>
+    <string name="batch_dock">Använd dockningsläge</string>
+    <string name="batch_updated">Uppdaterade %1$d appar</string>
 </resources>

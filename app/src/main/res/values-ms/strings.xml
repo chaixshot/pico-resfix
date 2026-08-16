@@ -39,4 +39,17 @@
     <string name="portrait">Potret</string>
     <string name="tag_dock">Dok</string>
     <string name="save_and_apply">Simpan dan gunakan</string>
+    <string name="tag_modified">Diubah suai</string>
+    <string name="batch_select">Pilih berbilang apl</string>
+    <string name="batch_settings">Tetapan Kelompok</string>
+    <string name="batch_apps_title">Aplikasi terpilih (%1$d)</string>
+    <string name="batch_apps_hint">Ketik untuk melihat aplikasi terpilih</string>
+    <string name="batch_edit">Edit aplikasi terpilih</string>
+    <string name="batch_selection_title">Pilih aplikasi</string>
+    <string name="batch_selection_empty">Pilih sekurang-kurangnya satu aplikasi dahulu</string>
+    <string name="batch_selected_count">%1$d terpilih</string>
+    <string name="batch_apply">Gunakan</string>
+    <string name="batch_enable">Dayakan tindih resolusi</string>
+    <string name="batch_dock">Guna mod Dock</string>
+    <string name="batch_updated">%1$d aplikasi dikemas kini</string>
 </resources>

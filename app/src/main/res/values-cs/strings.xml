@@ -39,4 +39,17 @@
     <string name="portrait">Na výšku</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Uložit a použít</string>
+    <string name="tag_modified">Změněno</string>
+    <string name="batch_select">Vybrat více aplikací</string>
+    <string name="batch_settings">Hromadné nastavení</string>
+    <string name="batch_apps_title">Vybrané aplikace (%1$d)</string>
+    <string name="batch_apps_hint">Klepnutím zobrazíte vybrané aplikace</string>
+    <string name="batch_edit">Upravit vybrané aplikace</string>
+    <string name="batch_selection_title">Vyberte aplikace</string>
+    <string name="batch_selection_empty">Nejdříve vyberte alespoň jednu aplikaci</string>
+    <string name="batch_selected_count">%1$d vybráno</string>
+    <string name="batch_apply">Použít</string>
+    <string name="batch_enable">Povolit přepsání rozlišení</string>
+    <string name="batch_dock">Použít režim Dock</string>
+    <string name="batch_updated">Aktualizováno %1$d aplikací</string>
 </resources>

@@ -39,4 +39,17 @@
     <string name="portrait">Verticale</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Salva e applica</string>
+    <string name="tag_modified">Modificato</string>
+    <string name="batch_select">Seleziona più app</string>
+    <string name="batch_settings">Impostazioni batch</string>
+    <string name="batch_apps_title">App selezionate (%1$d)</string>
+    <string name="batch_apps_hint">Tocca per visualizzare le app selezionate</string>
+    <string name="batch_edit">Modifica le app selezionate</string>
+    <string name="batch_selection_title">Seleziona app</string>
+    <string name="batch_selection_empty">Seleziona prima almeno un\'app</string>
+    <string name="batch_selected_count">%1$d selezionate</string>
+    <string name="batch_apply">Applica</string>
+    <string name="batch_enable">Abilita override risoluzione</string>
+    <string name="batch_dock">Usa modalità Dock</string>
+    <string name="batch_updated">%1$d app aggiornate</string>
 </resources>

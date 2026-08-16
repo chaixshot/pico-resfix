@@ -39,4 +39,17 @@
     <string name="portrait">Stående</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Lagre og bruk</string>
+    <string name="tag_modified">Endret</string>
+    <string name="batch_select">Velg flere apper</string>
+    <string name="batch_settings">Gruppeinnstillinger</string>
+    <string name="batch_apps_title">Valgte apper (%1$d)</string>
+    <string name="batch_apps_hint">Trykk for å se valgte apper</string>
+    <string name="batch_edit">Rediger valgte apper</string>
+    <string name="batch_selection_title">Velg apper</string>
+    <string name="batch_selection_empty">Velg minst én app først</string>
+    <string name="batch_selected_count">%1$d valgt</string>
+    <string name="batch_apply">Bruk</string>
+    <string name="batch_enable">Aktiver overstyring av oppløsning</string>
+    <string name="batch_dock">Bruk Dock-modus</string>
+    <string name="batch_updated">Oppdaterte %1$d apper</string>
 </resources>

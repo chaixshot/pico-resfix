@@ -39,4 +39,17 @@
     <string name="portrait">Κατακόρυφα</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Αποθήκευση και εφαρμογή</string>
+    <string name="tag_modified">Τροποποιήθηκε</string>
+    <string name="batch_select">Επιλογή πολλών εφαρμογών</string>
+    <string name="batch_settings">Μαζικές ρυθμίσεις</string>
+    <string name="batch_apps_title">Επιλεγμένες εφαρμογές (%1$d)</string>
+    <string name="batch_apps_hint">Πατήστε για προβολή επιλεγμένων εφαρμογών</string>
+    <string name="batch_edit">Επεξεργασία επιλεγμένων εφαρμογών</string>
+    <string name="batch_selection_title">Επιλογή εφαρμογών</string>
+    <string name="batch_selection_empty">Επιλέξτε τουλάχιστον μία εφαρμογή πρώτα</string>
+    <string name="batch_selected_count">%1$d επιλέχθηκαν</string>
+    <string name="batch_apply">Εφαρμογή</string>
+    <string name="batch_enable">Ενεργοποίηση παράκαμψης ανάλυσης</string>
+    <string name="batch_dock">Χρήση λειτουργίας Dock</string>
+    <string name="batch_updated">Ενημερώθηκαν %1$d εφαρμογές</string>
 </resources>

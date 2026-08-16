@@ -39,4 +39,17 @@
     <string name="portrait">Portret</string>
     <string name="tag_dock">Dock</string>
     <string name="save_and_apply">Salvează și aplică</string>
+    <string name="tag_modified">Modificat</string>
+    <string name="batch_select">Selectați mai multe aplicații</string>
+    <string name="batch_settings">Setări în lot</string>
+    <string name="batch_apps_title">Aplicații selectate (%1$d)</string>
+    <string name="batch_apps_hint">Atingeți pentru a vedea aplicațiile selectate</string>
+    <string name="batch_edit">Editați aplicațiile selectate</string>
+    <string name="batch_selection_title">Selectați aplicații</string>
+    <string name="batch_selection_empty">Selectați mai întâi cel puțin o aplicație</string>
+    <string name="batch_selected_count">%1$d selectate</string>
+    <string name="batch_apply">Aplică</string>
+    <string name="batch_enable">Activați suprascrierea rezoluției</string>
+    <string name="batch_dock">Utilizați modul Dock</string>
+    <string name="batch_updated">%1$d aplicații actualizate</string>
 </resources>
