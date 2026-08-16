@@ -385,6 +385,10 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     app:boxBackgroundColor="@color/dropdown_bg"
+                                    app:boxCornerRadiusBottomEnd="10dp"
+                                    app:boxCornerRadiusBottomStart="10dp"
+                                    app:boxCornerRadiusTopEnd="10dp"
+                                    app:boxCornerRadiusTopStart="10dp"
                                     app:boxStrokeColor="@color/box_stroke_selector"
                                     app:cursorColor="@color/primary"
                                     app:hintTextColor="?attr/colorOnPrimaryContainer">
@@ -395,11 +399,7 @@
                                         android:layout_height="wrap_content"
                                         android:hint="@string/density_hint"
                                         android:inputType="number"
-                                        android:textColorHighlight="@color/toggle_button"
-                                        app:boxCornerRadiusBottomEnd="10dp"
-                                        app:boxCornerRadiusBottomStart="10dp"
-                                        app:boxCornerRadiusTopEnd="10dp"
-                                        app:boxCornerRadiusTopStart="10dp" />
+                                        android:textColorHighlight="@color/toggle_button" />
                                 </com.google.android.material.textfield.TextInputLayout>
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
