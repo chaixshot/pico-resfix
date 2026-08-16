@@ -31,8 +31,6 @@
     <string name="search_hint">Søk i apper…</string>
     <string name="floating">Flytende</string>
     <string name="dock">Dokk</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Standardinnstillinger (ikke-systemapper uten spesifikke innstillinger)</string>
     <string name="enable_dock">Aktiver dokk</string>
     <string name="landscape">Liggende</string>

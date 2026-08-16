@@ -31,8 +31,6 @@
     <string name="search_hint">Apps suchen…</string>
     <string name="floating">Schwebend</string>
     <string name="dock">Dock</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Standardeinstellungen (Nicht-System-Apps ohne spezifische Einstellungen)</string>
     <string name="enable_dock">Dock aktivieren</string>
     <string name="landscape">Querformat</string>

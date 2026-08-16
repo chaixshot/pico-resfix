@@ -31,8 +31,6 @@
     <string name="search_hint">ค้นหาแอป…</string>
     <string name="floating">ลอย</string>
     <string name="dock">แท่นวาง</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">การตั้งค่าเริ่มต้น (แอปที่ไม่ได้ตั้งค่าเฉพาะ)</string>
     <string name="enable_dock">เปิดใช้งานด็อก</string>
     <string name="landscape">แนวนอน</string>

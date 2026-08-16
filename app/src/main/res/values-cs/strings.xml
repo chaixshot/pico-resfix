@@ -31,8 +31,6 @@
     <string name="search_hint">Hledat aplikace…</string>
     <string name="floating">Plovoucí</string>
     <string name="dock">Ukotvení</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Výchozí nastavení (nesystémové aplikace bez specifického nastavení)</string>
     <string name="enable_dock">Povolit dok</string>
     <string name="landscape">Na šířku</string>

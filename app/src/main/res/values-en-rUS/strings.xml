@@ -31,8 +31,6 @@
     <string name="search_hint">Search apps…</string>
     <string name="floating">Floating</string>
     <string name="dock">Dock</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Default Settings (non-system apps without specific settings)</string>
     <string name="enable_dock">Enable Dock</string>
     <string name="landscape">Landscape</string>

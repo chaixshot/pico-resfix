@@ -31,8 +31,6 @@
     <string name="search_hint">Rechercher des applications…</string>
     <string name="floating">Flottant</string>
     <string name="dock">Ancré</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Paramètres par défaut (apps non-système sans paramètres spécifiques)</string>
     <string name="enable_dock">Activer le dock</string>
     <string name="landscape">Paysage</string>

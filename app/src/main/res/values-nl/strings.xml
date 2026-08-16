@@ -31,8 +31,6 @@
     <string name="search_hint">Apps zoeken…</string>
     <string name="floating">Zwevend</string>
     <string name="dock">Dock</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Standaardinstellingen (apps zonder specifieke instellingen)</string>
     <string name="enable_dock">Dock inschakelen</string>
     <string name="landscape">Liggend</string>

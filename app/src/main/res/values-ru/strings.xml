@@ -31,8 +31,6 @@
     <string name="search_hint">Поиск приложений…</string>
     <string name="floating">Плавающее</string>
     <string name="dock">Закрепленное</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Настройки по умолчанию (для приложений без настроек)</string>
     <string name="enable_dock">Включить док</string>
     <string name="landscape">Альбомная</string>

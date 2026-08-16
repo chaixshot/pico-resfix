@@ -31,8 +31,6 @@
     <string name="search_hint">アプリを検索…</string>
     <string name="floating">フローティング</string>
     <string name="dock">ドック</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">デフォルト設定 (個別に設定されていない非システムアプリ)</string>
     <string name="enable_dock">ドックを有効にする</string>
     <string name="landscape">横向き</string>

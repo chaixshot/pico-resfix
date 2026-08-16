@@ -31,8 +31,6 @@
     <string name="search_hint">Szukaj aplikacji…</string>
     <string name="floating">Pływający</string>
     <string name="dock">Dok</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Ustawienia domyślne (aplikacje bez własnych ustawień)</string>
     <string name="enable_dock">Włącz dok</string>
     <string name="landscape">Pozioma</string>

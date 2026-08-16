@@ -31,8 +31,6 @@
     <string name="search_hint">Cari apl…</string>
     <string name="floating">Terapung</string>
     <string name="dock">Dok</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Tetapan Lalai (apl bukan sistem tanpa tetapan khusus)</string>
     <string name="enable_dock">Dayakan Dok</string>
     <string name="landscape">Landskap</string>

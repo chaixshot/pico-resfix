@@ -31,8 +31,6 @@
     <string name="search_hint">Sök i appar…</string>
     <string name="floating">Flytande</string>
     <string name="dock">Docka</string>
-
-    <!-- default config editor (in list header or separate) -->
     <string name="default_title">Standardinställningar (icke-systemappar utan specifika inställningar)</string>
     <string name="enable_dock">Aktivera docka</string>
     <string name="landscape">Liggande</string>
