@@ -218,7 +218,7 @@ public class AppListActivity extends AppCompatActivity {
     }
 
     private void updateBatchButtonState() {
-        int color = getColor(selectionMode ? R.color.primary : R.color.dropdown_bg);
+        int color = getColor(selectionMode ? R.color.toggle_button : R.color.dropdown_bg);
         fabBatch.setBackgroundTintList(ColorStateList.valueOf(color));
         fabBatchEdit.setVisibility(selectionMode ? View.VISIBLE : View.GONE);
         fabBatch.setContentDescription(selectionMode

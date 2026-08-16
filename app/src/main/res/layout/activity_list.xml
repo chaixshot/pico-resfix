@@ -132,7 +132,7 @@
             android:contentDescription="@string/batch_edit"
             android:visibility="gone"
             app:backgroundTint="@color/toggle_button"
-            app:srcCompat="@drawable/ic_settings" />
+            app:srcCompat="@android:drawable/ic_menu_edit" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_batch"
@@ -141,7 +141,7 @@
             android:layout_marginBottom="12dp"
             android:contentDescription="@string/batch_select"
             app:backgroundTint="@color/dropdown_bg"
-            app:srcCompat="@android:drawable/ic_menu_agenda" />
+            app:srcCompat="?attr/actionModeSelectAllDrawable" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_default"
