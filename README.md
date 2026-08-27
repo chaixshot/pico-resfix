@@ -130,4 +130,9 @@ Requirements: JDK 17 + Android SDK (platform 34, build-tools 34). Use the checke
 
 ## 7. Versioning
 
-Android `versionName`, Git tag, GitHub Release title, and release APK filename use the same version number. For example, v1.4 is published as tag `1.4` with `Pico-ResFix-v1.4.apk`.
+Android `versionName`, Git tag, GitHub Release title, and release APK filename use the same version number. For example, v1.16 is published as tag `1.16` with `Pico-ResFix-v1.16.apk`.
+
+<img width="2048" height="2048" alt="image" src="https://github.com/user-attachments/assets/6020ed87-897d-4211-bda7-defd81f1f532" />
+
+<img width="2048" height="2048" alt="image" src="https://github.com/user-attachments/assets/d266de64-1ddd-44eb-be38-330f53c07aaa" />
+
