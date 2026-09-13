@@ -1,11 +1,10 @@
 package com.picoxr.resfix;
 
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.SystemClock;
 import android.provider.Settings;
-import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -13,9 +12,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -27,8 +28,21 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 public class ResFix implements IXposedHookLoadPackage {
     static final String TAG = "PicoResFix";
     static final String CONFIG = "/data/local/tmp/resfix.cfg";
+    private static final String SELF_PACKAGE = "com.picoxr.resfix";
     private static final String CONFIG_SETTING = "pico_systemext_coord_resfix_config";
     private static final String GENERATION_SETTING = "pico_systemext_coord_resfix_generation";
+
+    /** Window-type constants: 2002 = near-field dock, 3002 = far-field floating. */
+    private static final int WINDOW_TYPE_DOCK = 2002;
+    private static final int WINDOW_TYPE_FLOATING = 3002;
+    private static final String NEAR_SPACE_POSITION = "near";
+
+    /**
+     * Hook callbacks run far more often than the config changes, and every probe costs a
+     * file read plus two binder calls. Re-probe at most this often; the GUI bumps the
+     * generation setting on every write, so changes still apply within one interval.
+     */
+    private static final long CONFIG_PROBE_INTERVAL_MS = 400;
 
     static final class Cfg {
         final int w;
@@ -57,7 +71,15 @@ public class ResFix implements IXposedHookLoadPackage {
     }
 
     private static volatile Snapshot snapshot;
-    private static final ThreadLocal<String> launchingPackage = new ThreadLocal<>();
+    private static volatile long lastProbeElapsed;
+    private static volatile boolean loggedStaleConfig;
+    /** Launch context as a stack: AppRecord.obtain() and prepareAppData() may nest. */
+    private static final ThreadLocal<List<String>> launchingPackages = new ThreadLocal<>();
+    /** getPackageName() lookup per class, including the "no such method" negative. */
+    private static final ConcurrentHashMap<Class<?>, Optional<Method>> GETTER_CACHE =
+            new ConcurrentHashMap<>();
+    /** Last window type routed per package, so per-callback logging only fires on change. */
+    private static final ConcurrentHashMap<String, Integer> lastRoutedType = new ConcurrentHashMap<>();
 
     private static Context systemContext() {
         try {
@@ -72,6 +94,11 @@ public class ResFix implements IXposedHookLoadPackage {
     }
 
     private static Snapshot configSnapshot() {
+        Snapshot current = snapshot;
+        long now = SystemClock.elapsedRealtime();
+        if (current != null && now - lastProbeElapsed < CONFIG_PROBE_INTERVAL_MS) return current;
+        lastProbeElapsed = now;
+
         Context context = systemContext();
         String generation = null;
         String settingsConfig = null;
@@ -92,21 +119,23 @@ public class ResFix implements IXposedHookLoadPackage {
             source = "Settings.Global";
         }
         if (parsed == null) {
-            Snapshot current = snapshot;
-            if (current != null) {
-                log("configuration reload failed; keeping last valid snapshot", null);
-                return current;
+            Snapshot last = snapshot;
+            if (last != null) {
+                if (!loggedStaleConfig) {
+                    loggedStaleConfig = true;
+                    log("configuration reload failed; keeping last valid snapshot", null);
+                }
+                return last;
             }
             parsed = new JSONObject();
         }
+        loggedStaleConfig = false;
 
         String content = source + ":" + (source.equals(CONFIG) ? fileConfig : settingsConfig);
         String key = (generation == null ? "" : generation) + ":" + content.hashCode();
-        Snapshot current = snapshot;
-        if (current != null && current.key.equals(key)) return current;
-        Snapshot loaded = new Snapshot(key, parsed);
-        snapshot = loaded;
-        return loaded;
+        Snapshot fresh = new Snapshot(key, parsed);
+        snapshot = fresh;
+        return fresh;
     }
 
     private static JSONObject parseConfig(String text, String source) {
@@ -184,7 +213,8 @@ public class ResFix implements IXposedHookLoadPackage {
     }
 
     static Boolean dockOverride(String pkg) {
-        if (pkg == null) return null;
+        // Single choke point for the self-exclusion so every dock hook inherits it.
+        if (pkg == null || SELF_PACKAGE.equals(pkg)) return null;
         JSONObject apps = configSnapshot().root.optJSONObject("apps");
         JSONObject app = apps == null ? null : apps.optJSONObject(pkg);
         return app != null && app.has("dock") ? app.optBoolean("dock") : null;
@@ -218,26 +248,73 @@ public class ResFix implements IXposedHookLoadPackage {
 
     static String pkgFromThis(Object object) {
         if (object == null) return null;
+        // getPackageName() method, cached per class - this runs on every hook event.
+        String pkg = invokeGetter(object, "getPackageName");
+        if (pkg != null && !pkg.isEmpty()) return pkg;
+
+        // Direct package field.
+        pkg = fieldString(object, "mPackageName");
+        if (pkg != null && !pkg.isEmpty()) return pkg;
+
+        // Last structural fallback.
         try {
-            // Try getPackageName() method
-            try {
-                Method m = object.getClass().getMethod("getPackageName");
-                m.setAccessible(true);
-                String pkg = (String) m.invoke(object);
-                if (pkg != null && !pkg.isEmpty()) return pkg;
-            } catch (Throwable ignored) {}
-
-            // Try mPackageName field
-            String pkgField = fieldString(object, "mPackageName");
-            if (pkgField != null && !pkgField.isEmpty()) return pkgField;
-
-            // Fallback to mComponentName
             Object componentName = XposedHelpers.getObjectField(object, "mComponentName");
             if (componentName != null) {
-                return (String) componentName.getClass().getMethod("getPackageName").invoke(componentName);
+                pkg = invokeGetter(componentName, "getPackageName");
+                if (pkg != null && !pkg.isEmpty()) return pkg;
             }
         } catch (Throwable ignored) {}
         return null;
+    }
+
+    private static String invokeGetter(Object object, String methodName) {
+        Optional<Method> cached = GETTER_CACHE.get(object.getClass());
+        if (cached == null) {
+            Method found = null;
+            try {
+                found = object.getClass().getMethod(methodName);
+                found.setAccessible(true);
+            } catch (Throwable ignored) {}
+            cached = Optional.ofNullable(found);
+            GETTER_CACHE.putIfAbsent(object.getClass(), cached);
+            cached = GETTER_CACHE.get(object.getClass());
+        }
+        if (!cached.isPresent()) return null;
+        try {
+            return (String) cached.get().invoke(object);
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    static String currentLaunchPackage() {
+        List<String> stack = launchingPackages.get();
+        return stack == null || stack.isEmpty() ? null : stack.get(stack.size() - 1);
+    }
+
+    /** Removes any launch frame still visible from the current thread. */
+    static void clearLaunchPackage() {
+        launchingPackages.remove();
+    }
+
+    static Optional<String> pushLaunchPackage(String pkg) {
+        if (pkg == null) return Optional.empty();
+        List<String> stack = launchingPackages.get();
+        if (stack == null) {
+            stack = new ArrayList<>();
+            launchingPackages.set(stack);
+        }
+        stack.add(pkg);
+        return Optional.of(pkg);
+    }
+
+    static void popLaunchPackage(String pkg) {
+        if (pkg == null) return;
+        List<String> stack = launchingPackages.get();
+        if (stack == null) return;
+        int index = stack.lastIndexOf(pkg);
+        if (index >= 0) stack.remove(index);
+        if (stack.isEmpty()) launchingPackages.remove();
     }
 
     static boolean nativeDockMode(String pkg, Object appRecord) {
@@ -255,7 +332,7 @@ public class ResFix implements IXposedHookLoadPackage {
 
     /** Returns null when this AppRecord should not be resized. */
     static Cfg decide(String pkg, Object appRecord) {
-        if ("com.picoxr.resfix".equals(pkg)) return null;
+        if (SELF_PACKAGE.equals(pkg)) return null;
         Boolean dock = dockOverride(pkg);
         boolean effectiveDock = dock != null ? dock : nativeDockMode(pkg, appRecord);
         Cfg app = appConfig(pkg, effectiveDock);
@@ -274,43 +351,6 @@ public class ResFix implements IXposedHookLoadPackage {
         if (!"com.picovr.systemext".equals(lp.packageName)) return;
         installResolutionHook(lp);
         installDockHooks(lp);
-        installActivityStarterHooks(lp);
-    }
-
-    private static void installActivityStarterHooks(XC_LoadPackage.LoadPackageParam lp) {
-        try {
-            Class<?> control = XposedHelpers.findClass(
-                    "com.bytedance.nativeshell.appmanager.ActivityStarterControl", lp.classLoader);
-            Class<?> utils = XposedHelpers.findClass(
-                    "com.bytedance.nativeshell.appmanager.util.ActivityStarterControlUtils", lp.classLoader);
-
-            Log.e(TAG, "Dumping methods for ActivityStarterControl:");
-            for (Method method : control.getDeclaredMethods()) {
-                Log.e(TAG, "  " + method.toString());
-            }
-
-            Log.e(TAG, "Dumping methods for ActivityStarterControlUtils:");
-            for (Method method : utils.getDeclaredMethods()) {
-                Log.e(TAG, "  " + method.toString());
-            }
-
-            XposedBridge.hookAllMethods(control, "handleStartActivity", new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) {
-                    Log.e(TAG, "ActivityStarterControl.handleStartActivity called: " + Arrays.toString(param.args));
-                }
-            });
-
-            XposedBridge.hookAllMethods(control, "checkAppSwitchAllowed", new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) {
-                    Log.e(TAG, "ActivityStarterControl.checkAppSwitchAllowed called: " + Arrays.toString(param.args));
-                }
-            });
-
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to install ActivityStarter hooks", t);
-        }
     }
 
     private static void installResolutionHook(XC_LoadPackage.LoadPackageParam lp) {
@@ -339,7 +379,8 @@ public class ResFix implements IXposedHookLoadPackage {
                                 setInt(param.thisObject, "mHeight", targetH, true);
                                 if (cfg.density > 0) setInt(param.thisObject, "mDensity", targetDensity, false);
 
-                                Log.e(TAG, "route " + pkg + " -> " + targetW + "x" + targetH + "@" + targetDensity);
+                                XposedBridge.log(TAG + ": route " + pkg + " -> "
+                                        + targetW + "x" + targetH + "@" + targetDensity);
                             } catch (Throwable t) {
                                 log("createVirtualDisplay hook failed", t);
                             }
@@ -353,39 +394,41 @@ public class ResFix implements IXposedHookLoadPackage {
 
     private static void installAppRecordFix(XC_LoadPackage.LoadPackageParam lp) {
         try {
-            Class<?> appRecord = XposedHelpers.findClass(
+            final Class<?> appRecord = XposedHelpers.findClass(
                     "com.bytedance.nativeshell.appmanager.AppRecord", lp.classLoader);
-            XposedHelpers.findAndHookMethod(appRecord, "prepareAppData", Context.class, new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    String pkg = pkgFromThis(param.thisObject);
-                    if (pkg != null) launchingPackage.set(pkg);
-                }
-                @Override protected void afterHookedMethod(MethodHookParam param) {
-                    try {
-                        Object container = param.thisObject;
-                        String pkg = pkgFromThis(container);
-                        if (pkg == null) pkg = launchingPackage.get();
-                        if (pkg == null) return;
-
-                        Cfg cfg = decide(pkg, container);
-                        if (cfg != null) {
-                            setInt(container, "mWidth", cfg.w, false);
-                            setInt(container, "mHeight", cfg.h, false);
+            hook("AppRecord.prepareAppData", () -> XposedHelpers.findAndHookMethod(appRecord,
+                    "prepareAppData", Context.class, new XC_MethodHook() {
+                        @Override protected void beforeHookedMethod(MethodHookParam param) {
+                            pushLaunchPackage(pkgFromThis(param.thisObject));
                         }
+                        @Override protected void afterHookedMethod(MethodHookParam param) {
+                            try {
+                                Object container = param.thisObject;
+                                String pkg = pkgFromThis(container);
+                                if (pkg == null) pkg = currentLaunchPackage();
+                                if (pkg == null) return;
 
-                        Boolean dock = dockOverride(pkg);
-                        if (dock != null) {
-                            XposedHelpers.setObjectField(container, "mAppResizeable", dock);
-                            trySetIntField(container, "mWindowType", dock ? 2002 : 3002);
-                            trySetIntField(container, "mType", dock ? 2002 : 3002);
+                                Cfg cfg = decide(pkg, container);
+                                if (cfg != null) {
+                                    setInt(container, "mWidth", cfg.w, false);
+                                    setInt(container, "mHeight", cfg.h, false);
+                                }
+
+                                Boolean dock = dockOverride(pkg);
+                                if (dock != null) {
+                                    XposedHelpers.setObjectField(container, "mAppResizeable", dock);
+                                    trySetIntField(container, "mWindowType",
+                                            dock ? WINDOW_TYPE_DOCK : WINDOW_TYPE_FLOATING);
+                                    trySetIntField(container, "mType",
+                                            dock ? WINDOW_TYPE_DOCK : WINDOW_TYPE_FLOATING);
+                                }
+                            } catch (Throwable t) {
+                                log("AppRecord.prepareAppData hook failed", t);
+                            } finally {
+                                popLaunchPackage(pkgFromThis(param.thisObject));
+                            }
                         }
-                    } catch (Throwable t) {
-                        log("AppRecord.prepareAppData hook failed", t);
-                    } finally {
-                        launchingPackage.remove();
-                    }
-                }
-            });
+                    }));
         } catch (Throwable t) {
             log("failed to install AppRecord fix", t);
         }
@@ -408,337 +451,253 @@ public class ResFix implements IXposedHookLoadPackage {
     }
 
     private static void installDockHooks(XC_LoadPackage.LoadPackageParam lp) {
-        // Dump methods for RootAppContainer
+        final Class<?> appManagerUtils, appRecord, appContainer;
         try {
-            Class<?> rootAppContainer = XposedHelpers.findClass("com.bytedance.nativeshell.appmanager.RootAppContainer", lp.classLoader);
-            if (rootAppContainer != null) {
-                Log.e(TAG, "Dumping methods for RootAppContainer:");
-                for (Method method : rootAppContainer.getDeclaredMethods()) {
-                    Log.e(TAG, "  " + method.toString());
-                }
-            }
+            appManagerUtils = XposedHelpers.findClass(
+                    "com.bytedance.nativeshell.appmanager.AppManagerUtils", lp.classLoader);
+            appRecord = XposedHelpers.findClass(
+                    "com.bytedance.nativeshell.appmanager.AppRecord", lp.classLoader);
+            appContainer = XposedHelpers.findClass(
+                    "com.bytedance.nativeshell.appmanager.AppContainer", lp.classLoader);
         } catch (Throwable t) {
-            Log.e(TAG, "Failed to dump methods for RootAppContainer", t);
-        }
-
-        final Class<?> activityInfo;
-        final Class<?> appManagerService;
-        final Class<?> appManagerUtils;
-        final Class<?> immersiveModeManager;
-        final Class<?> appRecord;
-        final Class<?> appContainer;
-
-        try {
-            activityInfo = XposedHelpers.findClass("android.content.pm.ActivityInfo", lp.classLoader);
-            appManagerService = XposedHelpers.findClass("com.bytedance.nativeshell.appmanager.AppManagerService", lp.classLoader);
-            appManagerUtils = XposedHelpers.findClass("com.bytedance.nativeshell.appmanager.AppManagerUtils", lp.classLoader);
-            immersiveModeManager = XposedHelpers.findClass("com.bytedance.nativeshell.appmanager.action.ImmersiveModeManager", lp.classLoader);
-            appRecord = XposedHelpers.findClass("com.bytedance.nativeshell.appmanager.AppRecord", lp.classLoader);
-            appContainer = XposedHelpers.findClass("com.bytedance.nativeshell.appmanager.AppContainer", lp.classLoader);
-        } catch (Throwable t) {
-            Log.e(TAG, "failed to resolve dock hook classes", t);
+            log("failed to resolve dock hook classes", t);
             return;
         }
 
-        // Hook AppManagerService.notifyAllowAppStart and see if it's called
-        try {
-            XposedBridge.hookAllMethods(appManagerService, "notifyAllowAppStart", new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    try {
-                        Log.e(TAG, "notifyAllowAppStart called with args: " + Arrays.toString(param.args));
-                        if (param.args.length > 0 && param.args[0] != null) {
-                            String pkg = fieldString(param.args[0], "packageName");
-                            if (Boolean.TRUE.equals(dockOverride(pkg))) {
-                                param.setResult(true);
-                                Log.e(TAG, "Forced allow start for docked app via notifyAllowAppStart: " + pkg);
-                            }
-                        }
-                    } catch (Throwable t) {
-                        Log.e(TAG, "Error in notifyAllowAppStart hook", t);
+        hook("AppManagerUtils.isNearPanel", () -> hookBooleanReturn(
+                appManagerUtils, "isNearPanel", pkgFromFirstArgOrLaunch(), true));
+        hook("AppManagerUtils.isVrActivity", () -> hookBooleanReturn(
+                appManagerUtils, "isVrActivity", pkgFromFirstArg(), false));
+        hook("AppManagerUtils.isVrApp", () -> hookBooleanReturn(
+                appManagerUtils, "isVrApp", pkgFromFirstArg(), false));
+        hook("AppManagerUtils.getVrSpacePosition", () -> hookStringReturn(
+                appManagerUtils, "getVrSpacePosition",
+                pkgFromFirstArgOrLaunch(), NEAR_SPACE_POSITION));
+        hook("AppRecord.getVrSpacePosition", () -> hookStringReturn(
+                appRecord, "getVrSpacePosition", pkgFromThisOrLaunch(), NEAR_SPACE_POSITION));
+        hook("AppRecord.resizeable", () -> hookBooleanReturn(
+                appRecord, "resizeable", pkgFromThisOrLaunch(), true));
+
+        hook("AppRecord.<init>", () -> hookAllConstructors(appRecord, new XC_MethodHook() {
+            @Override protected void afterHookedMethod(MethodHookParam param) {
+                try {
+                    String pkg = pkgFromThisOrLaunch(param.thisObject);
+                    if (isDocked(pkg)) {
+                        trySetIntField(param.thisObject, "mType", WINDOW_TYPE_DOCK);
+                        trySetIntField(param.thisObject, "mWindowType", WINDOW_TYPE_DOCK);
+                        XposedHelpers.setObjectField(param.thisObject, "mAppResizeable", true);
                     }
+                } catch (Throwable t) {
+                    log("AppRecord constructor hook failed", t);
                 }
-            });
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to hook notifyAllowAppStart", t);
-        }
-
-        try {
-            XposedBridge.hookAllMethods(immersiveModeManager, "onAllowStartApp", new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    try {
-                        if (param.args.length > 0 && param.args[0] != null) {
-                            String pkg = fieldString(param.args[0], "packageName");
-                            if (Boolean.TRUE.equals(dockOverride(pkg))) {
-                                param.setResult(true);
-                                Log.e(TAG, "Forced allow start for docked app via onAllowStartApp: " + pkg);
-                            }
-                        }
-                    } catch (Throwable t) {
-                        Log.e(TAG, "Error in onAllowStartApp hook", t);
-                    }
-                }
-            });
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to hook onAllowStartApp", t);
-        }
-
-        // VR hooks
-        try {
-            XC_MethodHook vrHook = new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    try {
-                        if (param.args.length > 0 && param.args[0] != null) {
-                            String pkg = fieldString(param.args[0], "packageName");
-                            if (Boolean.TRUE.equals(dockOverride(pkg))) {
-                                param.setResult(false);
-                                Log.e(TAG, "isVr(App/Activity): forced to false for docked app: " + pkg);
-                            }
-                        }
-                    } catch (Throwable t) {
-                        Log.e(TAG, "Error in VR hook", t);
-                    }
-                }
-            };
-            XposedBridge.hookAllMethods(appManagerUtils, "isVrActivity", vrHook);
-            XposedBridge.hookAllMethods(appManagerUtils, "isVrApp", vrHook);
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to hook VR methods", t);
-        }
-
-        // Hook AppManagerUtils.isNearPanel and ensure it returns true
-        try {
-            XposedBridge.hookAllMethods(appManagerUtils, "isNearPanel", new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    try {
-                        String pkg = null;
-                        if (param.args.length > 0 && param.args[0] != null) {
-                            pkg = fieldString(param.args[0], "packageName");
-                        }
-                        if (pkg == null) pkg = launchingPackage.get();
-                        if (Boolean.TRUE.equals(dockOverride(pkg))) {
-                            param.setResult(true);
-                            Log.e(TAG, "isNearPanel: forced to true for docked app: " + pkg);
-                        }
-                    } catch (Throwable t) {
-                        Log.e(TAG, "Error in isNearPanel hook", t);
-                    }
-                }
-            });
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to hook isNearPanel", t);
-        }
-
-        // Hook AppManagerUtils.getVrSpacePosition(ActivityInfo) and return "near" for docked apps
-        try {
-            XposedBridge.hookAllMethods(appManagerUtils, "getVrSpacePosition", new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    try {
-                        String pkg = null;
-                        if (param.args.length > 0 && param.args[0] != null) {
-                            pkg = fieldString(param.args[0], "packageName");
-                        }
-                        if (pkg == null) pkg = launchingPackage.get();
-                        if (Boolean.TRUE.equals(dockOverride(pkg))) {
-                            param.setResult("near");
-                            Log.e(TAG, "AppManagerUtils.getVrSpacePosition: forced to 'near' for docked app: " + pkg);
-                        }
-                    } catch (Throwable t) {
-                        Log.e(TAG, "Error in AppManagerUtils.getVrSpacePosition hook", t);
-                    }
-                }
-            });
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to hook AppManagerUtils.getVrSpacePosition", t);
-        }
-
-        // Hook AppRecord.getVrSpacePosition() if it exists
-        try {
-            XposedBridge.hookAllMethods(appRecord, "getVrSpacePosition", new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    try {
-                        String pkg = pkgFromThis(param.thisObject);
-                        if (pkg == null) pkg = launchingPackage.get();
-                        if (Boolean.TRUE.equals(dockOverride(pkg))) {
-                            param.setResult("near");
-                            Log.e(TAG, "AppRecord.getVrSpacePosition: forced to 'near' for docked app: " + pkg);
-                        }
-                    } catch (Throwable t) {
-                        Log.e(TAG, "Error in AppRecord.getVrSpacePosition hook", t);
-                    }
-                }
-            });
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to hook AppRecord.getVrSpacePosition", t);
-        }
-
-        // Suppress "Exit fullscreen" tips
-        try {
-            XC_MethodHook suppressTipsHook = new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    try {
-                        String pkg = launchingPackage.get();
-                        if (pkg != null && Boolean.TRUE.equals(dockOverride(pkg))) {
-                            param.setResult(null);
-                            Log.e(TAG, "Suppressed showImmersiveTips for docked app: " + pkg);
-                        }
-                    } catch (Throwable t) {
-                        Log.e(TAG, "Error in showImmersiveTips hook", t);
-                    }
-                }
-            };
-            XposedBridge.hookAllMethods(appManagerService, "showImmersiveTips", suppressTipsHook);
-            XposedBridge.hookAllMethods(immersiveModeManager, "showImmersiveTips", suppressTipsHook);
-        } catch (Throwable ignored) {}
-
-        // Window type hooks
-        try {
-            XC_MethodHook windowTypeHook = new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    try {
-                        String pkg = pkgFromThis(param.thisObject);
-                        if (pkg == null && param.args.length > 0) {
-                            Object arg0 = param.args[0];
-                            if (arg0 instanceof String) {
-                                String s = (String) arg0;
-                                if (!"far".equals(s) && !"near".equals(s)) pkg = s;
-                            } else if (arg0 != null) {
-                                pkg = fieldString(arg0, "packageName");
-                            }
-                        }
-                        if (pkg == null) pkg = launchingPackage.get();
-
-                        if (pkg != null && !"com.picoxr.resfix".equals(pkg)) {
-                            Boolean dock = dockOverride(pkg);
-                            if (dock != null) {
-                                int type = dock ? 2002 : 3002;
-                                param.setResult(type);
-                                Log.e(TAG, "route " + pkg + " -> " + type);
-                            }
-                        }
-                    } catch (Throwable t) {
-                        Log.e(TAG, "window type callback failed", t);
-                    }
-                }
-            };
-
-            String[] methodsToHook = {"getType", "getWindowType", "convertPositionToWindowType"};
-            for (String methodName : methodsToHook) {
-                XposedBridge.hookAllMethods(appRecord, methodName, windowTypeHook);
-                XposedBridge.hookAllMethods(appManagerUtils, methodName, windowTypeHook);
             }
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to hook window type methods", t);
-        }
+        }));
 
-        // AppRecord.obtain hook
-        try {
-            XposedHelpers.findAndHookMethod(appRecord, "obtain", Context.class, activityInfo, new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    try {
-                        String pkg = fieldString(param.args[1], "packageName");
-                        if (pkg != null) launchingPackage.set(pkg);
-                    } catch (Throwable ignored) {}
-                }
-                @Override protected void afterHookedMethod(MethodHookParam param) {
-                    try {
-                        Object record = param.getResult();
-                        if (record == null) return;
-                        String pkg = launchingPackage.get();
-                        if (pkg == null) pkg = pkgFromThis(record);
-                        Boolean dock = dockOverride(pkg);
-                        if (Boolean.TRUE.equals(dock)) {
-                            trySetIntField(record, "mType", 2002);
-                            trySetIntField(record, "mWindowType", 2002);
-                            XposedHelpers.setObjectField(record, "mAppResizeable", true);
+        hook("AppContainer.updateVisible", () -> XposedHelpers.findAndHookMethod(
+                appContainer, "updateVisible", boolean.class, int.class, new XC_MethodHook() {
+                    @Override protected void beforeHookedMethod(MethodHookParam param) {
+                        try {
+                            if (param.args.length >= 2 && !(Boolean) param.args[0]
+                                    && (Integer) param.args[1] == 6
+                                    && isDocked(pkgFromThisOrLaunch(param.thisObject))) {
+                                param.setResult(false);
+                            }
+                        } catch (Throwable t) {
+                            log("updateVisible hook failed", t);
                         }
-                    } catch (Throwable t) {
-                        Log.e(TAG, "AppRecord.obtain hook failed", t);
-                    } finally {
-                        launchingPackage.remove();
                     }
-                }
-            });
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to hook AppRecord.obtain", t);
-        }
+                }));
 
-        // Constructor hooks
-        try {
-            hookAllConstructors(appRecord, new XC_MethodHook() {
-                @Override protected void afterHookedMethod(MethodHookParam param) {
-                    try {
-                        String pkg = pkgFromThis(param.thisObject);
-                        if (pkg == null) pkg = launchingPackage.get();
-                        Boolean dock = dockOverride(pkg);
-                        if (Boolean.TRUE.equals(dock)) {
-                            trySetIntField(param.thisObject, "mType", 2002);
-                            trySetIntField(param.thisObject, "mWindowType", 2002);
-                            XposedHelpers.setObjectField(param.thisObject, "mAppResizeable", true);
+        installAppRecordObtainHook(lp, appRecord);
+        installDockRoutingExtras(lp);
+    }
+
+    private static void installAppRecordObtainHook(XC_LoadPackage.LoadPackageParam lp,
+            Class<?> appRecord) {
+        final Class<?> activityInfo = XposedHelpers.findClass("android.content.pm.ActivityInfo", lp.classLoader);
+        hook("AppRecord.obtain", () -> XposedHelpers.findAndHookMethod(appRecord, "obtain",
+                Context.class, activityInfo, new XC_MethodHook() {
+                    @Override protected void beforeHookedMethod(MethodHookParam param) {
+                        try {
+                            if (param.args.length > 1 && param.args[1] != null) {
+                                pushLaunchPackage(fieldString(param.args[1], "packageName"));
+                            }
+                        } catch (Throwable ignored) {}
+                    }
+                    @Override protected void afterHookedMethod(MethodHookParam param) {
+                        String pushed = null;
+                        if (param.args.length > 1 && param.args[1] != null) {
+                            pushed = fieldString(param.args[1], "packageName");
                         }
-                    } catch (Throwable t) {
-                        Log.e(TAG, "AppRecord constructor hook failed", t);
-                    }
-                }
-            });
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to hook constructors", t);
-        }
-
-        // resizeable hook
-        try {
-            XposedHelpers.findAndHookMethod(appRecord, "resizeable", new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    try {
-                        String pkg = pkgFromThis(param.thisObject);
-                        Boolean dock = dockOverride(pkg);
-                        if (dock != null) param.setResult(dock);
-                    } catch (Throwable t) {
-                        Log.e(TAG, "resizeable hook failed", t);
-                    }
-                }
-            });
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to hook resizeable", t);
-        }
-
-        // updateVisible hook
-        try {
-            XposedHelpers.findAndHookMethod(appContainer, "updateVisible", boolean.class, int.class, new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    try {
-                        if (param.args.length >= 2 && !(Boolean) param.args[0] && (Integer) param.args[1] == 6) {
-                            String pkg = pkgFromThis(param.thisObject);
-                            if (Boolean.TRUE.equals(dockOverride(pkg))) param.setResult(false);
+                        try {
+                            Object record = param.getResult();
+                            if (record == null) return;
+                            String pkg = currentLaunchPackage();
+                            if (pkg == null) pkg = pkgFromThis(record);
+                            if (isDocked(pkg)) {
+                                trySetIntField(record, "mType", WINDOW_TYPE_DOCK);
+                                trySetIntField(record, "mWindowType", WINDOW_TYPE_DOCK);
+                                XposedHelpers.setObjectField(record, "mAppResizeable", true);
+                            }
+                        } catch (Throwable t) {
+                            log("AppRecord.obtain hook failed", t);
+                        } finally {
+                            popLaunchPackage(pushed);
                         }
+                    }
+                }));
+    }
+
+    private static void installDockRoutingExtras(XC_LoadPackage.LoadPackageParam lp) {
+        // These names are internal PICO routing APIs. The exact overloads are selected by
+        // return type below, so a changed or absent overload is skipped instead of receiving
+        // a result whose type could throw at its call site.
+        final Class<?> appManagerService, immersiveModeManager, activityStarterControl, controlUtils;
+        try {
+            appManagerService = XposedHelpers.findClass(
+                    "com.bytedance.nativeshell.appmanager.AppManagerService", lp.classLoader);
+            immersiveModeManager = XposedHelpers.findClass(
+                    "com.bytedance.nativeshell.appmanager.action.ImmersiveModeManager", lp.classLoader);
+            activityStarterControl = XposedHelpers.findClass(
+                    "com.bytedance.nativeshell.appmanager.ActivityStarterControl", lp.classLoader);
+            controlUtils = XposedHelpers.findClass(
+                    "com.bytedance.nativeshell.appmanager.util.ActivityStarterControlUtils", lp.classLoader);
+        } catch (Throwable t) {
+            // The core dock and window hooks remain active; the optional routing fixes are
+            // only useful for specific firmware builds and need no diagnostic noise.
+            return;
+        }
+
+        hook("AppManagerService.notifyAllowAppStart", () -> hookBooleanReturn(
+                appManagerService, "notifyAllowAppStart", pkgFromFirstArg(), true));
+        hook("AppManagerService.onAllowStartApp", () -> hookBooleanReturn(
+                appManagerService, "onAllowStartApp", pkgFromFirstArg(), true));
+        hook("ImmersiveModeManager.onAllowStartApp", () -> hookBooleanReturn(
+                immersiveModeManager, "onAllowStartApp", pkgFromFirstArg(), true));
+        hook("ActivityStarterControl.checkAppSwitchAllowed", () -> hookBooleanReturn(
+                activityStarterControl, "checkAppSwitchAllowed", pkgFromFirstArg(), true));
+        hook("ActivityStarterControlUtils.checkAppSwitchAllowed", () -> hookBooleanReturn(
+                controlUtils, "checkAppSwitchAllowed", pkgFromFirstArg(), true));
+
+        // Void display-tip methods have no return value, so suppressing is a safe no-return
+        // override. Only exact void overloads matching the configured dock package run.
+        hook("AppManagerService.showImmersiveTips", () -> hookVoidReturn(
+                appManagerService, "showImmersiveTips"));
+        hook("ImmersiveModeManager.showImmersiveTips", () -> hookVoidReturn(
+                immersiveModeManager, "showImmersiveTips"));
+    }
+
+    private interface PackageProvider {
+        String get(XC_MethodHook.MethodHookParam param);
+    }
+
+    private static PackageProvider pkgFromThis() {
+        return param -> pkgFromThis(param.thisObject);
+    }
+
+    private static PackageProvider pkgFromFirstArg() {
+        return param -> {
+            if (param.args.length == 0 || param.args[0] == null) return null;
+            return fieldString(param.args[0], "packageName");
+        };
+    }
+
+    private static PackageProvider pkgFromThisOrLaunch() {
+        return param -> pkgFromThisOrLaunch(param.thisObject);
+    }
+
+    private static PackageProvider pkgFromFirstArgOrLaunch() {
+        return param -> {
+            String pkg = pkgFromFirstArg().get(param);
+            return pkg != null ? pkg : currentLaunchPackage();
+        };
+    }
+
+    private static String pkgFromThisOrLaunch(Object object) {
+        String pkg = pkgFromThis(object);
+        return pkg != null ? pkg : currentLaunchPackage();
+    }
+
+    private static boolean isDocked(String pkg) {
+        return Boolean.TRUE.equals(dockOverride(pkg));
+    }
+
+    private static void hookBooleanReturn(Class<?> type, String methodName,
+            PackageProvider provider, boolean dockedResult) throws Throwable {
+        hookMethodsOfType(type, methodName, boolean.class, provider, dockedResult);
+    }
+
+    private static void hookStringReturn(Class<?> type, String methodName,
+            PackageProvider provider, String dockedResult) throws Throwable {
+        hookMethodsOfType(type, methodName, String.class, provider, dockedResult);
+    }
+
+    private static void hookVoidReturn(Class<?> type, String methodName) throws Throwable {
+        for (Method method : type.getDeclaredMethods()) {
+            if (!methodName.equals(method.getName()) || method.getReturnType() != void.class) continue;
+            hookMethod(method, new XC_MethodHook() {
+                @Override protected void beforeHookedMethod(MethodHookParam param) {
+                    try {
+                        String pkg = currentLaunchPackage();
+                        if (isDocked(pkg)) param.setResult(null);
                     } catch (Throwable t) {
-                        Log.e(TAG, "updateVisible hook failed", t);
+                        log("suppress immersive tips hook failed", t);
                     }
                 }
             });
-        } catch (Throwable t) {
-            Log.e(TAG, "Failed to hook updateVisible", t);
         }
+    }
 
-        // Diagnostic hooks
+    private static void hookMethodsOfType(Class<?> type, String methodName, Class<?> returnType,
+            PackageProvider provider, Object dockedResult) throws Throwable {
+        for (Method method : type.getDeclaredMethods()) {
+            if (!methodName.equals(method.getName()) || method.getReturnType() != returnType) continue;
+            final Object result = dockedResult;
+            hookMethod(method, new XC_MethodHook() {
+                @Override protected void beforeHookedMethod(MethodHookParam param) {
+                    try {
+                        String pkg = provider.get(param);
+                        if (isDocked(pkg)) param.setResult(result);
+                    } catch (Throwable t) {
+                        log("dock classification hook failed", t);
+                    }
+                }
+            });
+        }
+    }
+
+    private static void hookMethod(Method method, XC_MethodHook hook) throws Throwable {
+        Class<?>[] parameters = method.getParameterTypes();
+        Object[] args = new Object[parameters.length + 1];
+        System.arraycopy(parameters, 0, args, 0, parameters.length);
+        args[parameters.length] = hook;
+        XposedHelpers.findAndHookMethod(method.getDeclaringClass(), method.getName(), args);
+    }
+
+    /** Each dock hook installs independently so one missing internal method cannot
+     *  take down the hooks registered after it. */
+    private interface HookInstall {
+        void install() throws Throwable;
+    }
+
+    private static void hook(String name, HookInstall install) {
         try {
-            XposedBridge.hookAllMethods(appManagerService, "handleStartActivity", new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    Log.e(TAG, "BEFORE AppManagerService.handleStartActivity args: " + Arrays.toString(param.args));
-                }
-            });
-            XposedBridge.hookAllMethods(immersiveModeManager, "updateImmersiveMode", new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    Log.e(TAG, "BEFORE ImmersiveModeManager.updateImmersiveMode args: " + Arrays.toString(param.args));
-                }
-            });
-        } catch (Throwable ignored) {}
+            install.install();
+            XposedBridge.log(TAG + ": installed " + name);
+        } catch (Throwable t) {
+            log("failed to install " + name, t);
+        }
     }
 
     private static void hookAllConstructors(Class<?> clazz, XC_MethodHook hook) {
         try {
             XposedBridge.class.getMethod("hookAllConstructors", Class.class, XC_MethodHook.class)
                     .invoke(null, clazz, hook);
-        } catch (Throwable ignored) {}
+        } catch (Throwable t) {
+            // Not fatal on its own, but dock apps created outside obtain() will keep their
+            // native window type - this log is what makes that diagnosable.
+            log("hookAllConstructors unavailable; constructor-level dock override inactive", t);
+        }
     }
 
     private static void trySetIntField(Object obj, String field, int value) {
@@ -747,6 +706,6 @@ public class ResFix implements IXposedHookLoadPackage {
     }
 
     private static void log(String message, Throwable error) {
-        Log.e(TAG, message + (error == null ? "" : " (" + error + ")"));
+        XposedBridge.log(TAG + ": " + message + (error == null ? "" : " (" + error + ")"));
     }
 }

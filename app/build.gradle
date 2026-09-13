@@ -10,8 +10,8 @@ android {
         applicationId "com.picoxr.resfix"
         minSdk 29
         targetSdk 34
-        versionCode 19
-        versionName "1.4"
+        versionCode 20
+        versionName "1.4.1"
     }
 
     buildTypes {
@@ -45,6 +45,7 @@ dependencies {
     // Vector's legacy bridge exposes the older API signature where hook helpers
     // return XC_MethodHook.Unhook. Keep this compile-only so it is never bundled.
     compileOnly files('libs/vector-legacy-xposed-api.jar')
+    testImplementation files('libs/vector-legacy-xposed-api.jar')
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.json:json:20240303'
 }
